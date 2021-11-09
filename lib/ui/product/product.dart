@@ -175,7 +175,7 @@ class _FoodScreenWidgetState extends State<ProductScreen> {
                             padding:
                                 EdgeInsetsDirectional.fromSTEB(15, 20, 0, 0),
                             child: Text(
-                              'Осталось: ${widget.product.amount}',
+                              'Осталось: ${_getItemLeft()}',
                               style: DefaultAppTheme.bodyText1.override(
                                 fontFamily: 'Gilroy',
                                 color: DefaultAppTheme.secondaryColor,
@@ -276,6 +276,16 @@ class _FoodScreenWidgetState extends State<ProductScreen> {
     );
   }
 
+  String _getItemLeft() {
+    if (widget.product.itemType == 'gift') {
+      int amount = widget.product.amount ?? 0;
+
+      return '${amount - _cartStore.getGiftQuantity(widget.product.id!)}';
+    }
+
+    return '${widget.product.amount}';
+  }
+
   Widget _buildOthers() {
     return Observer(builder: (context) {
       print(_catalogStore.otherList?.items?.length);
@@ -325,6 +335,13 @@ class _FoodScreenWidgetState extends State<ProductScreen> {
                       child: ElevatedButton(
                         onPressed: () {
                           if (widget.product.itemType == 'gift') {
+                            int amount = widget.product.amount ?? 0;
+                            if (_cartStore
+                                    .getGiftQuantity(widget.product.id!) >=
+                                amount) {
+                              return;
+                            }
+
                             pushNewScreen(context,
                                 screen:
                                     PackagePickerScreen(gift: widget.product),
@@ -334,11 +351,17 @@ class _FoodScreenWidgetState extends State<ProductScreen> {
                             return;
                           }
 
-                          _cartStore!.addToCart(widget.product);
+                          double price = widget.product.price ?? 0;
+                          if (price > 0)
+                            _cartStore.addToCart(widget.product);
+                          else
+                            Helpers.showInfoMessage(
+                                context, 'Невозможно добавить товар в корзину');
                         },
-                        child: Text(widget.product.itemType == 'gift'
-                            ? 'Добавить'
-                            : '${NumberFormat.currency(symbol: "", decimalDigits: 0, locale: "ru").format(widget.product.price?.toInt())} тг'),
+                        child: widget.product.itemType == 'gift'
+                            ? _buildGiftBtn()
+                            : Text(
+                                '${NumberFormat.currency(symbol: "", decimalDigits: 0, locale: "ru").format(widget.product.price?.toInt())} тг'),
                         style: ElevatedButton.styleFrom(
                             minimumSize: Size(150, 36),
                             textStyle: DefaultAppTheme.title2.override(
@@ -374,6 +397,13 @@ class _FoodScreenWidgetState extends State<ProductScreen> {
             ),
           );
     ;
+  }
+
+  Widget _buildGiftBtn() {
+    int amount = widget.product.amount ?? 0;
+    return _cartStore.getGiftQuantity(widget.product.id!) < amount
+        ? Text('Добавить')
+        : Text('Нет в наличии');
   }
 
   Widget _buildDescription() {
@@ -456,13 +486,14 @@ class _FoodScreenWidgetState extends State<ProductScreen> {
   }
 
   bool _checkItemisInCart() {
-    return _cartStore!.getSpecificItemFromCartProvider(widget.product.id) !=
+    if (widget.product.itemType == 'gift') return false;
+
+    return _cartStore.getSpecificItemFromCartProvider(widget.product.id) !=
         null;
   }
 
   int _getQuantity() {
-    if (_cartStore == null) return 0;
-    var item = _cartStore!.getSpecificItemFromCartProvider(widget.product.id);
+    var item = _cartStore.getSpecificItemFromCartProvider(widget.product.id);
     if (item == null) return 0;
 
     print("count: ${item.quantity}");

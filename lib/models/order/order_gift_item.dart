@@ -1,9 +1,12 @@
 import 'dart:convert';
 
 import 'package:esentai/models/order/order_gift.dart';
+import 'package:esentai/models/order/order_package.dart';
+import 'package:esentai/models/order/order_package_list.dart';
 
 class OrderGiftItem {
   OrderGift? gift;
+
   OrderGiftItem({
     this.gift,
   });
@@ -24,7 +27,7 @@ class OrderGiftItem {
 
   factory OrderGiftItem.fromMap(Map<String, dynamic> map) {
     return OrderGiftItem(
-      gift: OrderGift.fromMap(map['gift']),
+      gift: map['gift'] != null ? OrderGift.fromMap(map['gift']) : null,
     );
   }
 

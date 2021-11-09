@@ -21,6 +21,7 @@ import 'package:esentai/models/info/banner_list.dart';
 import 'package:esentai/models/info/info.dart';
 import 'package:esentai/models/info/info_list.dart';
 import 'package:esentai/models/message.dart';
+import 'package:esentai/models/notification/notification_list.dart';
 import 'package:esentai/models/order/order.dart';
 import 'package:esentai/models/order/order_list.dart';
 import 'package:esentai/models/order/order_result.dart';
@@ -200,10 +201,10 @@ class Repository {
   }
 
   // get products
-  Future<ProductList> getProducts(
-      List<int> subcategories, String orderBy, String? token) async {
+  Future<ProductList> getProducts(List<int> subcategories, String orderBy,
+      bool isActive, String? token) async {
     return await _catalogApi
-        .getProducts(subcategories, orderBy, token)
+        .getProducts(subcategories, orderBy, isActive, token)
         .then((list) {
       // list.items?.forEach((item) {});
 
@@ -371,6 +372,27 @@ class Repository {
   // add address
   Future<Address> addAddress(String token, Map<String, String> data) async {
     return await _userApi.addAddress(token, data).then((res) {
+      return res;
+    }).catchError((e) => throw e);
+  }
+
+  // get notifications
+  Future<NotificationList> getNotifications(String? token) async {
+    return await _userApi.getNotifications(token!).then((list) {
+      return list;
+    });
+  }
+
+  // delete notification
+  Future<bool> deleteNotification(String token, int id) async {
+    return await _userApi.deleteNotification(token, id).then((res) {
+      return res;
+    }).catchError((e) => throw e);
+  }
+
+  // delete notifications
+  Future<bool> deleteAllNotifications(String token) async {
+    return await _userApi.deleteAllNotifications(token).then((res) {
       return res;
     }).catchError((e) => throw e);
   }

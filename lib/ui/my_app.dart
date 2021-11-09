@@ -8,7 +8,6 @@ import 'package:esentai/stores/catalog/catalog_store.dart';
 import 'package:esentai/stores/form/form_store.dart';
 import 'package:esentai/stores/order/order_store.dart';
 import 'package:esentai/ui/home/navbarscreen.dart';
-import 'package:esentai/ui/test/test.dart';
 import 'package:esentai/utils/routes/routes.dart';
 import 'package:esentai/stores/language/language_store.dart';
 import 'package:esentai/stores/post/post_store.dart';
@@ -16,12 +15,22 @@ import 'package:esentai/stores/theme/theme_store.dart';
 import 'package:esentai/stores/user/user_store.dart';
 import 'package:esentai/ui/onboarding/onboarding.dart';
 import 'package:esentai/utils/locale/app_localization.dart';
-import 'package:esentai/widgets/progress_indicator_widget.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:provider/provider.dart';
+
+// final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+//     FlutterLocalNotificationsPlugin();
+
+// const AndroidNotificationChannel channel = AndroidNotificationChannel(
+//   'high_importance_channel', // id
+//   'High Importance Notifications', // title
+//   description:
+//       'This channel is used for important notifications.', // description
+//   importance: Importance.high,
+// );
 
 class MyApp extends StatefulWidget {
   MyApp({Key? key, this.initScreen}) : super(key: key);
@@ -46,34 +55,50 @@ class _MyAppState extends State<MyApp> {
   final GiftStore _giftStore = GiftStore();
   final OrderStore _orderStore = OrderStore(getIt<Repository>());
 
-  // FCM
-  // final Future<FirebaseApp> _initialization = Firebase.initializeApp();
+  @override
+  void initState() {
+    super.initState();
+
+    // init fcm
+    // FirebaseMessaging.instance
+    //     .getInitialMessage()
+    //     .then((RemoteMessage? message) {
+    //   if (message != null) {
+    //     print("init message: $message");
+    //   }
+    // });
+
+    // FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    //   print("on foreground message");
+
+    //   RemoteNotification? notification = message.notification;
+    //   AndroidNotification? android = message.notification?.android;
+
+    //   if (notification != null && android != null && !kIsWeb) {
+    //     flutterLocalNotificationsPlugin.show(
+    //         notification.hashCode,
+    //         notification.title,
+    //         notification.body,
+    //         NotificationDetails(
+    //           android: AndroidNotificationDetails(
+    //             channel.id,
+    //             channel.name,
+    //             channelDescription: channel.description,
+    //             // TODO add a proper drawable resource to android, for now using
+    //             //      one that already exists in example app.
+    //             icon: 'launch_background',
+    //           ),
+    //         ));
+    //   }
+    // });
+
+    // FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+    //   print('A new onMessageOpenedApp event was published!');
+    // });
+  }
 
   @override
   Widget build(BuildContext context) {
-    // return FutureBuilder(
-    //   // Initialize FlutterFire:
-    //   future: _initialization,
-    //   builder: (context, snapshot) {
-    //     // Check for errors
-    //     if (snapshot.hasError) {
-    //       return SomethingWentWrong();
-    //     }
-
-    //     // Once complete, show your application
-    //     if (snapshot.connectionState == ConnectionState.done) {
-    //       print('FirebaseInit ok');
-
-    //     }
-
-    //     // Otherwise, show something whilst waiting for initialization to complete
-    //     return Container(
-    //       color: Colors.white,
-    //       // child: CustomProgressIndicatorWidget(),
-    //     );
-    //   },
-    // );
-
     return MultiProvider(
       providers: [
         Provider<ThemeStore>(create: (_) => _themeStore),

@@ -32,7 +32,6 @@ class _SubcategoryScreenWidgetState extends State<SubcategoryScreen> {
   String _sortBy = 'name';
 
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-
   bool _isActive = true;
 
   late CatalogStore _catalogStore;
@@ -233,9 +232,19 @@ class _SubcategoryScreenWidgetState extends State<SubcategoryScreen> {
   }
 
   Widget _buildListView() {
-    print(_catalogStore.productsList?.items?.length);
-
     return Observer(builder: (context) {
+      print(_catalogStore.productsList?.items?.length);
+
+      if (_catalogStore.productsList != null &&
+          _catalogStore.productsList!.items!.isEmpty) {
+        return Container(
+          padding: const EdgeInsets.fromLTRB(0, 40, 0, 0),
+          child: Center(
+            child: Text('Не найдено'),
+          ),
+        );
+      }
+
       return _catalogStore.productsList != null &&
               _catalogStore.productsList!.items != null
           ? Padding(
@@ -270,56 +279,115 @@ class _SubcategoryScreenWidgetState extends State<SubcategoryScreen> {
 
   Widget _buildFilter() {
     return Padding(
-      padding: EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
-      child: FlutterFlowChoiceChips(
-        options: [
-          // ChipData('Есть в наличие'),
-          ChipData('По алфавиту'),
-          ChipData('По популярности'),
-          ChipData('Сначала подешевле'),
-          ChipData('Сначала подороже'),
-        ],
-        onChanged: (val) => setState(() {
-          _sort(val);
-        }),
-        selectedChipStyle: ChipStyle(
-          backgroundColor: Color(0x00000000),
-          textStyle: DefaultAppTheme.bodyText1.override(
-            fontFamily: 'Gilroy',
-            color: DefaultAppTheme.primaryColor,
+        padding: EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: [
+              SizedBox(width: 16),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(0, 0, 8, 0),
+                child: ChoiceChip(
+                    label: Text('Есть в наличии'),
+                    selected: _isActive == true,
+                    onSelected: (val) {
+                      _filter();
+                    }),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(0, 0, 8, 0),
+                child: ChoiceChip(
+                  label: Text('По алфавиту'),
+                  onSelected: (val) {
+                    _sort('name');
+                  },
+                  selected: _sortBy == 'name',
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(0, 0, 8, 0),
+                child: ChoiceChip(
+                  label: Text('По популярности'),
+                  onSelected: (val) {
+                    _sort('-name');
+                  },
+                  selected: _sortBy == '-name',
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(0, 0, 8, 0),
+                child: ChoiceChip(
+                  label: Text('Сначала подешевле'),
+                  onSelected: (val) {
+                    _sort('price');
+                  },
+                  selected: _sortBy == 'price',
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(0, 0, 8, 0),
+                child: ChoiceChip(
+                  label: Text('Сначала подороже'),
+                  onSelected: (val) {
+                    _sort('-price');
+                  },
+                  selected: _sortBy == '-price',
+                ),
+              ),
+
+              //   FlutterFlowChoiceChips(
+              //     options: [
+              //       // ChipData('Есть в наличие'),
+              //       ChipData('По алфавиту'),
+              //       ChipData('По популярности'),
+              //       ChipData('Сначала подешевле'),
+              //       ChipData('Сначала подороже'),
+              //     ],
+              //     onChanged: (val) {
+              //       _sort(val);
+              //     },
+              //     selectedChipStyle: ChipStyle(
+              //       backgroundColor: Color(0x00000000),
+              //       textStyle: DefaultAppTheme.bodyText1.override(
+              //         fontFamily: 'Gilroy',
+              //         color: DefaultAppTheme.primaryColor,
+              //       ),
+              //       iconColor: Colors.white,
+              //       iconSize: 18,
+              //       elevation: 0,
+              //     ),
+              //     unselectedChipStyle: ChipStyle(
+              //       backgroundColor: Color(0xFFF0F0F0),
+              //       textStyle: DefaultAppTheme.bodyText2,
+              //       iconColor: DefaultAppTheme.primaryColor,
+              //       iconSize: 18,
+              //       elevation: 0,
+              //     ),
+              //     chipSpacing: 20,
+              //   ),
+            ],
           ),
-          iconColor: Colors.white,
-          iconSize: 18,
-          elevation: 0,
-        ),
-        unselectedChipStyle: ChipStyle(
-          backgroundColor: Color(0xFFF0F0F0),
-          textStyle: DefaultAppTheme.bodyText2,
-          iconColor: DefaultAppTheme.primaryColor,
-          iconSize: 18,
-          elevation: 0,
-        ),
-        chipSpacing: 20,
-      ),
-    );
+        ));
   }
 
   void _loadData() {
     print("in filter: $_filterSubs");
-    _catalogStore.getProducts(_filterSubs, _sortBy);
+    // _catalogStore.productsList = null;
+    _catalogStore.getProducts(_filterSubs, _sortBy, _isActive);
+  }
+
+  void _filter() {
+    setState(() {
+      _isActive = !_isActive;
+    });
+
+    _loadData();
   }
 
   void _sort(String val) {
-    // TODO:
-    var orderBy = 'name';
-
-    if (val.contains('Сначала подешевле')) {
-      _sortBy = 'price';
-    } else if (val.contains('Сначала подороже')) {
-      _sortBy = '-price';
-    } else if (val.contains('По алфавиту')) {
-      _sortBy = 'name';
-    }
+    setState(() {
+      _sortBy = val;
+    });
 
     print(' sort by $_sortBy');
 

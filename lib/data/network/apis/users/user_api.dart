@@ -10,6 +10,7 @@ import 'package:esentai/models/address/address_list.dart';
 import 'package:esentai/models/auth/login_response.dart';
 import 'package:esentai/models/auth/token_response.dart';
 import 'package:esentai/models/message.dart';
+import 'package:esentai/models/notification/notification_list.dart';
 import 'package:esentai/models/order/order.dart';
 import 'package:esentai/models/order/order_list.dart';
 import 'package:esentai/models/order/order_result.dart';
@@ -106,15 +107,19 @@ class UserApi {
       String? fcmToken = await messaging.getToken();
 
       if (fcmToken != null) {
-        var fcmData = {
-          "registration_id": fcmToken,
-          "type": Platform.isAndroid ? 'android' : 'ios',
-        };
+        try {
+          var fcmData = {
+            "registration_id": fcmToken,
+            "type": Platform.isAndroid ? 'android' : 'ios',
+          };
 
-        final registerDevice = await _dioClient.post(Endpoints.fcmDevice,
-            data: fcmData,
-            options:
-                Options(headers: {"Authorization": "JWT ${tokenRes.access}"}));
+          await _dioClient.post(Endpoints.fcmDevice,
+              data: fcmData,
+              options: Options(
+                  headers: {"Authorization": "JWT ${tokenRes.access}"}));
+        } catch (e) {
+          print(e);
+        }
       }
 
       return tokenRes;
@@ -282,6 +287,45 @@ class UserApi {
           data: data,
           options: Options(headers: {"Authorization": "JWT $token"}));
       return Order.fromMap(res);
+    } catch (e) {
+      print(e.toString());
+      throw e;
+    }
+  }
+
+  // get notifications
+  Future<NotificationList> getNotifications(String token) async {
+    try {
+      final res = await _dioClient.get(Endpoints.getNotifications,
+          options: Options(headers: {"Authorization": "JWT $token"}));
+      return NotificationList.fromMap(res);
+    } catch (e) {
+      print(e.toString());
+      throw e;
+    }
+  }
+
+  // delete notification
+  Future<bool> deleteNotification(String token, int id) async {
+    try {
+      final res = await _dioClient.delete(
+          Endpoints.deleteNotification
+              .toString()
+              .replaceFirst(':id', id.toString()),
+          options: Options(headers: {"Authorization": "JWT $token"}));
+      return true;
+    } catch (e) {
+      print(e.toString());
+      throw e;
+    }
+  }
+
+  // delete all notifications
+  Future<bool> deleteAllNotifications(String token) async {
+    try {
+      final res = await _dioClient.post(Endpoints.clearNotifications,
+          options: Options(headers: {"Authorization": "JWT $token"}));
+      return true;
     } catch (e) {
       print(e.toString());
       throw e;

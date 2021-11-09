@@ -50,12 +50,12 @@ class _CartScreenWidgetState extends State<CartScreen> {
 
   @override
   void initState() {
+    super.initState();
+
     _slidableController = SlidableController(
       onSlideAnimationChanged: handleSlideAnimationChanged,
       onSlideIsOpenChanged: handleSlideIsOpenChanged,
     );
-
-    super.initState();
   }
 
   @override

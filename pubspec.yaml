@@ -7,7 +7,7 @@ description: Essentai Gourmet App.
 # Both the version and the builder number may be overridden in flutter
 # build by specifying --build-name and --build-number, respectively.
 # Read more about versioning at semver.org.
-version: 1.0.0+1
+version: 1.0.4+5
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
@@ -98,6 +98,11 @@ dependencies:
   overlay_support: ^1.2.1
   share_plus: ^3.0.4
   credit_card_type_detector: ^2.0.0
+  expandable: ^5.0.1
+  # flutter_local_notifications: ^9.0.2
+
+
+
 
 
 dev_dependencies:

@@ -7,9 +7,11 @@ import 'package:esentai/stores/catalog/catalog_store.dart';
 import 'package:esentai/ui/info/banner.dart';
 // import 'package:esentai/ui/info/banner.dart';
 import 'package:esentai/ui/info/info.dart';
+import 'package:esentai/ui/notifications/notifications.dart';
 import 'package:esentai/ui/orders/order_prepare.dart';
 import 'package:esentai/utils/themes/default.dart';
 import 'package:esentai/ui/catalog/product_card_widget.dart';
+import 'package:esentai/widgets/category_card_widget.dart';
 import 'package:esentai/widgets/search_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -33,13 +35,8 @@ class _HomeScreenWidgetState extends State<HomeScreen> {
   late CatalogStore _catalogStore;
   late CartStore _cartStore;
 
-  final List<String> _slides = [
-    'assets/images/slide1.png',
-    'assets/images/slide2.png',
-    'assets/images/slide3.png',
-    'assets/images/slide4.png',
-    'assets/images/slide5.png',
-  ];
+  final CarouselController _controller = CarouselController();
+  int _current = 0;
 
   @override
   void initState() {
@@ -74,7 +71,17 @@ class _HomeScreenWidgetState extends State<HomeScreen> {
             color: Colors.white,
           ),
         ),
-        actions: [],
+        actions: [
+          InkWell(
+              onTap: () {
+                _onNotificationPressed();
+              },
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(0, 0, 16, 0),
+                child: Image.asset('assets/images/ic_notification.png',
+                    width: 20, height: 20),
+              )),
+        ],
         centerTitle: true,
         elevation: 0,
       ),
@@ -283,7 +290,12 @@ class _HomeScreenWidgetState extends State<HomeScreen> {
                     ),
                   ),
                   _buildBannerList(),
+                  _buildIndicators(),
+                  SizedBox(height: 16),
                   _buildGifts(),
+                  SizedBox(height: 32),
+                  _buildCategories(),
+                  SizedBox(height: 32),
                   _buildProducts(),
                 ],
               ),
@@ -302,12 +314,13 @@ class _HomeScreenWidgetState extends State<HomeScreen> {
       //   for (var banner in _catalogStore.bannerList!.items!) print(banner);
       // }
       print("banner items");
-      print(_catalogStore.bannerList?.items?.length);
+      // print(_catalogStore.bannerList?.items?.length);
 
       return _catalogStore.bannerList != null
           ? Padding(
-              padding: const EdgeInsets.fromLTRB(0, 20, 0, 20),
+              padding: const EdgeInsets.fromLTRB(0, 20, 0, 10),
               child: CarouselSlider(
+                carouselController: _controller,
                 items: _catalogStore.bannerList!.items!
                     .map((item) => InkWell(
                           onTap: () {
@@ -349,11 +362,16 @@ class _HomeScreenWidgetState extends State<HomeScreen> {
                         ))
                     .toList(),
                 options: CarouselOptions(
-                  autoPlay: true,
+                  // autoPlay: true,
                   height: 210,
                   enlargeCenterPage: false,
                   viewportFraction: 1,
                   initialPage: 0,
+                  onPageChanged: (index, reason) {
+                    setState(() {
+                      _current = index;
+                    });
+                  },
                 ),
               ),
             )
@@ -405,42 +423,76 @@ class _HomeScreenWidgetState extends State<HomeScreen> {
     });
   }
 
-  List<Widget> _getBanners() {
-    List<Widget> widgets = [];
+  Widget _buildIndicators() {
+    return Observer(builder: (context) {
+      // print(_catalogStore.bannerList?.items?.length);
 
-    for (BannerPage banner in _catalogStore.bannerList!.items!) {
-      InkWell(
-        onTap: () {
-          _onBannerPressed(banner);
-        },
-        child: Padding(
-          padding: const EdgeInsets.only(right: 16.0),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(10),
-            child: SizedBox(
-              width: MediaQuery.of(context).size.width,
-              height: 193,
-              child: CachedNetworkImage(
-                fadeInDuration: Duration(milliseconds: 0),
-                fadeOutDuration: Duration(milliseconds: 0),
-                imageUrl: '${banner.image}',
-                // placeholder: (context, url) =>
-                //     CircularProgressIndicator(),
-                errorWidget: (context, url, error) => Image.asset(
-                    'assets/images/nophoto.png',
-                    width: MediaQuery.of(context).size.width,
-                    height: 193,
-                    fit: BoxFit.cover),
-                fit: BoxFit.cover,
+      return _catalogStore.bannerList != null
+          ? Padding(
+              padding: EdgeInsets.only(top: 0.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: _catalogStore.bannerList!.items!
+                    .asMap()
+                    .entries
+                    .map((entry) {
+                  return GestureDetector(
+                    onTap: () => _controller.animateToPage(entry.key),
+                    child: Container(
+                        width: 6.0,
+                        height: 6.0,
+                        margin: EdgeInsets.symmetric(
+                            vertical: 4.0, horizontal: 4.0),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: _current == entry.key
+                              ? DefaultAppTheme.textColor
+                              : DefaultAppTheme.grayLight,
+                        )),
+                  );
+                }).toList(),
               ),
-            ),
-          ),
-        ),
-      );
-    }
-
-    return widgets;
+            )
+          : Container();
+    });
   }
+
+  // List<Widget> _getBanners() {
+  //   List<Widget> widgets = [];
+
+  //   for (BannerPage banner in _catalogStore.bannerList!.items!) {
+  //     InkWell(
+  //       onTap: () {
+  //         _onBannerPressed(banner);
+  //       },
+  //       child: Padding(
+  //         padding: const EdgeInsets.only(right: 16.0),
+  //         child: ClipRRect(
+  //           borderRadius: BorderRadius.circular(10),
+  //           child: SizedBox(
+  //             width: MediaQuery.of(context).size.width,
+  //             height: 193,
+  //             child: CachedNetworkImage(
+  //               fadeInDuration: Duration(milliseconds: 0),
+  //               fadeOutDuration: Duration(milliseconds: 0),
+  //               imageUrl: '${banner.image}',
+  //               // placeholder: (context, url) =>
+  //               //     CircularProgressIndicator(),
+  //               errorWidget: (context, url, error) => Image.asset(
+  //                   'assets/images/nophoto.png',
+  //                   width: MediaQuery.of(context).size.width,
+  //                   height: 193,
+  //                   fit: BoxFit.cover),
+  //               fit: BoxFit.cover,
+  //             ),
+  //           ),
+  //         ),
+  //       ),
+  //     );
+  //   }
+
+  //   return widgets;
+  // }
 
   Widget _buildGifts() {
     return Observer(builder: (context) {
@@ -448,58 +500,157 @@ class _HomeScreenWidgetState extends State<HomeScreen> {
       print(_catalogStore.mainGifts?.items?.length);
 
       return _catalogStore.mainGifts != null
-          ? Column(
-              children: [
-                Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(16, 40, 16, 0),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      Expanded(
-                        child: Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(0, 0, 16, 0),
-                          child: Text(
-                            'Подарочные наборы',
-                            style: DefaultAppTheme.title2.override(
-                              fontFamily: 'Gilroy',
+          ? Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.1),
+                    spreadRadius: 5,
+                    blurRadius: 7,
+                    offset: Offset(0, 3), // changes position of shadow
+                  ),
+                ],
+              ),
+              padding: EdgeInsets.fromLTRB(0, 20, 0, 20),
+              child: Column(
+                children: [
+                  Padding(
+                    padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        Expanded(
+                          child: Padding(
+                            padding:
+                                EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
+                            child: Text(
+                              'Подарочные наборы',
+                              style: DefaultAppTheme.title2.override(
+                                fontFamily: 'Gilroy',
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      // Text(
-                      //   'Все товары',
-                      //   style: DefaultAppTheme.bodyText1.override(
-                      //     fontFamily: 'Gilroy',
-                      //     color: DefaultAppTheme.primaryColor,
-                      //   ),
-                      // )
-                    ],
-                  ),
-                ),
-                if (_catalogStore.mainGifts != null &&
-                    _catalogStore.mainGifts!.items != null)
-                  Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(16, 11, 16, 0),
-                    child: GridView(
-                      padding: EdgeInsets.zero,
-                      physics: NeverScrollableScrollPhysics(),
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        crossAxisSpacing: 9,
-                        mainAxisSpacing: 9,
-                        childAspectRatio: 0.66,
-                      ),
-                      shrinkWrap: true,
-                      scrollDirection: Axis.vertical,
-                      children: [
-                        for (var product in _catalogStore.mainGifts!.items!)
-                          ProductCardWidget(
-                            product: product,
-                          )
+                        // Text(
+                        //   'Все товары',
+                        //   style: DefaultAppTheme.bodyText1.override(
+                        //     fontFamily: 'Gilroy',
+                        //     color: DefaultAppTheme.primaryColor,
+                        //   ),
+                        // )
                       ],
                     ),
                   ),
-              ],
+                  if (_catalogStore.mainGifts != null &&
+                      _catalogStore.mainGifts!.items != null)
+                    Padding(
+                      padding: EdgeInsetsDirectional.fromSTEB(0, 11, 0, 0),
+                      child: SingleChildScrollView(
+                        padding: EdgeInsets.zero,
+                        // physics: NeverScrollableScrollPhysics(),
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // SizedBox(
+                              //   width: 16,
+                              // ),
+                              for (var product
+                                  in _catalogStore.mainGifts!.items!)
+                                ProductCardWidget(
+                                  product: product,
+                                )
+                            ]),
+                      ),
+                    ),
+                ],
+              ),
+            )
+          : Container();
+    });
+  }
+
+  Widget _buildCategories() {
+    return Observer(builder: (context) {
+      // hide print
+      print(_catalogStore.catalogList?.items?.length);
+
+      return _catalogStore.catalogList != null
+          ? Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.1),
+                    spreadRadius: 5,
+                    blurRadius: 7,
+                    offset: Offset(0, 3), // changes position of shadow
+                  ),
+                ],
+              ),
+              padding: EdgeInsets.fromLTRB(0, 20, 0, 20),
+              child: Column(
+                children: [
+                  Padding(
+                    padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        Expanded(
+                          child: Padding(
+                            padding:
+                                EdgeInsetsDirectional.fromSTEB(16, 0, 16, 16),
+                            child: Text(
+                              'Категории',
+                              style: DefaultAppTheme.title2.override(
+                                fontFamily: 'Gilroy',
+                              ),
+                            ),
+                          ),
+                        ),
+                        // Text(
+                        //   'Все товары',
+                        //   style: DefaultAppTheme.bodyText1.override(
+                        //     fontFamily: 'Gilroy',
+                        //     color: DefaultAppTheme.primaryColor,
+                        //   ),
+                        // )
+                      ],
+                    ),
+                  ),
+                  if (_catalogStore.mainGifts != null &&
+                      _catalogStore.mainGifts!.items != null)
+                    Padding(
+                      padding: EdgeInsetsDirectional.fromSTEB(0, 11, 0, 0),
+                      child: SingleChildScrollView(
+                        padding: EdgeInsets.zero,
+                        // physics: NeverScrollableScrollPhysics(),
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(
+                                width: 16,
+                              ),
+                              for (var category
+                                  in _catalogStore.catalogList!.items!)
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(0, 0, 16, 0),
+                                  child: CategoryCardWidget(
+                                    category: category,
+                                  ),
+                                )
+                            ]),
+                      ),
+                    ),
+                ],
+              ),
             )
           : Container();
     });
@@ -511,56 +662,71 @@ class _HomeScreenWidgetState extends State<HomeScreen> {
       print(_catalogStore.mainList?.items?.length);
 
       return _catalogStore.mainList != null
-          ? Column(
-              children: [
-                Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(16, 40, 16, 0),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      Expanded(
-                        child: Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(0, 0, 16, 0),
-                          child: Text(
-                            'Новинки',
-                            style: DefaultAppTheme.title2.override(
-                              fontFamily: 'Gilroy',
+          ? Container(
+              padding: EdgeInsets.fromLTRB(0, 20, 0, 20),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.1),
+                    spreadRadius: 5,
+                    blurRadius: 7,
+                    offset: Offset(0, 3), // changes position of shadow
+                  ),
+                ],
+              ),
+              child: Column(
+                children: [
+                  Padding(
+                    padding: EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        Expanded(
+                          child: Padding(
+                            padding:
+                                EdgeInsetsDirectional.fromSTEB(0, 0, 16, 0),
+                            child: Text(
+                              'Новинки',
+                              style: DefaultAppTheme.title2.override(
+                                fontFamily: 'Gilroy',
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      // Text(
-                      //   'Все товары',
-                      //   style: DefaultAppTheme.bodyText1.override(
-                      //     fontFamily: 'Gilroy',
-                      //     color: DefaultAppTheme.primaryColor,
-                      //   ),
-                      // )
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(16, 11, 16, 108),
-                  child: GridView(
-                    physics: NeverScrollableScrollPhysics(),
-                    padding: EdgeInsets.zero,
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 9,
-                      mainAxisSpacing: 9,
-                      childAspectRatio: 0.66,
+                        // Text(
+                        //   'Все товары',
+                        //   style: DefaultAppTheme.bodyText1.override(
+                        //     fontFamily: 'Gilroy',
+                        //     color: DefaultAppTheme.primaryColor,
+                        //   ),
+                        // )
+                      ],
                     ),
-                    shrinkWrap: true,
-                    scrollDirection: Axis.vertical,
-                    children: [
-                      for (var product in _catalogStore.mainList!.items!)
-                        ProductCardWidget(
-                          product: product,
-                        ),
-                    ],
                   ),
-                )
-              ],
+                  Padding(
+                    padding: EdgeInsetsDirectional.fromSTEB(0, 11, 0, 108),
+                    child: GridView(
+                      physics: NeverScrollableScrollPhysics(),
+                      padding: EdgeInsets.zero,
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 9,
+                        mainAxisSpacing: 9,
+                        childAspectRatio: 0.66,
+                      ),
+                      shrinkWrap: true,
+                      scrollDirection: Axis.vertical,
+                      children: [
+                        for (var product in _catalogStore.mainList!.items!)
+                          ProductCardWidget(
+                            product: product,
+                          ),
+                      ],
+                    ),
+                  )
+                ],
+              ),
             )
           : Container();
     });
@@ -640,8 +806,15 @@ class _HomeScreenWidgetState extends State<HomeScreen> {
 
     if (!_catalogStore.isLoading) {
       _catalogStore.getBanners();
+      _catalogStore.getCategoryList();
       _catalogStore.getMainGifts();
       _catalogStore.getMainProducts();
     }
+  }
+
+  void _onNotificationPressed() {
+    pushNewScreen(context,
+        screen: NotificationsScreen(),
+        pageTransitionAnimation: PageTransitionAnimation.fade);
   }
 }

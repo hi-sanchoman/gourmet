@@ -306,7 +306,18 @@ class _CartItemWidgetWidgetState extends State<CartItemWidgetWidget> {
   }
 
   int _getQuantity() {
-    return widget.item.quantity;
+    String type = widget.item.productDetails is Product ? 'product' : 'gift';
+    String itemId = '';
+
+    if (type == 'product') {
+      return widget.item.quantity;
+    }
+
+    GiftWrapper wrapper = widget.item.productDetails as GiftWrapper;
+
+    return _cartStore != null
+        ? _cartStore!.getGiftQuantity(wrapper.gift.id!)
+        : 0;
   }
 
   // void _onCartDecrement() {

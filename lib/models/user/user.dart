@@ -6,6 +6,7 @@ class User {
   List<dynamic>? addresses;
   double? loyaltyBalance;
   String? loyaltyNum;
+  String? birthday;
 
   User(
       {this.id,
@@ -14,6 +15,7 @@ class User {
       this.email,
       this.addresses,
       this.loyaltyBalance,
+      this.birthday,
       this.loyaltyNum});
 
   factory User.fromMap(Map<String, dynamic> json) => User(
@@ -23,6 +25,7 @@ class User {
       email: json["email"],
       loyaltyBalance: json['balance'],
       loyaltyNum: json['card_code'],
+      birthday: json['birthday'],
       addresses: null // TODO: address
       );
 }

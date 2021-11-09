@@ -3,6 +3,7 @@ import 'package:esentai/data/sharedpref/shared_preference_helper.dart';
 import 'package:esentai/models/address/address.dart';
 import 'package:esentai/models/address/address_list.dart';
 import 'package:esentai/models/message.dart';
+import 'package:esentai/models/notification/notification_list.dart';
 import 'package:esentai/models/order/order.dart';
 import 'package:esentai/models/order/order_list.dart';
 import 'package:esentai/models/payment/creditcard.dart';
@@ -96,6 +97,9 @@ abstract class _UserStore with Store {
 
   @observable
   ObservableFuture<bool> loginFuture = emptyLoginResponse;
+
+  @observable
+  NotificationList? notificationList;
 
   @observable
   bool isLoading = false;
@@ -404,6 +408,73 @@ abstract class _UserStore with Store {
       isLoading = false;
       success = false;
       // print(e.toString());
+    });
+  }
+
+  // get notifications
+  @action
+  Future getNotifications() async {
+    isLoading = true;
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString(Preferences.auth_token);
+
+    if (token == null) return;
+
+    await _repository.getNotifications(token).then((res) {
+      isLoading = false;
+
+      if (res is NotificationList) {
+        success = true;
+        notificationList = res;
+      } else {
+        // no notifications found
+        success = true;
+        notificationList = NotificationList(items: []);
+      }
+    }).catchError((e) {
+      isLoading = false;
+      notificationList = null;
+
+      // print(e.toString());
+    });
+  }
+
+  // delete notification
+  @action
+  Future removeNotificationById(int id) async {
+    isLoading = true;
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString(Preferences.auth_token);
+
+    if (token == null) return;
+
+    await _repository.deleteNotification(token, id).then((res) {
+      isLoading = false;
+      success = true;
+    }).catchError((e) {
+      success = false;
+      isLoading = false;
+    });
+  }
+
+  // delete all notifications
+  @action
+  Future removeAllNotifications() async {
+    isLoading = true;
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString(Preferences.auth_token);
+
+    if (token == null) return;
+
+    await _repository.deleteAllNotifications(token).then((res) {
+      isLoading = false;
+      success = true;
+    }).catchError((e) {
+      success = false;
+      isLoading = false;
     });
   }
 

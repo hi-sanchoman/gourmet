@@ -6,6 +6,7 @@ import 'package:esentai/stores/user/user_store.dart';
 import 'package:esentai/ui/home/home.dart';
 import 'package:esentai/ui/home/navbarscreen.dart';
 import 'package:esentai/ui/verify_phone/verify_phone.dart';
+import 'package:esentai/utils/helpers.dart';
 import 'package:esentai/utils/locale/app_localization.dart';
 import 'package:esentai/utils/routes/routes.dart';
 import 'package:esentai/utils/themes/default.dart';
@@ -186,13 +187,6 @@ class _LoginScreenState extends State<LoginScreen> {
             // is user logged in
             // Observer(builder: (context) {
             //   return _isLoggedIn(context);
-            // }),
-            // loader indicator
-            // Observer(builder: (context) {
-            //   return Visibility(
-            //     visible: _formStore.isLoading,
-            //     child: CustomProgressIndicatorWidget(),
-            //   );
             // }),
           ],
         ),
@@ -421,6 +415,16 @@ class _LoginScreenState extends State<LoginScreen> {
           children: [
             _phoneInput,
             Spacer(),
+            // loader indicator
+            Observer(builder: (context) {
+              return Visibility(
+                visible: _formStore.isLoading,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 0, 0, 20),
+                  child: CircularProgressIndicator(),
+                ),
+              );
+            }),
             ElevatedButton(
               onPressed: () {
                 _onLogin();
@@ -523,7 +527,8 @@ class _LoginScreenState extends State<LoginScreen> {
       print("cant login " + _formStore.formErrorStore.userId.toString());
 
       _inputKeyPhone.currentState?.setErrors();
-      _showErrorMessage(_formStore.formErrorStore.userId.toString());
+      Helpers.showInfoMessage(context, "Неверный номер телефона");
+      // _showErrorMessage(_formStore.formErrorStore.userId.toString());
 
       return;
     }
@@ -545,7 +550,9 @@ class _LoginScreenState extends State<LoginScreen> {
       _inputKeyPhone2.currentState?.setErrors();
       _inputKeyEmail.currentState?.setErrors();
 
-      _showErrorMessage(_formStore.formErrorStore.register.toString());
+      Helpers.showInfoMessage(context, "Заполните все поля");
+
+      // _showErrorMessage(_formStore.formErrorStore.register.toString());
 
       return;
     }
@@ -577,6 +584,10 @@ class _LoginScreenState extends State<LoginScreen> {
       _formStore.success = false;
       // go to phone verify
       Navigator.of(context).pushNamed(Routes.verifyPhone);
+      // pushNewScreen(context,
+      //     screen: PhoneVerifyScreen(referer: 'login'),
+      //     withNavBar: false,
+      //     pageTransitionAnimation: PageTransitionAnimation.fade);
     });
 
     return Container(
@@ -590,11 +601,12 @@ class _LoginScreenState extends State<LoginScreen> {
   _showErrorMessage(String message) {
     if (message.isNotEmpty) {
       Future.delayed(Duration(milliseconds: 0), () {
-        FlushbarHelper.createError(
-          message: message,
-          title: AppLocalizations.of(context).translate('home_tv_error'),
-          duration: Duration(seconds: 3),
-        )..show(context);
+        Helpers.showInfoMessage(context, message);
+        // FlushbarHelper.createError(
+        //   message: message,
+        //   title: AppLocalizations.of(context).translate('home_tv_error'),
+        //   duration: Duration(seconds: 3),
+        // )..show(context);
       });
     }
 

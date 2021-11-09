@@ -26,6 +26,11 @@
 	<string>Нужен доступ к геолокации для указания адреса в вашем местоположении</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Для указания адреса на карте нужно разрешение на местоположение</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+		<string>remote-notification</string>
+	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>

@@ -366,9 +366,10 @@ mixin _$CatalogStore on _CatalogStore, Store {
   final _$getProductsAsyncAction = AsyncAction('_CatalogStore.getProducts');
 
   @override
-  Future<dynamic> getProducts(List<int> subcategories, String orderBy) {
+  Future<dynamic> getProducts(
+      List<int> subcategories, String orderBy, bool isActive) {
     return _$getProductsAsyncAction
-        .run(() => super.getProducts(subcategories, orderBy));
+        .run(() => super.getProducts(subcategories, orderBy, isActive));
   }
 
   final _$getOtherProductsAsyncAction =

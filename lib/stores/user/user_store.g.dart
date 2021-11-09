@@ -221,6 +221,21 @@ mixin _$UserStore on _UserStore, Store {
     });
   }
 
+  final _$notificationListAtom = Atom(name: '_UserStore.notificationList');
+
+  @override
+  NotificationList? get notificationList {
+    _$notificationListAtom.reportRead();
+    return super.notificationList;
+  }
+
+  @override
+  set notificationList(NotificationList? value) {
+    _$notificationListAtom.reportWrite(value, super.notificationList, () {
+      super.notificationList = value;
+    });
+  }
+
   final _$isLoadingAtom = Atom(name: '_UserStore.isLoading');
 
   @override
@@ -329,6 +344,32 @@ mixin _$UserStore on _UserStore, Store {
         .run(() => super.submitReview(review, orderId));
   }
 
+  final _$getNotificationsAsyncAction =
+      AsyncAction('_UserStore.getNotifications');
+
+  @override
+  Future<dynamic> getNotifications() {
+    return _$getNotificationsAsyncAction.run(() => super.getNotifications());
+  }
+
+  final _$removeNotificationByIdAsyncAction =
+      AsyncAction('_UserStore.removeNotificationById');
+
+  @override
+  Future<dynamic> removeNotificationById(int id) {
+    return _$removeNotificationByIdAsyncAction
+        .run(() => super.removeNotificationById(id));
+  }
+
+  final _$removeAllNotificationsAsyncAction =
+      AsyncAction('_UserStore.removeAllNotifications');
+
+  @override
+  Future<dynamic> removeAllNotifications() {
+    return _$removeAllNotificationsAsyncAction
+        .run(() => super.removeAllNotifications());
+  }
+
   @override
   String toString() {
     return '''
@@ -346,6 +387,7 @@ paymentLink: ${paymentLink},
 currentPaymentMethod: ${currentPaymentMethod},
 hideNavBar: ${hideNavBar},
 loginFuture: ${loginFuture},
+notificationList: ${notificationList},
 isLoading: ${isLoading}
     ''';
   }

@@ -643,7 +643,8 @@ class _OrderDetailsScreenWidgetState extends State<OrderDetailsWidget> {
         ),
         if (_userStore.currentOrder!.review == null)
           Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(16, 10, 16, 64),
+            padding: EdgeInsetsDirectional.fromSTEB(
+                16, 10, 16, MediaQuery.of(context).viewInsets.bottom + 64),
             child: ElevatedButton(
               onPressed: () {
                 _submitReview();

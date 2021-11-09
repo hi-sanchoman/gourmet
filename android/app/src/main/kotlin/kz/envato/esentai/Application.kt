@@ -1,23 +1,19 @@
-// package kz.envato.esentai
+package kz.envato.esentai
 
-// import io.flutter.app.FlutterApplication
-// import io.flutter.plugin.common.PluginRegistry
-// import io.flutter.plugin.common.PluginRegistry.PluginRegistrantCallback
-// import io.flutter.plugins.firebasemessaging.FirebaseMessagingPlugin
-// import io.flutter.view.FlutterMain
-// import io.flutter.plugins.firebasemessaging.FlutterFirebaseMessagingService
+import io.flutter.app.FlutterApplication
+import io.flutter.plugin.common.PluginRegistry
+import io.flutter.plugin.common.PluginRegistry.PluginRegistrantCallback
+import io.flutter.view.FlutterMain
+import io.flutter.plugins.firebase.messaging.FlutterFirebaseMessagingBackgroundService;
 
-// class Application : FlutterApplication(), PluginRegistrantCallback {
+class Application : FlutterApplication(), PluginRegistrantCallback {
 
-//     override fun onCreate() {
-//         super.onCreate()
-//         // FlutterFirebaseMessagingService.setPluginRegistrant(this);
-//         // FlutterMain.startInitialization(this)
-//     }
+    override fun onCreate() {
+        super.onCreate()
+        // FlutterFirebaseMessagingBackgroundService.setPluginRegistrant(this);
+        // FlutterMain.startInitialization(this)
+    }
 
-//     override fun registerWith(registry: PluginRegistry?) {
-//         // if (!registry!!.hasPlugin("io.flutter.plugins.firebasemessaging")) {
-//         //     FirebaseMessagingPlugin.registerWith(registry!!.registrarFor("io.flutter.plugins.firebasemessaging.FirebaseMessagingPlugin"));
-//         // }
-//     }
-// }
+    override fun registerWith(registry: PluginRegistry?) {
+    }
+}

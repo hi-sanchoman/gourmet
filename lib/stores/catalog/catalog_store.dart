@@ -178,7 +178,8 @@ abstract class _CatalogStore with Store {
   }
 
   @action
-  Future getProducts(List<int> subcategories, String orderBy) async {
+  Future getProducts(
+      List<int> subcategories, String orderBy, bool isActive) async {
     isLoading = true;
     productsList = null;
 
@@ -188,14 +189,16 @@ abstract class _CatalogStore with Store {
 
     // print("token is ... $token");
 
-    await _repository.getProducts(subcategories, orderBy, token).then((res) {
+    await _repository
+        .getProducts(subcategories, orderBy, isActive, token)
+        .then((res) {
       isLoading = false;
       successProducts = true;
       productsList = res;
     }).catchError((e) {
       isLoading = false;
       successProducts = false;
-      errorStore.errorMessage = e.toString();
+      errorStore.errorMessage = "Ошибка на сервере. Попробуйте позже.";
     });
   }
 

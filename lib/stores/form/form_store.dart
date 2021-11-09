@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:esentai/constants/app_config.dart';
 import 'package:esentai/data/repository.dart';
 import 'package:esentai/data/sharedpref/constants/preferences.dart';
@@ -187,8 +188,35 @@ abstract class _FormStore with Store {
     }).catchError((e) {
       isLoading = false;
       success = false;
-      errorStore.errorMessage = e.toString();
-      // print(e);
+
+      // throw e;
+
+      late DioError? err;
+      bool isRx = false;
+
+      try {
+        err = e as DioError;
+      } catch (e) {
+        isRx = true;
+        err = null;
+      }
+
+      if (err is DioError && err.response != null && !isRx) {
+        print("login error: ${e.response!.data['error']}");
+
+        if (err.response!.data['email'] != null) {
+          errorStore.errorMessage = 'Пользователь с такой почтой существует';
+        } else if (err.response!.data['birthday'] != null) {
+          errorStore.errorMessage = 'Укажите ваш день рождения';
+        } else if (err.response!.data['error'] != null) {
+          errorStore.errorMessage = 'Пользователь с таким номером существует';
+        } else {
+          errorStore.errorMessage =
+              'Ошибка на сервере. Попробуйте другой сотовый оператор';
+        }
+      } else {
+        errorStore.errorMessage = 'Ошибка на сервере. Попробуйте еще раз.';
+      }
     });
   }
 
@@ -205,7 +233,8 @@ abstract class _FormStore with Store {
     }).catchError((e) {
       isLoading = false;
       successSMS = false;
-      errorStore.errorMessage = e.toString();
+
+      errorStore.errorMessage = 'Ошибка на сервере. Попробуйте еще раз.';
     });
   }
 
@@ -235,10 +264,17 @@ abstract class _FormStore with Store {
       else
         successSMS = false;
 
-      errorStore.errorMessage = e.toString().contains('No such user')
-          ? 'Нет такого пользователя'
-          : e.toString();
-      print(e);
+      DioError err = e as DioError;
+
+      if (err.response != null) {
+        print("login error: ${e.response!.data['error']}");
+
+        if (err.response!.data['error'].contains('No such user')) {
+          errorStore.errorMessage = 'Пользователь не существует';
+        }
+      } else {
+        errorStore.errorMessage = 'Ошибка на сервере. Попробуйте еще раз.';
+      }
     });
   }
 
@@ -251,26 +287,17 @@ abstract class _FormStore with Store {
 
       if (res is LoginResponse) {
         loginResponse = res;
-
-        if (mode == 'login')
-          success = true;
-        else
-          successSMS = true;
+        successSMS = true;
       }
 
       // print("login response: $res");
     }).catchError((e) {
       isLoading = false;
+      successSMS = false;
 
-      if (mode == 'login')
-        success = false;
-      else
-        successSMS = false;
+      DioError err = e as DioError;
 
-      errorStore.errorMessage = e.toString().contains('No such user')
-          ? 'Нет такого пользователя'
-          : e.toString();
-      print(e);
+      errorStore.errorMessage = 'Ошибка на сервере. Попробуйте еще раз.';
     });
   }
 

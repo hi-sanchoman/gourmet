@@ -145,7 +145,10 @@ class _SearchScreenWidgetState extends State<SearchScreen> {
           ),
           Observer(builder: (context) {
             return _catalogStore.isLoading
-                ? CustomProgressIndicatorWidget()
+                ? Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 80, 0, 0),
+                    child: Center(child: CircularProgressIndicator()),
+                  )
                 : Container();
           }),
         ],
@@ -155,7 +158,7 @@ class _SearchScreenWidgetState extends State<SearchScreen> {
 
   Widget _buildSearchInput() {
     return Padding(
-      padding: EdgeInsetsDirectional.fromSTEB(16, 16, 16, 0),
+      padding: EdgeInsetsDirectional.fromSTEB(16, 16, 16, 16),
       child: Row(children: [
         Padding(
           padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
@@ -236,10 +239,18 @@ class _SearchScreenWidgetState extends State<SearchScreen> {
       print('rebuild');
       print(_catalogStore.searchList?.items?.length);
 
+      // for (var subcategory in _catalogStore.searchList!.items!) {
+      //   print(subcategory);
+
+      //   for (var product in subcategory.products!) {
+      //     print(product);
+      //   }
+      // }
+
       return _catalogStore.searchList != null &&
               _catalogStore.searchList!.items != null
           ? Padding(
-              padding: const EdgeInsets.fromLTRB(0, 0, 0, 92),
+              padding: const EdgeInsets.fromLTRB(0, 16, 0, 92),
               child: Column(
                 children: [
                   for (var subcategory in _catalogStore.searchList!.items!)
@@ -265,19 +276,21 @@ class _SearchScreenWidgetState extends State<SearchScreen> {
                             shrinkWrap: true,
                             scrollDirection: Axis.vertical,
                             children: [
-                              for (var product in subcategory.products!)
-                                ProductCardWidget(
-                                  product: Product(
-                                      id: product['id'],
-                                      name: product['name'],
-                                      mainImage: product['main_image'],
-                                      amount: product['amount'],
-                                      price: double.tryParse(
-                                          product['price'] ?? 0),
-                                      itemType: product['item_type'],
-                                      isActive: product['is_active'],
-                                      isLiked: product['is_liked']),
-                                ),
+                              if (subcategory.products != null)
+                                for (var product in subcategory.products!)
+                                  ProductCardWidget(
+                                    product: Product(
+                                        id: product['id'],
+                                        name: product['name'],
+                                        mainImage: product['main_image'],
+                                        amount: product['amount'] ?? 0,
+                                        price: double.tryParse(
+                                            product['price'] ?? '0'),
+                                        itemType: product['item_type'],
+                                        isActive: product['is_active'] ?? false,
+                                        isLiked: product['is_liked'] ?? false),
+                                  ),
+                              // Text('${product['name']}'),
                             ],
                           ),
                         ),

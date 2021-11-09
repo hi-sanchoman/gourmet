@@ -9,6 +9,7 @@ import 'package:esentai/ui/address/address_picker.dart';
 import 'package:esentai/ui/creditcard/creditcard_picker.dart';
 import 'package:esentai/ui/favorites/favorites.dart';
 import 'package:esentai/ui/login/login.dart';
+import 'package:esentai/ui/notifications/notifications.dart';
 import 'package:esentai/ui/orders/orders.dart';
 import 'package:esentai/ui/orders/payment_picker.dart';
 import 'package:esentai/ui/profile/edit_profile.dart';
@@ -52,7 +53,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     if (!_userStore.isLoggedIn) {
       Future.delayed(Duration(milliseconds: 0), () {
-        print("user is not logged in");
+        // print("user is not logged in");
         pushNewScreen(context,
             screen: LoginScreen(),
             withNavBar: false,
@@ -132,7 +133,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             //       children: [
             //         Center(
             //           child: Text(
-            //             'Для просмотра личного кабинета зайдите в приложение',
+            //             'Нет данных',
             //             textAlign: TextAlign.center,
             //           ),
             //         ),
@@ -140,13 +141,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
             //           padding: const EdgeInsets.all(16.0),
             //           child: ElevatedButton(
             //               onPressed: () {
-            //                 pushNewScreen(context,
-            //                     screen: LoginScreen(),
-            //                     withNavBar: false,
-            //                     pageTransitionAnimation:
-            //                         PageTransitionAnimation.fade);
+            //                 _userStore.getProfile();
             //               },
-            //               child: Text('Войти в приложение'),
+            //               child: Text('Перезагрузить'),
             //               style: DefaultAppTheme.buttonDefaultStyle),
             //         )
             //       ]),
@@ -261,6 +258,33 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     height: 1,
                                     thickness: 1,
                                   ),
+                                  InkWell(
+                                    onTap: () {
+                                      _onNotificationsPressed();
+                                    },
+                                    child: ListTile(
+                                      leading: FaIcon(
+                                        FontAwesomeIcons.bell,
+                                        color: DefaultAppTheme.grayLight,
+                                        size: 20,
+                                      ),
+                                      title: Text(
+                                        'Мои уведомления',
+                                        textAlign: TextAlign.start,
+                                        style: DefaultAppTheme.bodyText1,
+                                      ),
+                                      trailing: Icon(
+                                        Icons.arrow_forward_ios,
+                                        color: DefaultAppTheme.primaryColor,
+                                        size: 20,
+                                      ),
+                                      dense: false,
+                                    ),
+                                  ),
+                                  Divider(
+                                    height: 1,
+                                    thickness: 1,
+                                  ),
                                   ListTile(
                                     dense: false,
                                   ),
@@ -269,13 +293,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     thickness: 1,
                                   ),
                                   _buildPaymentMethod(),
-                                  Divider(
-                                    height: 1,
-                                    thickness: 1,
-                                  ),
-                                  ListTile(
-                                    dense: false,
-                                  ),
+                                  // Divider(
+                                  //   height: 1,
+                                  //   thickness: 1,
+                                  // ),
+                                  // ListTile(
+                                  //   dense: false,
+                                  // ),
                                   Divider(
                                     height: 1,
                                     thickness: 1,
@@ -513,15 +537,35 @@ class _ProfileScreenState extends State<ProfileScreen> {
             _userStore.profile?.fullname ?? '',
             style: DefaultAppTheme.title1,
           ),
-          Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(0, 5, 0, 0),
-            child: Text(
-              _userStore.profile?.username ?? '',
-              style: DefaultAppTheme.title2.override(
-                color: DefaultAppTheme.grayLight,
+          Row(
+            children: [
+              Image.asset('assets/images/ic_phone_grey.png', width: 15),
+              Padding(
+                padding: EdgeInsetsDirectional.fromSTEB(5, 5, 0, 0),
+                child: Text(
+                  _userStore.profile?.username ?? '',
+                  style: DefaultAppTheme.title2.override(
+                    color: DefaultAppTheme.grayLight,
+                  ),
+                ),
               ),
+            ],
+          ),
+          if (_userStore.profile?.birthday != null)
+            Row(
+              children: [
+                Image.asset('assets/images/ic_birthday.png', width: 15),
+                Padding(
+                  padding: EdgeInsetsDirectional.fromSTEB(5, 5, 0, 0),
+                  child: Text(
+                    '${_userStore.profile?.birthday}',
+                    style: DefaultAppTheme.title2.override(
+                      color: DefaultAppTheme.grayLight,
+                    ),
+                  ),
+                ),
+              ],
             ),
-          )
         ],
       ),
     );
@@ -651,6 +695,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void _onFavoritesPressed() {
     pushNewScreen(context,
         screen: FavoritesScreen(),
+        withNavBar: true,
+        pageTransitionAnimation: PageTransitionAnimation.fade);
+  }
+
+  void _onNotificationsPressed() {
+    pushNewScreen(context,
+        screen: NotificationsScreen(),
         withNavBar: true,
         pageTransitionAnimation: PageTransitionAnimation.fade);
   }

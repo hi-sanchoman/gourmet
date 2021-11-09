@@ -273,11 +273,8 @@ class _ChooseAddressScreenState extends State<PickOnMapScreen> {
   _showErrorMessage(String message) {
     Future.delayed(Duration(milliseconds: 0), () {
       if (message.isNotEmpty) {
-        FlushbarHelper.createError(
-          message: message,
-          title: AppLocalizations.of(context).translate('home_tv_error'),
-          duration: Duration(seconds: 3),
-        )..show(context);
+        Helpers.showInfoMessage(
+            context, 'Ошибка на сервере. Попробуйте еще раз');
       }
     });
 

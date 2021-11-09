@@ -44,6 +44,7 @@ class _ProductCardWidgetState extends State<ProductCardWidget> {
   @override
   void initState() {
     super.initState();
+    // print("product is ${widget.product}");
   }
 
   @override
@@ -78,6 +79,7 @@ class _ProductCardWidgetState extends State<ProductCardWidget> {
       double price = widget.product.price ?? 0;
 
       return Card(
+        elevation: 0,
         clipBehavior: Clip.antiAliasWithSaveLayer,
         color: Colors.white,
         shape: RoundedRectangleBorder(

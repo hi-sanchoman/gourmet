@@ -42,12 +42,19 @@ class CatalogApi {
   }
 
   // get products by subcategories
-  Future<ProductList> getProducts(
-      List<int> subcategories, String orderBy, String? token) async {
-    var params = {
-      "sub_categories_id": subcategories.join(","),
-      'ordering': orderBy
-    };
+  Future<ProductList> getProducts(List<int> subcategories, String orderBy,
+      bool isActive, String? token) async {
+    var params = {'ordering': orderBy};
+
+    if (isActive == true) {
+      params['is_active'] = 'True';
+    }
+
+    // if (subcategories.isNotEmpty) {
+    params['sub_categories_id'] = subcategories.join(",");
+    // }
+
+    print("params: $params");
 
     Options? options = Options();
     if (token != null && token.isNotEmpty) {

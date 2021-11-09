@@ -9,6 +9,7 @@ import 'package:esentai/data/sharedpref/shared_preference_helper.dart';
 import 'package:esentai/models/auth/login_response.dart';
 import 'package:esentai/stores/form/form_store.dart';
 import 'package:esentai/stores/user/user_store.dart';
+import 'package:esentai/utils/helpers.dart';
 import 'package:esentai/utils/locale/app_localization.dart';
 import 'package:esentai/utils/routes/routes.dart';
 import 'package:esentai/utils/themes/default.dart';
@@ -91,12 +92,12 @@ class _PhoneVerifyScreenState extends State<PhoneVerifyScreen> {
       child: Stack(
         children: [
           _buildMainBody(),
-          Observer(builder: (context) {
-            return Visibility(
-              visible: _formStore.isLoading,
-              child: CustomProgressIndicatorWidget(),
-            );
-          }),
+          // Observer(builder: (context) {
+          //   return Visibility(
+          //     visible: _formStore.isLoading,
+          //     child: CustomProgressIndicatorWidget(),
+          //   );
+          // }),
           Observer(builder: (context) {
             return _formStore.successSMS || _userStore.success
                 ? navigate(context)
@@ -273,8 +274,17 @@ class _PhoneVerifyScreenState extends State<PhoneVerifyScreen> {
                         ),
                       ),
                       Spacer(),
+                      Observer(builder: (context) {
+                        return Visibility(
+                          visible: _formStore.isLoading,
+                          child: Padding(
+                            padding: const EdgeInsets.fromLTRB(0, 0, 0, 20),
+                            child: CircularProgressIndicator(),
+                          ),
+                        );
+                      }),
                       Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(30, 24, 30, 0),
+                        padding: EdgeInsetsDirectional.fromSTEB(30, 24, 30, 16),
                         child: ElevatedButton(
                           onPressed: () {
                             _onSubmit();
@@ -351,19 +361,21 @@ class _PhoneVerifyScreenState extends State<PhoneVerifyScreen> {
 
     // if (widget.referer == 'login') {
     // TODO: check for error
-    var result = await _formStore.activateUser();
+    print("print- activate user");
+    await _formStore.activateUser();
 
-    print(result);
-    // return;
-
-    await _formStore.getToken();
-
+    if (_formStore.loginResponse != null) {
+      print("print- get token");
+      await _formStore.getToken();
+    }
     // await _registerDevice();
 
     // } else {
     // print("register mode");
     // }
     // _formStore.activateSMS();
+
+    _showErrorMessage('Ошибка на сервере');
   }
 
   void _registerDevice() async {
@@ -463,6 +475,8 @@ class _PhoneVerifyScreenState extends State<PhoneVerifyScreen> {
 
     // we have user data -> go home
     if (_userStore.profile != null) {
+      print("print- success... go to home page");
+
       // save user data <- does this shoud be here?
       SharedPreferences.getInstance().then((prefs) {
         prefs.setString(Preferences.username, _userStore.profile!.username!);
@@ -493,6 +507,7 @@ class _PhoneVerifyScreenState extends State<PhoneVerifyScreen> {
       _userStore.isLoggedIn = true;
 
       // get current userdata
+      print("print- get current profile");
       _userStore.getProfile();
 
       return Container();
@@ -518,11 +533,13 @@ class _PhoneVerifyScreenState extends State<PhoneVerifyScreen> {
   _showErrorMessage(String message) {
     if (message.isNotEmpty) {
       Future.delayed(Duration(milliseconds: 0), () {
-        FlushbarHelper.createError(
-          message: message,
-          title: AppLocalizations.of(context).translate('home_tv_error'),
-          duration: Duration(seconds: 3),
-        )..show(context);
+        // FlushbarHelper.createError(
+        //   message: message,
+        //   title: AppLocalizations.of(context).translate('home_tv_error'),
+        //   duration: Duration(seconds: 3),
+        // )..show(context);
+
+        // Helpers.showInfoMessage(context, "Неверный код. Попробуйте еще раз.");
       });
     }
 

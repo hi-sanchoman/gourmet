@@ -65,4 +65,11 @@ class Endpoints {
   // favorites
   static const String getFavorites = baseUrl + '/favorites/';
   static const String toggleFav = baseUrl + '/favorites/';
+
+  // notifications
+  static const String getNotifications = baseUrl + '/notifications/';
+  static const String getNotification = baseUrl + '/notifications/:id/';
+  static const String deleteNotification = baseUrl + '/notifications/:id/';
+  static const String clearNotifications =
+      baseUrl + '/users/notifications-delete/';
 }
