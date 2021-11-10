@@ -136,12 +136,16 @@ class _SearchScreenWidgetState extends State<SearchScreen> {
         children: [
           RefreshIndicator(
             onRefresh: () async {
-              _onSearch();
+              _onSearch(_textController.text);
             },
             child: ListView(
               padding: EdgeInsets.zero,
               scrollDirection: Axis.vertical,
-              children: [_buildSearchInput(), _buildListView()],
+              children: [
+                _buildSearchInput(),
+                _buildAutocomplete(),
+                _buildListView()
+              ],
             ),
           ),
           Observer(builder: (context) {
@@ -160,7 +164,7 @@ class _SearchScreenWidgetState extends State<SearchScreen> {
   Widget _buildSearchInput() {
     return Padding(
       padding: EdgeInsetsDirectional.fromSTEB(16, 16, 16, 16),
-      child: Row(children: [
+      child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
         Padding(
           padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
           child: IconButton(
@@ -171,58 +175,82 @@ class _SearchScreenWidgetState extends State<SearchScreen> {
               color: DefaultAppTheme.primaryColor),
         ),
         Expanded(
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  blurRadius: 10,
-                  color: DefaultAppTheme.grayLight,
-                  offset: Offset(0, 2),
-                )
-              ],
-              borderRadius: BorderRadius.circular(36),
-            ),
-            child: TextFormField(
-              controller: _textController,
-              onChanged: (val) {
-                // print(val);
-
-                setState(() {
-                  _query = val;
-                });
-
-                _onSearch();
-              },
-              autofocus: true,
-              // obscureText: false,
-              decoration: InputDecoration(
-                hintText: 'Поиск среди 5000 товаров',
-                hintStyle: DefaultAppTheme.bodyText2,
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: Color(0x00000000),
-                    width: 1,
-                  ),
-                  borderRadius: BorderRadius.circular(36),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: Color(0x00000000),
-                    width: 1,
-                  ),
-                  borderRadius: BorderRadius.circular(36),
-                ),
-                filled: true,
-                fillColor: Colors.white,
-                contentPadding: EdgeInsetsDirectional.fromSTEB(20, 13, 20, 13),
+          child: Stack(children: [
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    blurRadius: 10,
+                    color: DefaultAppTheme.grayLight,
+                    offset: Offset(0, 2),
+                  )
+                ],
+                borderRadius: BorderRadius.circular(36),
               ),
-              style: DefaultAppTheme.bodyText1,
-              maxLines: 1,
-              // focusNode: _focusNode,
+              child: TextFormField(
+                controller: _textController,
+                onChanged: (val) {
+                  // print(val);
+
+                  setState(() {
+                    _query = val;
+                  });
+
+                  _onAutocomplete();
+                },
+                onFieldSubmitted: (val) {
+                  _onSearch(val);
+                },
+                textInputAction: TextInputAction.search,
+                autofocus: true,
+                // obscureText: false,
+                decoration: InputDecoration(
+                  hintText: 'Поиск среди 5000 товаров',
+                  hintStyle: DefaultAppTheme.bodyText2,
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Color(0x00000000),
+                      width: 1,
+                    ),
+                    borderRadius: BorderRadius.circular(36),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Color(0x00000000),
+                      width: 1,
+                    ),
+                    borderRadius: BorderRadius.circular(36),
+                  ),
+                  filled: true,
+                  fillColor: Colors.white,
+                  contentPadding:
+                      EdgeInsetsDirectional.fromSTEB(20, 13, 48, 13),
+                ),
+                style: DefaultAppTheme.bodyText1,
+                maxLines: 1,
+                // focusNode: _focusNode,
+              ),
             ),
-          ),
+            if (_query.length > 0)
+              Align(
+                alignment: Alignment.centerRight,
+                child: InkWell(
+                  onTap: () {
+                    setState(() {
+                      _textController.text = '';
+                      _query = '';
+                    });
+                  },
+                  child: Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 12, 16, 0),
+                      child: Icon(Icons.cancel,
+                          color: DefaultAppTheme.grey3, size: 20)),
+                ),
+              )
+          ]),
         ),
+
         // Padding(
         //   padding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
         //   child: TextButton(
@@ -232,6 +260,45 @@ class _SearchScreenWidgetState extends State<SearchScreen> {
         //       child: Text('Отменить')),
         // )
       ]),
+    );
+  }
+
+  Widget _buildAutocomplete() {
+    return Observer(builder: (context) {
+      print(_catalogStore.productsList?.items?.length);
+
+      return _catalogStore.productsList != null
+          ? Padding(
+              padding: const EdgeInsets.fromLTRB(0, 16, 0, 92),
+              child: Column(children: [
+                for (var product in _catalogStore.productsList!.items!)
+                  _buildSuggestion(product)
+              ]),
+            )
+          : Container(
+              height: 0,
+            );
+    });
+  }
+
+  Widget _buildSuggestion(Product product) {
+    return InkWell(
+      onTap: () {
+        _onSearch(product.name ?? '');
+      },
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+        child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Icon(Icons.search, color: DefaultAppTheme.grayLight),
+          Expanded(
+              child: Padding(
+            padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+            child: Text('${product.name}', style: DefaultAppTheme.bodyText1),
+          )),
+          Image.asset('assets/images/searc_paste.png',
+              width: 15, height: 15, fit: BoxFit.contain)
+        ]),
+      ),
     );
   }
 
@@ -335,14 +402,14 @@ class _SearchScreenWidgetState extends State<SearchScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text('Ничего не найдено',
-                        style: DefaultAppTheme.title1
-                            .override(color: DefaultAppTheme.grayLight)),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
-                      child: Image.asset('assets/images/search_not_found.png',
-                          width: 100, height: 100),
-                    ),
+                    // Text('Ничего не найдено',
+                    //     style: DefaultAppTheme.title1
+                    //         .override(color: DefaultAppTheme.grayLight)),
+                    // Padding(
+                    //   padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
+                    //   child: Image.asset('assets/images/search_not_found.png',
+                    //       width: 100, height: 100),
+                    // ),
                   ]),
             );
     });
@@ -355,13 +422,28 @@ class _SearchScreenWidgetState extends State<SearchScreen> {
         pageTransitionAnimation: PageTransitionAnimation.fade);
   }
 
-  void _onSearch() {
+  void _onAutocomplete() {
     print("query is $_query");
 
     if (_query.length >= 2) {
       // print(_query);
       Future.delayed(Duration(milliseconds: 400), () {
-        _catalogStore.searchProducts(_query);
+        _catalogStore.autocomplete(_query);
+
+        _catalogStore.searchList = null;
+      });
+    }
+  }
+
+  void _onSearch(String search) {
+    if (search.length >= 2) {
+      // print(_query);
+      Future.delayed(Duration(milliseconds: 400), () {
+        _catalogStore.searchProducts(search);
+
+        _textController.text = search;
+
+        _catalogStore.productsList = null;
       });
     }
   }

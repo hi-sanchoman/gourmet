@@ -551,4 +551,20 @@ abstract class _CatalogStore with Store {
       errorStore.errorMessage = e.toString();
     });
   }
+
+  @action
+  Future autocomplete(String query) async {
+    isLoading = true;
+    productsList = null;
+
+    await _repository.autocomplete(query).then((res) {
+      isLoading = false;
+      successProducts = true;
+      productsList = res;
+    }).catchError((e) {
+      isLoading = false;
+      successProducts = false;
+      errorStore.errorMessage = 'Ошибка на сервере. Попробуйте позже';
+    });
+  }
 }

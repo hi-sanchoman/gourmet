@@ -369,17 +369,17 @@ class _CategoryScreenScreenWidgetState extends State<CategoryScreen> {
                   mainAxisSize: MainAxisSize.max,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text('Ничего не найдено',
-                        style: DefaultAppTheme.title1
-                            .override(color: DefaultAppTheme.grayLight)),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
-                      child: Text(
-                        'К сожалению, этих товаров сейчас нет',
-                        style: DefaultAppTheme.bodyText2,
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
+                    // Text('Ничего не найдено',
+                    //     style: DefaultAppTheme.title1
+                    //         .override(color: DefaultAppTheme.grayLight)),
+                    // Padding(
+                    //   padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
+                    //   child: Text(
+                    //     'К сожалению, этих товаров сейчас нет',
+                    //     style: DefaultAppTheme.bodyText2,
+                    //     textAlign: TextAlign.center,
+                    //   ),
+                    // ),
                   ]),
             );
     });

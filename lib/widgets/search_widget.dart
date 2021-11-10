@@ -119,7 +119,7 @@ class _SearchWidgetWidgetState extends State<SearchWidget> {
               height: 16,
               fit: BoxFit.cover,
             ),
-          )
+          ),
         ],
       ),
     );

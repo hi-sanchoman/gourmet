@@ -333,4 +333,18 @@ class CatalogApi {
       throw e;
     }
   }
+
+  // autocomplete
+  Future<ProductList> autocomplete(String query) async {
+    try {
+      var params = {'search': query};
+
+      final res =
+          await _dioClient.get(Endpoints.getProducts, queryParameters: params);
+
+      return ProductList.fromJson(res);
+    } catch (e) {
+      throw e;
+    }
+  }
 }

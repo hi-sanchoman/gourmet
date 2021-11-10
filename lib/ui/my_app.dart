@@ -132,6 +132,13 @@ class _MyAppState extends State<MyApp> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    // print("from my app: ${_userStore.isLoggedIn}");
+  }
+
+  @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [

@@ -257,6 +257,15 @@ class Repository {
     }).catchError((e) => throw e);
   }
 
+  // search autocomplete
+  Future<ProductList> autocomplete(
+    String query,
+  ) async {
+    return await _catalogApi.autocomplete(query).then((list) {
+      return list;
+    });
+  }
+
   // search products
   Future<SearchList> searchProducts(String query, String? token) async {
     return await _catalogApi.searchProducts(query, token).then((list) {
