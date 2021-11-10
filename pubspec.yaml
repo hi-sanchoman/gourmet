@@ -99,7 +99,7 @@ dependencies:
   share_plus: ^3.0.4
   credit_card_type_detector: ^2.0.0
   expandable: ^5.0.1
-  # flutter_local_notifications: ^9.0.2
+  flutter_local_notifications: ^9.0.2
 
 
 

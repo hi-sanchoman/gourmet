@@ -8,6 +8,7 @@ import 'package:esentai/stores/catalog/catalog_store.dart';
 import 'package:esentai/stores/form/form_store.dart';
 import 'package:esentai/stores/order/order_store.dart';
 import 'package:esentai/ui/home/navbarscreen.dart';
+import 'package:esentai/utils/helpers.dart';
 import 'package:esentai/utils/routes/routes.dart';
 import 'package:esentai/stores/language/language_store.dart';
 import 'package:esentai/stores/post/post_store.dart';
@@ -15,22 +16,44 @@ import 'package:esentai/stores/theme/theme_store.dart';
 import 'package:esentai/stores/user/user_store.dart';
 import 'package:esentai/ui/onboarding/onboarding.dart';
 import 'package:esentai/utils/locale/app_localization.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:provider/provider.dart';
 
-// final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-//     FlutterLocalNotificationsPlugin();
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
 
-// const AndroidNotificationChannel channel = AndroidNotificationChannel(
-//   'high_importance_channel', // id
-//   'High Importance Notifications', // title
-//   description:
-//       'This channel is used for important notifications.', // description
-//   importance: Importance.high,
-// );
+const AndroidNotificationChannel channel = AndroidNotificationChannel(
+  'high_importance_channel', // id
+  'Важные уведомления', // title
+  description: 'Этот канал используется для важных уведомлений.', // description
+  importance: Importance.high,
+);
+
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+  print('Handling a background message ${message.messageId}');
+  print('data: ${message.data}');
+
+  Helpers.setNotificationsBadge();
+
+  // flutterLocalNotificationsPlugin.show(
+  //     message.data.hashCode,
+  //     message.data['title'],
+  //     message.data['body'],
+  //     NotificationDetails(
+  //       android: AndroidNotificationDetails(
+  //         channel.id,
+  //         channel.name,
+  //         channelDescription: channel.description,
+  //       ),
+  //     ));
+}
 
 class MyApp extends StatefulWidget {
   MyApp({Key? key, this.initScreen}) : super(key: key);
@@ -60,41 +83,52 @@ class _MyAppState extends State<MyApp> {
     super.initState();
 
     // init fcm
-    // FirebaseMessaging.instance
-    //     .getInitialMessage()
-    //     .then((RemoteMessage? message) {
-    //   if (message != null) {
-    //     print("init message: $message");
-    //   }
-    // });
+    FirebaseMessaging.instance
+        .getInitialMessage()
+        .then((RemoteMessage? message) {
+      if (message != null) {
+        print("init message: $message");
+      }
+    });
 
-    // FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-    //   print("on foreground message");
+    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
-    //   RemoteNotification? notification = message.notification;
-    //   AndroidNotification? android = message.notification?.android;
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      print("on foreground message");
 
-    //   if (notification != null && android != null && !kIsWeb) {
-    //     flutterLocalNotificationsPlugin.show(
-    //         notification.hashCode,
-    //         notification.title,
-    //         notification.body,
-    //         NotificationDetails(
-    //           android: AndroidNotificationDetails(
-    //             channel.id,
-    //             channel.name,
-    //             channelDescription: channel.description,
-    //             // TODO add a proper drawable resource to android, for now using
-    //             //      one that already exists in example app.
-    //             icon: 'launch_background',
-    //           ),
-    //         ));
-    //   }
-    // });
+      RemoteNotification? notification = message.notification;
+      AndroidNotification? android = message.notification?.android;
 
-    // FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-    //   print('A new onMessageOpenedApp event was published!');
-    // });
+      if (notification != null && !kIsWeb) {
+        print('if case');
+        print('data: ${message.data}');
+
+        Helpers.setNotificationsBadge();
+
+        if (android != null) {
+          flutterLocalNotificationsPlugin.show(
+              notification.hashCode,
+              notification.title,
+              notification.body,
+              NotificationDetails(
+                android: AndroidNotificationDetails(
+                  channel.id,
+                  channel.name,
+                  channelDescription: channel.description,
+                  // TODO add a proper drawable resource to android, for now using
+                  //      one that already exists in example app.
+                  icon: 'launch_background',
+                ),
+              ));
+        }
+      } else {
+        print('else case');
+      }
+    });
+
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      print('A new onMessageOpenedApp event was published!');
+    });
   }
 
   @override

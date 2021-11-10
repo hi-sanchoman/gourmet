@@ -13,4 +13,5 @@ class Preferences {
   static const String fullname = "fullname";
 
   static const String hasPermissions = 'hasPermissions';
+  static const String fcm = 'fcm';
 }

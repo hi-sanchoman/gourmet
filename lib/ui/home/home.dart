@@ -1,9 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:esentai/data/sharedpref/constants/preferences.dart';
+import 'package:esentai/data/sharedpref/shared_preference_helper.dart';
 import 'package:esentai/models/info/banner.dart';
 import 'package:esentai/models/info/info.dart';
 import 'package:esentai/stores/cart/cart_store.dart';
 import 'package:esentai/stores/catalog/catalog_store.dart';
+import 'package:esentai/stores/user/user_store.dart';
 import 'package:esentai/ui/info/banner.dart';
 // import 'package:esentai/ui/info/banner.dart';
 import 'package:esentai/ui/info/info.dart';
@@ -13,6 +16,7 @@ import 'package:esentai/utils/themes/default.dart';
 import 'package:esentai/ui/catalog/product_card_widget.dart';
 import 'package:esentai/widgets/category_card_widget.dart';
 import 'package:esentai/widgets/search_widget.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -20,6 +24,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({Key? key}) : super(key: key);
@@ -32,6 +37,7 @@ class _HomeScreenWidgetState extends State<HomeScreen> {
   late TextEditingController searchFieldController;
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
+  late UserStore _userStore;
   late CatalogStore _catalogStore;
   late CartStore _cartStore;
 
@@ -42,18 +48,23 @@ class _HomeScreenWidgetState extends State<HomeScreen> {
   void initState() {
     super.initState();
     searchFieldController = TextEditingController();
+
+    _fcmPermissions();
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
 
+    _userStore = Provider.of<UserStore>(context);
     _catalogStore = Provider.of<CatalogStore>(context);
     _cartStore = Provider.of<CartStore>(context);
 
     if (!_catalogStore.isLoading) {
       _loadData();
     }
+
+    _getNotificationBadge();
   }
 
   @override
@@ -251,11 +262,31 @@ class _HomeScreenWidgetState extends State<HomeScreen> {
                             _onNotificationPressed();
                           },
                           child: Padding(
-                            padding: const EdgeInsets.fromLTRB(0, 0, 16, 0),
-                            child: Image.asset(
-                                'assets/images/ic_notification.png',
-                                width: 20,
-                                height: 20),
+                            padding: const EdgeInsets.fromLTRB(0, 16, 16, 0),
+                            child: Stack(
+                              children: [
+                                Image.asset('assets/images/ic_notification.png',
+                                    width: 20, height: 20),
+                                if (_userStore.showBadge != null &&
+                                    _userStore.showBadge != false)
+                                  Padding(
+                                    padding:
+                                        const EdgeInsets.fromLTRB(10, 0, 0, 0),
+                                    child: Align(
+                                      alignment: Alignment.topRight,
+                                      child: ClipRRect(
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(5)),
+                                          child: Container(
+                                            color:
+                                                DefaultAppTheme.secondaryColor,
+                                            width: 10,
+                                            height: 10,
+                                          )),
+                                    ),
+                                  ),
+                              ],
+                            ),
                           )),
                     ],
                     elevation: 0,
@@ -814,5 +845,24 @@ class _HomeScreenWidgetState extends State<HomeScreen> {
     pushNewScreen(context,
         screen: NotificationsScreen(),
         pageTransitionAnimation: PageTransitionAnimation.fade);
+  }
+
+  void _fcmPermissions() async {
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+    NotificationSettings settings = await messaging.requestPermission(
+      alert: true,
+      announcement: false,
+      badge: true,
+      carPlay: false,
+      criticalAlert: false,
+      provisional: false,
+      sound: true,
+    );
+  }
+
+  void _getNotificationBadge() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    _userStore.showBadge = prefs.getBool(Preferences.fcm);
   }
 }

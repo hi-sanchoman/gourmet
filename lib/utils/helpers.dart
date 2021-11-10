@@ -1,11 +1,13 @@
 import 'package:another_flushbar/flushbar.dart';
 import 'package:another_flushbar/flushbar_helper.dart';
 import 'package:credit_card_type_detector/credit_card_type_detector.dart';
+import 'package:esentai/data/sharedpref/constants/preferences.dart';
 import 'package:esentai/models/payment/creditcard.dart';
 import 'package:esentai/utils/themes/default.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'locale/app_localization.dart';
 
@@ -67,6 +69,11 @@ class Helpers {
     return dateHour.toString().padLeft(2, '0') +
         ":" +
         dateMinute.toString().padLeft(2, '0');
+  }
+
+  static void setNotificationsBadge() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool(Preferences.fcm, true);
   }
 
   static Future<Position> determinePosition() async {

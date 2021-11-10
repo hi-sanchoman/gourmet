@@ -67,6 +67,9 @@ abstract class _UserStore with Store {
   bool successProfile = false;
 
   @observable
+  bool? showBadge = false;
+
+  @observable
   User? profile;
 
   @observable
