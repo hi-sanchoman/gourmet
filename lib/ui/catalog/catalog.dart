@@ -48,34 +48,16 @@ class _CatalogScreenWidgetState extends State<CatalogScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: scaffoldKey,
-      appBar: AppBar(
-        backgroundColor: DefaultAppTheme.primaryColor,
-        automaticallyImplyLeading: false,
-        title: Text(
-          'Каталог',
-          style: DefaultAppTheme.title2.override(
-            fontFamily: 'Gilroy',
-            color: Colors.white,
-          ),
-        ),
-        actions: [],
-        centerTitle: true,
-        elevation: 0,
-      ),
-      backgroundColor: Color(0xFFFCFCFC),
-      body: SafeArea(child: _buildBody()),
+      body: _buildBody(),
     );
   }
 
   Widget _buildBody() {
     return Stack(children: [
       _buildMainBody(),
-      Observer(builder: (context) {
-        return Container();
-      }),
-      Observer(builder: (context) {
-        return Container();
-      }),
+      // Observer(builder: (context) {
+      //   return Container();
+      // }),
     ]);
   }
 
@@ -83,29 +65,54 @@ class _CatalogScreenWidgetState extends State<CatalogScreen> {
     return Observer(builder: (context) {
       return _catalogStore.isLoading
           ? CustomProgressIndicatorWidget()
-          : Stack(
-              children: [
-                RefreshIndicator(
-                  onRefresh: () async {
-                    if (!_catalogStore.isLoading) {
-                      _catalogStore.getCategoryList();
-                    }
-                  },
-                  child: ListView(
-                      padding: EdgeInsets.zero,
-                      scrollDirection: Axis.vertical,
-                      children: [
-                        SearchWidget(),
-                        Padding(
-                          padding: EdgeInsets.only(top: 20),
-                          child: Material(
-                            child: _buildListView(),
-                            color: Color(0xFFFCFCFC),
-                          ),
-                        )
-                      ]),
-                )
-              ],
+          : RefreshIndicator(
+              onRefresh: () async {
+                if (!_catalogStore.isLoading) {
+                  _catalogStore.getCategoryList();
+                }
+              },
+              child: CustomScrollView(
+                slivers: [
+                  SliverAppBar(
+                      floating: false,
+                      pinned: true,
+                      snap: false,
+                      centerTitle: true,
+                      backgroundColor: DefaultAppTheme.primaryColor,
+                      title: Text(
+                        'Каталог',
+                        style: DefaultAppTheme.title2.override(
+                          fontFamily: 'Gilroy',
+                          color: Colors.white,
+                        ),
+                      ),
+                      elevation: 0,
+                      bottom: AppBar(
+                          backgroundColor: Color(0xFFFCFCFC),
+                          titleSpacing: 0,
+                          elevation: 0,
+                          title: Stack(
+                            children: [
+                              Container(
+                                width: double.infinity,
+                                height: 22,
+                                // color: Colors.red,
+                                color: DefaultAppTheme.primaryColor,
+                              ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.fromLTRB(16, 0, 16, 0),
+                                child: SearchWidget(),
+                              )
+                            ],
+                          ))),
+                  SliverList(
+                    delegate: SliverChildListDelegate([
+                      _buildListView(),
+                    ]),
+                  ),
+                ],
+              ),
             );
     });
   }
@@ -138,6 +145,7 @@ class _CatalogScreenWidgetState extends State<CatalogScreen> {
         ? Padding(
             padding: EdgeInsets.only(bottom: 50.0),
             child: CategoryHeaderWidget(
+                category: _catalogStore.catalogList!.items![position],
                 title: '${_catalogStore.catalogList?.items?[position].name}',
                 onHeaderTap: () {
                   _onCategoryOpen(_catalogStore.catalogList?.items?[position]);
@@ -153,6 +161,7 @@ class _CatalogScreenWidgetState extends State<CatalogScreen> {
 
   // on category clicked
   void _onCategoryOpen(Category? category) {
+    print('category open... ${category}');
     pushNewScreen(context,
         screen: CategoryScreen(category: category!),
         withNavBar: true,

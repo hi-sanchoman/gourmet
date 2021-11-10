@@ -173,11 +173,11 @@ class _SubcategoryScreenWidgetState extends State<FavoritesScreen> {
 
   Widget _buildListView() {
     return Observer(builder: (context) {
-      print("favorites...");
+      print("favorites... ${_catalogStore.favoritesList?.items?.length}");
 
-      if (_catalogStore.favoritesList == null) {
-        return Container();
-      }
+      // if (_catalogStore.favoritesList == null) {
+      //   return Container();
+      // }
 
       var size = MediaQuery.of(context).size;
 
@@ -185,7 +185,8 @@ class _SubcategoryScreenWidgetState extends State<FavoritesScreen> {
       final double itemHeight = (size.height - kToolbarHeight - 96) / 2;
       final double itemWidth = size.width / 2;
 
-      return _catalogStore.favoritesList!.items != null
+      return _catalogStore.favoritesList!.items != null &&
+              _catalogStore.favoritesList!.items!.length > 0
           ? Padding(
               padding: EdgeInsetsDirectional.fromSTEB(16, 10, 16, 0),
               child: GridView(
@@ -206,10 +207,23 @@ class _SubcategoryScreenWidgetState extends State<FavoritesScreen> {
               ),
             )
           : Container(
-              padding: EdgeInsets.only(top: 20),
-              child: Center(
-                child: Text('Нет избранных товаров'),
-              ),
+              padding: EdgeInsets.only(top: 200),
+              child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('Тут пусто',
+                        style: DefaultAppTheme.title1
+                            .override(color: DefaultAppTheme.grayLight)),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
+                      child: Text(
+                        'Добавьте товар в избранные, нажав на иконку «сердце»',
+                        style: DefaultAppTheme.bodyText2,
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ]),
             );
     });
   }

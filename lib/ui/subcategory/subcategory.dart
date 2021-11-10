@@ -1,3 +1,5 @@
+import 'package:esentai/data/sharedpref/constants/preferences.dart';
+import 'package:esentai/models/catalog/category.dart';
 import 'package:esentai/models/catalog/subcategory.dart';
 import 'package:esentai/models/catalog/subcategory_list.dart';
 import 'package:esentai/stores/cart/cart_store.dart';
@@ -10,16 +12,21 @@ import 'package:esentai/utils/themes/default.dart';
 import 'package:esentai/widgets/choice_chips.dart';
 import 'package:esentai/widgets/progress_indicator_widget.dart';
 import 'package:esentai/widgets/search_widget.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:intl/intl.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SubcategoryScreen extends StatefulWidget {
-  SubcategoryScreen({Key? key, required this.subcategory}) : super(key: key);
+  SubcategoryScreen(
+      {Key? key, required this.subcategory, required this.category})
+      : super(key: key);
 
   final Subcategory subcategory;
+  final Category category;
 
   @override
   _SubcategoryScreenWidgetState createState() =>
@@ -36,6 +43,51 @@ class _SubcategoryScreenWidgetState extends State<SubcategoryScreen> {
 
   late CatalogStore _catalogStore;
   late CartStore _cartStore;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _checkPermissions();
+  }
+
+  void _checkPermissions() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int? hasPermissions = prefs.getInt(Preferences.hasPermissions);
+
+    if (widget.category.hasPermissions == true && hasPermissions == null) {
+      bool res = await showCupertinoModalPopup(
+          context: context,
+          builder: (BuildContext context) => CupertinoAlertDialog(
+                title: new Text("Вам 21 год или больше?"),
+                content: Text('${widget.category.permissionsText}'),
+                actions: <Widget>[
+                  CupertinoDialogAction(
+                    isDefaultAction: true,
+                    child: Text('Да'),
+                    onPressed: () {
+                      Navigator.pop(context, true);
+                    },
+                  ),
+                  CupertinoDialogAction(
+                    child: Text("Нет"),
+                    onPressed: () {
+                      Navigator.pop(context, false);
+                    },
+                  )
+                ],
+              ));
+
+      if (res == true) {
+        // it's ok
+        await prefs.setInt(Preferences.hasPermissions, 1);
+        return;
+      }
+
+      // not ok
+      Navigator.of(context).pop();
+    }
+  }
 
   @override
   void didChangeDependencies() {
@@ -66,73 +118,8 @@ class _SubcategoryScreenWidgetState extends State<SubcategoryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      appBar: AppBar(
-        backgroundColor: DefaultAppTheme.primaryColor,
-        automaticallyImplyLeading: true,
-        leading: InkWell(
-          onTap: () {
-            Navigator.of(context).pop();
-          },
-          child: Icon(
-            Icons.arrow_back_ios,
-            color: Colors.white,
-            size: 24,
-          ),
-        ),
-        title: Text(
-          '${_subcategory.name}',
-          style: DefaultAppTheme.title2.override(
-            fontFamily: 'Gilroy',
-            color: Colors.white,
-          ),
-        ),
-        actions: [
-          // Padding(
-          //     padding: EdgeInsetsDirectional.fromSTEB(0, 0, 16, 0),
-          //     child: InkWell(
-          //       onTap: () async {
-          //         // print("${_category.subcategories?.items}");
-
-          //         await showModalBottomSheet(
-          //           isScrollControlled: true,
-          //           useRootNavigator: true,
-          //           context: context,
-          //           shape: RoundedRectangleBorder(
-          //             borderRadius: BorderRadius.only(
-          //                 topLeft: Radius.circular(10),
-          //                 topRight: Radius.circular(10)),
-          //           ),
-          //           builder: (context) {
-          //             return Wrap(
-          //               children: [
-          //                 CheckboxListTile(
-          //                     value: _isActive,
-          //                     title: Text('Есть в наличие'),
-          //                     onChanged: (val) {
-          //                       setState(() {
-          //                         _isActive = val ?? false;
-          //                       });
-          //                     }),
-          //               ],
-          //             );
-          //           },
-          //         );
-
-          //         _loadData();
-          //       },
-          //       child: Icon(
-          //         Icons.filter_alt_outlined,
-          //         color: Colors.white,
-          //         size: 24,
-          //       ),
-          //     )),
-        ],
-        centerTitle: true,
-        elevation: 0,
-      ),
       backgroundColor: Color(0xFFFCFCFC),
-      // backgroundColor: Colors.blue,
-      body: SafeArea(child: _buildBody()),
+      body: _buildBody(),
     );
   }
 
@@ -207,26 +194,67 @@ class _SubcategoryScreenWidgetState extends State<SubcategoryScreen> {
 
   Widget _buildMainBody() {
     return Observer(builder: (context) {
-      return Stack(
-        children: [
-          RefreshIndicator(
-            onRefresh: () async {
-              _loadData();
-            },
-            child: ListView(
-              padding: EdgeInsets.zero,
-              scrollDirection: Axis.vertical,
-              children: [
-                SearchWidget(),
+      return RefreshIndicator(
+        onRefresh: () async {
+          _loadData();
+        },
+        child: CustomScrollView(
+          slivers: [
+            SliverAppBar(
+                floating: false,
+                pinned: true,
+                snap: false,
+                centerTitle: true,
+                backgroundColor: DefaultAppTheme.primaryColor,
+                automaticallyImplyLeading: true,
+                leading: InkWell(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Icon(
+                    Icons.arrow_back_ios,
+                    color: Colors.white,
+                    size: 24,
+                  ),
+                ),
+                title: Text(
+                  '${_subcategory.name}',
+                  style: DefaultAppTheme.title2.override(
+                    fontFamily: 'Gilroy',
+                    color: Colors.white,
+                  ),
+                ),
+                elevation: 0,
+                bottom: AppBar(
+                    automaticallyImplyLeading: false,
+                    backgroundColor: Color(0xFFFCFCFC),
+                    titleSpacing: 0,
+                    elevation: 0,
+                    title: Stack(
+                      children: [
+                        Container(
+                          width: double.infinity,
+                          height: 22,
+                          // color: Colors.red,
+                          color: DefaultAppTheme.primaryColor,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+                          child: SearchWidget(),
+                        )
+                      ],
+                    ))),
+            SliverList(
+              delegate: SliverChildListDelegate([
                 _buildFilter(),
                 _buildListView(),
                 Container(
                   height: 140,
                 ),
-              ],
+              ]),
             ),
-          )
-        ],
+          ],
+        ),
       );
     });
   }
@@ -238,10 +266,24 @@ class _SubcategoryScreenWidgetState extends State<SubcategoryScreen> {
       if (_catalogStore.productsList != null &&
           _catalogStore.productsList!.items!.isEmpty) {
         return Container(
-          padding: const EdgeInsets.fromLTRB(0, 40, 0, 0),
-          child: Center(
-            child: Text('Не найдено'),
-          ),
+          padding: EdgeInsets.only(top: 150),
+          width: double.infinity,
+          child: Column(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('Ничего не найдено',
+                    style: DefaultAppTheme.title1
+                        .override(color: DefaultAppTheme.grayLight)),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
+                  child: Text(
+                    'К сожалению, этих товаров сейчас нет',
+                    style: DefaultAppTheme.bodyText2,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ]),
         );
       }
 

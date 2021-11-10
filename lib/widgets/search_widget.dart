@@ -31,29 +31,29 @@ class _SearchWidgetWidgetState extends State<SearchWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Color(0xFFFCFCFC),
+      color: Colors.transparent,
       width: MediaQuery.of(context).size.width,
-      height: 44,
+      height: 56,
       child: Stack(
         children: [
           Column(
             mainAxisSize: MainAxisSize.max,
             children: [
-              Container(
-                width: MediaQuery.of(context).size.width,
-                height: 22,
-                decoration: BoxDecoration(
-                  color: DefaultAppTheme.primaryColor,
-                  shape: BoxShape.rectangle,
-                ),
-              ),
-              Container(
-                width: MediaQuery.of(context).size.width,
-                height: 22,
-                decoration: BoxDecoration(
-                  color: Color(0xFFFCFCFC),
-                ),
-              )
+              // Container(
+              //   width: MediaQuery.of(context).size.width,
+              //   height: 22,
+              //   decoration: BoxDecoration(
+              //     color: DefaultAppTheme.primaryColor,
+              //     shape: BoxShape.rectangle,
+              //   ),
+              // ),
+              // Container(
+              //   width: MediaQuery.of(context).size.width,
+              //   height: 22,
+              //   decoration: BoxDecoration(
+              //     color: Colors.transparent,
+              //   ),
+              // ),
             ],
           ),
           InkWell(
@@ -61,7 +61,7 @@ class _SearchWidgetWidgetState extends State<SearchWidget> {
               _onSearchPressed();
             },
             child: Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
+              padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
               child: Container(
                 width: MediaQuery.of(context).size.width,
                 // height: MediaQuery.of(context).size.height * 1,
@@ -112,7 +112,7 @@ class _SearchWidgetWidgetState extends State<SearchWidget> {
             ),
           ),
           Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(36, 14, 0, 0),
+            padding: EdgeInsetsDirectional.fromSTEB(20, 14, 0, 0),
             child: Image.asset(
               'assets/images/search.png',
               width: 16,

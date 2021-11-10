@@ -60,31 +60,6 @@ class _HomeScreenWidgetState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: scaffoldKey,
-      appBar: AppBar(
-        backgroundColor: DefaultAppTheme.primaryColor,
-        iconTheme: IconThemeData(color: Colors.white),
-        automaticallyImplyLeading: true,
-        title: Text(
-          'Главная',
-          style: DefaultAppTheme.title2.override(
-            fontFamily: 'Gilroy',
-            color: Colors.white,
-          ),
-        ),
-        actions: [
-          InkWell(
-              onTap: () {
-                _onNotificationPressed();
-              },
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(0, 0, 16, 0),
-                child: Image.asset('assets/images/ic_notification.png',
-                    width: 20, height: 20),
-              )),
-        ],
-        centerTitle: true,
-        elevation: 0,
-      ),
       backgroundColor: Color(0xFFFCFCFC),
       drawer: Container(
         width: 258,
@@ -248,61 +223,78 @@ class _HomeScreenWidgetState extends State<HomeScreen> {
         ),
       ),
       body: Observer(builder: (context) {
-        return SafeArea(
-          child: Stack(children: [
-            RefreshIndicator(
-              onRefresh: () async {
-                _loadData();
-              },
-              child: ListView(
-                padding: EdgeInsets.zero,
-                scrollDirection: Axis.vertical,
-                shrinkWrap: true,
-                children: [
-                  Container(
-                    width: MediaQuery.of(context).size.width,
-                    height: 44,
-                    decoration: BoxDecoration(),
-                    child: Stack(
-                      children: [
-                        Column(
-                          mainAxisSize: MainAxisSize.max,
+        return Stack(children: [
+          RefreshIndicator(
+            onRefresh: () async {
+              _loadData();
+            },
+            child: CustomScrollView(
+              slivers: [
+                SliverAppBar(
+                    floating: false,
+                    pinned: true,
+                    snap: false,
+                    centerTitle: true,
+                    backgroundColor: DefaultAppTheme.primaryColor,
+                    iconTheme: IconThemeData(color: Colors.white),
+                    automaticallyImplyLeading: true,
+                    title: Text(
+                      'Главная',
+                      style: DefaultAppTheme.title2.override(
+                        fontFamily: 'Gilroy',
+                        color: Colors.white,
+                      ),
+                    ),
+                    actions: [
+                      InkWell(
+                          onTap: () {
+                            _onNotificationPressed();
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.fromLTRB(0, 0, 16, 0),
+                            child: Image.asset(
+                                'assets/images/ic_notification.png',
+                                width: 20,
+                                height: 20),
+                          )),
+                    ],
+                    elevation: 0,
+                    bottom: AppBar(
+                        automaticallyImplyLeading: false,
+                        backgroundColor: Color(0xFFFCFCFC),
+                        titleSpacing: 0,
+                        elevation: 0,
+                        title: Stack(
                           children: [
                             Container(
-                              width: MediaQuery.of(context).size.width,
+                              width: double.infinity,
                               height: 22,
-                              decoration: BoxDecoration(
-                                color: DefaultAppTheme.primaryColor,
-                                shape: BoxShape.rectangle,
-                              ),
+                              // color: Colors.red,
+                              color: DefaultAppTheme.primaryColor,
                             ),
-                            Container(
-                              width: MediaQuery.of(context).size.width,
-                              height: 22,
-                              decoration: BoxDecoration(
-                                color: Color(0xFFFCFCFC),
-                              ),
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+                              child: SearchWidget(),
                             )
                           ],
-                        ),
-                        SearchWidget(),
-                      ],
-                    ),
-                  ),
-                  _buildBannerList(),
-                  _buildIndicators(),
-                  SizedBox(height: 16),
-                  _buildGifts(),
-                  SizedBox(height: 32),
-                  _buildCategories(),
-                  SizedBox(height: 32),
-                  _buildProducts(),
-                ],
-              ),
+                        ))),
+                SliverList(
+                  delegate: SliverChildListDelegate([
+                    _buildBannerList(),
+                    _buildIndicators(),
+                    SizedBox(height: 16),
+                    _buildGifts(),
+                    SizedBox(height: 32),
+                    _buildCategories(),
+                    SizedBox(height: 32),
+                    _buildProducts(),
+                  ]),
+                ),
+              ],
             ),
-            _buildCartTotal(),
-          ]),
-        );
+          ),
+          _buildCartTotal(),
+        ]);
       }),
     );
   }

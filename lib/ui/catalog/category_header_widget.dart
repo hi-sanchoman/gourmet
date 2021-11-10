@@ -1,4 +1,5 @@
 import 'package:esentai/data/network/constants/endpoints.dart';
+import 'package:esentai/models/catalog/category.dart';
 import 'package:esentai/models/catalog/subcategory.dart';
 import 'package:esentai/models/catalog/subcategory_list.dart';
 import 'package:esentai/ui/catalog/subcategory_header_widget.dart';
@@ -13,12 +14,14 @@ import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 class CategoryHeaderWidget extends StatefulWidget {
   CategoryHeaderWidget(
       {Key? key,
+      required this.category,
       required this.title,
       this.subcategoryList,
       required this.onHeaderTap,
       required this.onAllItemsPressed})
       : super(key: key);
 
+  final Category category;
   final String title;
   SubcategoryList? subcategoryList;
   Function() onHeaderTap;
@@ -102,7 +105,8 @@ class _CategoryHeaderWidgetState extends State<CategoryHeaderWidget> {
         image: '${subcategory.image}',
         onTap: () {
           pushNewScreen(context,
-              screen: SubcategoryScreen(subcategory: subcategory),
+              screen: SubcategoryScreen(
+                  subcategory: subcategory, category: widget.category),
               withNavBar: true,
               pageTransitionAnimation: PageTransitionAnimation.fade);
         },

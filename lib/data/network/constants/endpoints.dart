@@ -41,6 +41,7 @@ class Endpoints {
   static const String getMainGifts = baseUrl + '/main-gifts/';
   static const String getMainProducts = baseUrl + '/main-products/';
   static const String getCategoryList = baseUrl + "/category-list/";
+  static const String getSubcategories = baseUrl + '/subcategory-list/';
   static const String getProducts = baseUrl + "/products/";
   static const String getProductById = baseUrl + "/products/:id/";
   static const String getGiftById = baseUrl + "/gifts/:id/";

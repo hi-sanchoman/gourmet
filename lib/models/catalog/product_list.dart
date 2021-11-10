@@ -24,11 +24,17 @@ class ProductList {
     };
   }
 
-  factory ProductList.fromMap(Map<String, dynamic> map) {
+  factory ProductList.fromMap(Map<String, dynamic> map,
+      {bool subcategory = false}) {
     // print("map in productlist: $map");
+    String key = 'items';
+
+    if (subcategory == true) {
+      key = 'products';
+    }
 
     return ProductList(
-      items: List<Product>.from(map['items']?.map((x) => Product.fromMap(x))),
+      items: List<Product>.from(map[key]?.map((x) => Product.fromMap(x))),
     );
   }
 

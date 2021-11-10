@@ -10,6 +10,7 @@ import 'package:esentai/models/catalog/gift_list.dart';
 import 'package:esentai/models/catalog/product.dart';
 import 'package:esentai/models/catalog/product_list.dart';
 import 'package:esentai/models/catalog/search_list.dart';
+import 'package:esentai/models/catalog/subcategory_list.dart';
 import 'package:esentai/models/favorites/favorite_list.dart';
 import 'package:esentai/models/gift/package_list.dart';
 import 'package:esentai/models/gift/postcard_list.dart';
@@ -37,6 +38,40 @@ class CatalogApi {
       return CategoryList.fromJson(res);
     } catch (e) {
       // print(e.toString());
+      throw e;
+    }
+  }
+
+  // get subcategories
+  Future<SubcategoryList> getSubcategories(List<int> subcategories,
+      String orderBy, bool isActive, String? token) async {
+    var params = {'ordering': orderBy};
+
+    if (isActive == true) {
+      params['is_active'] = 'True';
+    }
+
+    // if (subcategories.isNotEmpty) {
+    params['sub_categories_id'] = subcategories.join(",");
+    // }
+
+    print("params: $params");
+
+    Options? options = Options();
+    if (token != null && token.isNotEmpty) {
+      options = Options(headers: {"Authorization": "JWT $token"});
+    }
+
+    // print("data are: $params, $token, ${options?.headers}");
+
+    try {
+      final res = await _dioClient.get(Endpoints.getSubcategories,
+          queryParameters: params, options: options);
+
+      // print('res for products... $res');
+
+      return SubcategoryList.fromJson(res);
+    } catch (e) {
       throw e;
     }
   }

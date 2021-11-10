@@ -6,6 +6,7 @@ import 'package:esentai/models/catalog/gift_list.dart';
 import 'package:esentai/models/catalog/product.dart';
 import 'package:esentai/models/catalog/product_list.dart';
 import 'package:esentai/models/catalog/search_list.dart';
+import 'package:esentai/models/catalog/subcategory_list.dart';
 import 'package:esentai/models/favorites/favorite_list.dart';
 import 'package:esentai/models/gift/package.dart';
 import 'package:esentai/models/gift/package_list.dart';
@@ -53,6 +54,9 @@ abstract class _CatalogStore with Store {
 
   @observable
   ProductList? mainList;
+
+  @observable
+  SubcategoryList? subcategoryList;
 
   @observable
   ProductList? productsList;
@@ -174,6 +178,31 @@ abstract class _CatalogStore with Store {
       isLoading = false;
       successProducts = false;
       errorStore.errorMessage = e.toString();
+    });
+  }
+
+  @action
+  Future getSubcategories(
+      List<int> subcategories, String orderBy, bool isActive) async {
+    isLoading = true;
+    subcategoryList = null;
+
+    // token
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString(Preferences.auth_token);
+
+    // print("token is ... $token");
+
+    await _repository
+        .getSubcategories(subcategories, orderBy, isActive, token)
+        .then((res) {
+      isLoading = false;
+      successProducts = true;
+      subcategoryList = res;
+    }).catchError((e) {
+      isLoading = false;
+      successProducts = false;
+      errorStore.errorMessage = "Ошибка на сервере. Попробуйте позже.";
     });
   }
 
@@ -367,6 +396,26 @@ abstract class _CatalogStore with Store {
               }
 
               searchList = searchList!.copyWith(items: searchList!.items!);
+            }
+          }
+
+          // subcategories list
+          if (subcategoryList != null) {
+            if (subcategoryList!.items != null) {
+              for (var res in subcategoryList!.items!) {
+                if (res.products != null) {
+                  for (var item in res.products!.items!) {
+                    if (item.id == id) {
+                      item.isLiked = !item.isLiked!;
+                      // print('item found to be checked/unchekd');
+                      break;
+                    }
+                  }
+                }
+              }
+
+              subcategoryList =
+                  subcategoryList!.copyWith(items: subcategoryList!.items!);
             }
           }
 

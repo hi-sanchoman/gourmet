@@ -97,12 +97,24 @@ class _ChooseDefaultCreditCardWidgetWidgetState
       print(_userStore.cardList);
 
       if (_userStore.cardList == null) {
-        return Text('Нет добавленных карт.');
+        return Padding(
+          padding: const EdgeInsets.fromLTRB(0, 32, 0, 20),
+          child: Text(
+            'Нет добавленных карт.',
+            style: DefaultAppTheme.bodyText2,
+          ),
+        );
       }
 
       if (_userStore.cardList != null) {
         if (_userStore.cardList!.items!.isEmpty) {
-          return Text('Нет добавленных карт.');
+          return Padding(
+            padding: const EdgeInsets.fromLTRB(0, 32, 0, 20),
+            child: Text(
+              'Нет добавленных карт.',
+              style: DefaultAppTheme.bodyText2,
+            ),
+          );
         }
       }
 

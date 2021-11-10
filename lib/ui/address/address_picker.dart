@@ -95,16 +95,22 @@ class _ChooseDefaultAddressWidgetWidgetState
 
       if (_userStore.addressList == null) {
         return Padding(
-          padding: const EdgeInsets.only(top: 16),
-          child: Text('Нет добавленных адресов.'),
+          padding: const EdgeInsets.fromLTRB(0, 32, 0, 20),
+          child: Text(
+            'Нет добавленных адресов.',
+            style: DefaultAppTheme.bodyText2,
+          ),
         );
       }
 
       if (_userStore.addressList != null) {
         if (_userStore.addressList!.items!.isEmpty) {
           return Padding(
-            padding: const EdgeInsets.only(top: 16),
-            child: Text('Нет добавленных адресов.'),
+            padding: const EdgeInsets.fromLTRB(0, 32, 0, 20),
+            child: Text(
+              'Нет добавленных адресов.',
+              style: DefaultAppTheme.bodyText2,
+            ),
           );
         }
       }

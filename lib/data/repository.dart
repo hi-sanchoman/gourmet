@@ -13,6 +13,7 @@ import 'package:esentai/models/catalog/gift_list.dart';
 import 'package:esentai/models/catalog/product.dart';
 import 'package:esentai/models/catalog/product_list.dart';
 import 'package:esentai/models/catalog/search_list.dart';
+import 'package:esentai/models/catalog/subcategory_list.dart';
 import 'package:esentai/models/favorites/favorite_list.dart';
 import 'package:esentai/models/gift/package_list.dart';
 import 'package:esentai/models/gift/postcard_list.dart';
@@ -194,6 +195,18 @@ class Repository {
   // get other gifts
   Future<ProductList> getOtherGifts(int id, String? token) async {
     return await _catalogApi.getOtherGifts(id, token).then((list) {
+      // list.items?.forEach((item) {});
+
+      return list;
+    });
+  }
+
+  // get subcategories
+  Future<SubcategoryList> getSubcategories(List<int> subcategories,
+      String orderBy, bool isActive, String? token) async {
+    return await _catalogApi
+        .getSubcategories(subcategories, orderBy, isActive, token)
+        .then((list) {
       // list.items?.forEach((item) {});
 
       return list;

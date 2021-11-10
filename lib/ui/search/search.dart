@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:esentai/models/catalog/product.dart';
 import 'package:esentai/stores/cart/cart_store.dart';
 import 'package:esentai/stores/catalog/catalog_store.dart';
@@ -254,7 +255,8 @@ class _SearchScreenWidgetState extends State<SearchScreen> {
       final double itemWidth = size.width / 2;
 
       return _catalogStore.searchList != null &&
-              _catalogStore.searchList!.items != null
+              _catalogStore.searchList!.items != null &&
+              _catalogStore.searchList!.items!.length > 0
           ? Padding(
               padding: const EdgeInsets.fromLTRB(0, 16, 0, 92),
               child: Column(
@@ -264,7 +266,27 @@ class _SearchScreenWidgetState extends State<SearchScreen> {
                       children: [
                         Padding(
                           padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-                          child: Text('${subcategory.name}'),
+                          child: Row(
+                            children: [
+                              SizedBox(
+                                width: 60,
+                                height: 60,
+                                child: ClipRRect(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(30)),
+                                  child: CachedNetworkImage(
+                                      imageUrl: '${subcategory.image}'),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
+                                child: Text(
+                                  '${subcategory.name}',
+                                  style: DefaultAppTheme.title2,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                         Padding(
                           padding:
@@ -306,11 +328,22 @@ class _SearchScreenWidgetState extends State<SearchScreen> {
               ),
             )
           : Container(
-              color: Colors.white,
-              padding: EdgeInsets.only(top: 20),
-              child: Center(
-                child: Text(''),
-              ),
+              padding: EdgeInsets.only(top: 200),
+              width: double.infinity,
+              child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text('Ничего не найдено',
+                        style: DefaultAppTheme.title1
+                            .override(color: DefaultAppTheme.grayLight)),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
+                      child: Image.asset('assets/images/search_not_found.png',
+                          width: 100, height: 100),
+                    ),
+                  ]),
             );
     });
   }

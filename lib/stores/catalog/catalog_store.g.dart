@@ -85,6 +85,21 @@ mixin _$CatalogStore on _CatalogStore, Store {
     });
   }
 
+  final _$subcategoryListAtom = Atom(name: '_CatalogStore.subcategoryList');
+
+  @override
+  SubcategoryList? get subcategoryList {
+    _$subcategoryListAtom.reportRead();
+    return super.subcategoryList;
+  }
+
+  @override
+  set subcategoryList(SubcategoryList? value) {
+    _$subcategoryListAtom.reportWrite(value, super.subcategoryList, () {
+      super.subcategoryList = value;
+    });
+  }
+
   final _$productsListAtom = Atom(name: '_CatalogStore.productsList');
 
   @override
@@ -363,6 +378,16 @@ mixin _$CatalogStore on _CatalogStore, Store {
     return _$getMainProductsAsyncAction.run(() => super.getMainProducts());
   }
 
+  final _$getSubcategoriesAsyncAction =
+      AsyncAction('_CatalogStore.getSubcategories');
+
+  @override
+  Future<dynamic> getSubcategories(
+      List<int> subcategories, String orderBy, bool isActive) {
+    return _$getSubcategoriesAsyncAction
+        .run(() => super.getSubcategories(subcategories, orderBy, isActive));
+  }
+
   final _$getProductsAsyncAction = AsyncAction('_CatalogStore.getProducts');
 
   @override
@@ -503,6 +528,7 @@ catalogList: ${catalogList},
 searchList: ${searchList},
 mainGifts: ${mainGifts},
 mainList: ${mainList},
+subcategoryList: ${subcategoryList},
 productsList: ${productsList},
 favoritesList: ${favoritesList},
 bannerList: ${bannerList},

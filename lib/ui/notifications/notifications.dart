@@ -187,9 +187,24 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                 Container(height: 82),
               ])
         : Container(
-            child: Center(
-              child: Text('Нет уведомлений'),
-            ),
+            padding: EdgeInsets.only(top: 0),
+            width: double.infinity,
+            child: Column(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('Тут пусто',
+                      style: DefaultAppTheme.title1
+                          .override(color: DefaultAppTheme.grayLight)),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
+                    child: Text(
+                      'Здесь появятся ваши уведомления',
+                      style: DefaultAppTheme.bodyText2,
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ]),
           );
   }
 
