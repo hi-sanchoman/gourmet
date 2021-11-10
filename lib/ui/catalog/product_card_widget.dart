@@ -87,7 +87,7 @@ class _ProductCardWidgetState extends State<ProductCardWidget> {
         ),
         child: Container(
           width: 167,
-          height: 252,
+          height: 262,
           child: Stack(
             children: [
               Column(
@@ -191,7 +191,7 @@ class _ProductCardWidgetState extends State<ProductCardWidget> {
                 Align(
                   alignment: AlignmentDirectional(-1, 0.2),
                   child: Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(15, 0, 0, 15),
+                    padding: EdgeInsetsDirectional.fromSTEB(15, 0, 0, 20),
                     child: Container(
                       width: 85,
                       height: 20,
@@ -243,6 +243,7 @@ class _ProductCardWidgetState extends State<ProductCardWidget> {
                             fontFamily: 'Gilroy',
                             color: Colors.white,
                           ),
+                          padding: const EdgeInsets.only(top: 4),
                           elevation: 0,
                           primary: DefaultAppTheme.primaryColor,
                           onPrimary: Colors.white,

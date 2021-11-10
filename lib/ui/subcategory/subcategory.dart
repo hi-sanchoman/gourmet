@@ -7,6 +7,7 @@ import 'package:esentai/stores/catalog/catalog_store.dart';
 import 'package:esentai/ui/_bottomsheets/bs_subcategory_filter.dart';
 import 'package:esentai/ui/catalog/product_card_widget.dart';
 import 'package:esentai/ui/orders/order_prepare.dart';
+import 'package:esentai/utils/extensions/gourmet_gridview_delegate.dart';
 import 'package:esentai/utils/helpers.dart';
 import 'package:esentai/utils/themes/default.dart';
 import 'package:esentai/widgets/choice_chips.dart';
@@ -300,12 +301,12 @@ class _SubcategoryScreenWidgetState extends State<SubcategoryScreen> {
               child: GridView(
                 padding: EdgeInsets.zero,
                 physics: NeverScrollableScrollPhysics(),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 9,
-                  mainAxisSpacing: 9,
-                  childAspectRatio: itemWidth / itemHeight,
-                ),
+                gridDelegate: GourmetGridViewDelegate(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 9,
+                    mainAxisSpacing: 9,
+                    // childAspectRatio: itemWidth / itemHeight,
+                    height: 262),
                 shrinkWrap: true,
                 scrollDirection: Axis.vertical,
                 children: [

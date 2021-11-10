@@ -6,6 +6,7 @@ import 'package:esentai/stores/catalog/catalog_store.dart';
 import 'package:esentai/ui/_bottomsheets/bs_subcategory_filter.dart';
 import 'package:esentai/ui/catalog/product_card_widget.dart';
 import 'package:esentai/ui/orders/order_prepare.dart';
+import 'package:esentai/utils/extensions/gourmet_gridview_delegate.dart';
 import 'package:esentai/utils/helpers.dart';
 import 'package:esentai/utils/themes/default.dart';
 import 'package:esentai/widgets/choice_chips.dart';
@@ -253,6 +254,8 @@ class _CategoryScreenScreenWidgetState extends State<CategoryScreen> {
                                     print(
                                         "filter length after: ${_catalogStore.filter!.length}");
 
+                                    print('${_catalogStore.filter!.length}');
+
                                     _loadData();
                                   },
                                   child: Padding(
@@ -266,32 +269,38 @@ class _CategoryScreenScreenWidgetState extends State<CategoryScreen> {
                                                 'assets/images/ic_filter_new.png'),
                                             size: 25,
                                             color: Colors.white),
-                                        // if (_catalogStore.filter!.length > 0)
-                                        //   Align(
-                                        //     alignment: Alignment.topRight,
-                                        //     child: Padding(
-                                        //       padding:
-                                        //           const EdgeInsets.fromLTRB(
-                                        //               20, 0, 0, 0),
-                                        //       child: ClipRRect(
-                                        //         borderRadius: BorderRadius.all(
-                                        //             Radius.circular(10)),
-                                        //         child: Container(
-                                        //           width: 20,
-                                        //           height: 20,
-                                        //           child: Center(
-                                        //             child: Text(
-                                        //               '${_catalogStore.filter?.length}',
-                                        //               style: TextStyle(
-                                        //                   color: Colors.white),
-                                        //             ),
-                                        //           ),
-                                        //           color: DefaultAppTheme
-                                        //               .secondaryColor,
-                                        //         ),
-                                        //       ),
-                                        //     ),
-                                        //   )
+                                        Observer(builder: (context) {
+                                          return _catalogStore.filter!.length <
+                                                  _category.subcategories!
+                                                      .items!.length
+                                              ? Align(
+                                                  alignment: Alignment.topRight,
+                                                  child: Padding(
+                                                    padding: const EdgeInsets
+                                                        .fromLTRB(20, 0, 0, 0),
+                                                    child: ClipRRect(
+                                                      borderRadius:
+                                                          BorderRadius.all(
+                                                              Radius.circular(
+                                                                  8)),
+                                                      child: Container(
+                                                        width: 16,
+                                                        height: 16,
+                                                        child: Center(
+                                                            // child: Text(
+                                                            //   '${_catalogStore.filter?.length}',
+                                                            //   style: TextStyle(
+                                                            //       color: Colors.white),
+                                                            // ),
+                                                            ),
+                                                        color: DefaultAppTheme
+                                                            .secondaryColor,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                )
+                                              : Container();
+                                        })
                                       ],
                                     ),
                                   )))
@@ -427,14 +436,13 @@ class _CategoryScreenScreenWidgetState extends State<CategoryScreen> {
                             GridView(
                               padding: EdgeInsets.zero,
                               physics: NeverScrollableScrollPhysics(),
-                              gridDelegate:
-                                  SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 2,
-                                crossAxisSpacing: 9,
-                                mainAxisSpacing: 9,
-                                // childAspectRatio: 0.66,
-                                childAspectRatio: itemWidth / itemHeight,
-                              ),
+                              gridDelegate: GourmetGridViewDelegate(
+                                  crossAxisCount: 2,
+                                  crossAxisSpacing: 9,
+                                  mainAxisSpacing: 9,
+                                  // childAspectRatio: 0.66,
+                                  // childAspectRatio: itemWidth / itemHeight,
+                                  height: 262),
                               shrinkWrap: true,
                               scrollDirection: Axis.vertical,
                               children: [

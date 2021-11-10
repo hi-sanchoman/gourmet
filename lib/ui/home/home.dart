@@ -12,6 +12,7 @@ import 'package:esentai/ui/info/banner.dart';
 import 'package:esentai/ui/info/info.dart';
 import 'package:esentai/ui/notifications/notifications.dart';
 import 'package:esentai/ui/orders/order_prepare.dart';
+import 'package:esentai/utils/extensions/gourmet_gridview_delegate.dart';
 import 'package:esentai/utils/themes/default.dart';
 import 'package:esentai/ui/catalog/product_card_widget.dart';
 import 'package:esentai/widgets/category_card_widget.dart';
@@ -738,12 +739,12 @@ class _HomeScreenWidgetState extends State<HomeScreen> {
                     child: GridView(
                       physics: NeverScrollableScrollPhysics(),
                       padding: EdgeInsets.zero,
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        crossAxisSpacing: 9,
-                        mainAxisSpacing: 9,
-                        childAspectRatio: itemWidth / itemHeight,
-                      ),
+                      gridDelegate: GourmetGridViewDelegate(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 9,
+                          mainAxisSpacing: 9,
+                          // childAspectRatio: itemWidth / itemHeight,
+                          height: 262),
                       shrinkWrap: true,
                       scrollDirection: Axis.vertical,
                       children: [

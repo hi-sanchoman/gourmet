@@ -320,7 +320,9 @@ class _FoodScreenWidgetState extends State<ProductScreen> {
   }
 
   Widget _buildBtn() {
-    return widget.product.isActive != null && widget.product.isActive!
+    return widget.product.isActive != null &&
+            widget.product.isActive! &&
+            widget.product.amount != null
         ? Padding(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
             child: Container(

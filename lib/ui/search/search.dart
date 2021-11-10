@@ -4,6 +4,7 @@ import 'package:esentai/stores/cart/cart_store.dart';
 import 'package:esentai/stores/catalog/catalog_store.dart';
 import 'package:esentai/ui/catalog/product_card_widget.dart';
 import 'package:esentai/ui/orders/order_prepare.dart';
+import 'package:esentai/utils/extensions/gourmet_gridview_delegate.dart';
 import 'package:esentai/utils/themes/default.dart';
 import 'package:esentai/widgets/progress_indicator_widget.dart';
 import 'package:flutter/material.dart';
@@ -240,6 +241,7 @@ class _SearchScreenWidgetState extends State<SearchScreen> {
                     setState(() {
                       _textController.text = '';
                       _query = '';
+                      _catalogStore.productsList = null;
                     });
                   },
                   child: Padding(
@@ -335,16 +337,16 @@ class _SearchScreenWidgetState extends State<SearchScreen> {
                           padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
                           child: Row(
                             children: [
-                              SizedBox(
-                                width: 60,
-                                height: 60,
-                                child: ClipRRect(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(30)),
-                                  child: CachedNetworkImage(
-                                      imageUrl: '${subcategory.image}'),
-                                ),
-                              ),
+                              // SizedBox(
+                              //   width: 60,
+                              //   height: 60,
+                              //   child: ClipRRect(
+                              //     borderRadius:
+                              //         BorderRadius.all(Radius.circular(30)),
+                              //     child: CachedNetworkImage(
+                              //         imageUrl: '${subcategory.image}'),
+                              //   ),
+                              // ),
                               Padding(
                                 padding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
                                 child: Text(
@@ -361,13 +363,12 @@ class _SearchScreenWidgetState extends State<SearchScreen> {
                           child: GridView(
                             padding: EdgeInsets.zero,
                             physics: NeverScrollableScrollPhysics(),
-                            gridDelegate:
-                                SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
-                              crossAxisSpacing: 9,
-                              mainAxisSpacing: 9,
-                              childAspectRatio: itemWidth / itemHeight,
-                            ),
+                            gridDelegate: GourmetGridViewDelegate(
+                                crossAxisCount: 2,
+                                crossAxisSpacing: 9,
+                                mainAxisSpacing: 9,
+                                // childAspectRatio: itemWidth / itemHeight,
+                                height: 262),
                             shrinkWrap: true,
                             scrollDirection: Axis.vertical,
                             children: [

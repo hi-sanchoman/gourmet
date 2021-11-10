@@ -86,6 +86,9 @@ class _BsSubcategoryFilterWidgetState extends State<BsSubcategoryFilterWidget> {
                             else
                               _catalogStore.filter!.add(subcategory.id!);
 
+                            _catalogStore.filter =
+                                _catalogStore.filter!.map((f) => f).toList();
+
                             print(newValue);
                           }),
                           title: Text(
@@ -110,7 +113,7 @@ class _BsSubcategoryFilterWidgetState extends State<BsSubcategoryFilterWidget> {
 
   void _onClearAllPressed() {
     setState(() {
-      _catalogStore.filter!.clear();
+      _catalogStore.filter = [];
     });
   }
 }
