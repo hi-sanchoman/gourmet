@@ -223,7 +223,7 @@ class _CategoryScreenScreenWidgetState extends State<CategoryScreen> {
                       visible: _catalogStore.isLoading,
                       child: Container(
                           padding: const EdgeInsets.fromLTRB(0, 40, 0, 0),
-                          color: Colors.white,
+                          color: Colors.transparent,
                           child: Center(child: CircularProgressIndicator())),
                     );
                   }),
@@ -263,6 +263,12 @@ class _CategoryScreenScreenWidgetState extends State<CategoryScreen> {
         );
       }
 
+      var size = MediaQuery.of(context).size;
+
+      /*24 is for notification bar on Android*/
+      final double itemHeight = (size.height - kToolbarHeight - 96) / 2;
+      final double itemWidth = size.width / 2;
+
       return _catalogStore.productsList != null &&
               _catalogStore.productsList!.items != null
           ? Padding(
@@ -274,7 +280,8 @@ class _CategoryScreenScreenWidgetState extends State<CategoryScreen> {
                   crossAxisCount: 2,
                   crossAxisSpacing: 9,
                   mainAxisSpacing: 9,
-                  childAspectRatio: 0.66,
+                  // childAspectRatio: 0.66,
+                  childAspectRatio: itemWidth / itemHeight,
                 ),
                 shrinkWrap: true,
                 scrollDirection: Axis.vertical,

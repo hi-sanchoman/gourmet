@@ -276,7 +276,7 @@ class _PhoneVerifyScreenState extends State<PhoneVerifyScreen> {
                       Spacer(),
                       Observer(builder: (context) {
                         return Visibility(
-                          visible: _formStore.isLoading,
+                          visible: _formStore.isLoading || _userStore.isLoading,
                           child: Padding(
                             padding: const EdgeInsets.fromLTRB(0, 0, 0, 20),
                             child: CircularProgressIndicator(),
@@ -364,10 +364,13 @@ class _PhoneVerifyScreenState extends State<PhoneVerifyScreen> {
     print("print- activate user");
     await _formStore.activateUser();
 
-    if (_formStore.loginResponse != null) {
+    print("after code enter: ${_formStore.successSMS}");
+
+    if (_formStore.successSMS == true) {
       print("print- get token");
       await _formStore.getToken();
-    }
+      return;
+    } else {}
     // await _registerDevice();
 
     // } else {
@@ -438,10 +441,10 @@ class _PhoneVerifyScreenState extends State<PhoneVerifyScreen> {
     _startTimer();
 
     // resend code
-    if (widget.referer == 'login')
-      _formStore.login(mode: "verify_phone");
-    else
-      _formStore.resendSMS();
+    // if (widget.referer == 'login')
+    _formStore.login(mode: "verify_phone");
+    // else
+    // _formStore.resendSMS();
   }
 
   void _startTimer() {

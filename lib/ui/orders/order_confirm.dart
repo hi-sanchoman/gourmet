@@ -570,10 +570,11 @@ class _CheckoutConfirmScreenWidgetState extends State<CheckoutConfirmScreen> {
       "comment": _orderStore.comment,
       "review": null,
       "delivery_type": _orderStore.deliveryType == 'DEV_DIY' ? 2 : 1,
-      "address": _orderStore.deliveryType == 'DEV_DIY'
-          ? null
-          : _orderStore.address?.id, // TODO: address from current address
     };
+
+    if (_orderStore.deliveryType != 'DEV_DIY' && _orderStore.address != null) {
+      data['address'] = _orderStore.address!.id;
+    }
 
     print('order to be created: $data');
 

@@ -179,6 +179,12 @@ class _SubcategoryScreenWidgetState extends State<FavoritesScreen> {
         return Container();
       }
 
+      var size = MediaQuery.of(context).size;
+
+      /*24 is for notification bar on Android*/
+      final double itemHeight = (size.height - kToolbarHeight - 96) / 2;
+      final double itemWidth = size.width / 2;
+
       return _catalogStore.favoritesList!.items != null
           ? Padding(
               padding: EdgeInsetsDirectional.fromSTEB(16, 10, 16, 0),
@@ -189,7 +195,7 @@ class _SubcategoryScreenWidgetState extends State<FavoritesScreen> {
                   crossAxisCount: 2,
                   crossAxisSpacing: 9,
                   mainAxisSpacing: 9,
-                  childAspectRatio: 0.66,
+                  childAspectRatio: itemWidth / itemHeight,
                 ),
                 shrinkWrap: true,
                 scrollDirection: Axis.vertical,

@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:esentai/data/sharedpref/constants/preferences.dart';
 import 'package:esentai/data/sharedpref/shared_preference_helper.dart';
 import 'package:esentai/models/address/address.dart';
@@ -25,7 +26,7 @@ abstract class _UserStore with Store {
   final Repository _repository;
 
   // store for handling form errors
-  final FormErrorStore formErrorStore = FormErrorStore();
+  // final FormErrorStore formErrorStore = FormErrorStore();
 
   // store for handling error messages
   final ErrorStore errorStore = ErrorStore();
@@ -197,7 +198,24 @@ abstract class _UserStore with Store {
     }).catchError((e) {
       isLoading = false;
       successProfile = false;
-      errorStore.errorMessage = e.toString();
+
+      DioError err = e as DioError;
+
+      if (err.response != null) {
+        print("login error: ${e.response!.data['email']}");
+
+        if (err.response!.data['email'] != null) {
+          errorStore.errorMessage = 'Ошибка: почта уже существует';
+        } else if (err.response!.data['username'] != null) {
+          errorStore.errorMessage = 'Ошибка: номер уже существует';
+        } else {
+          errorStore.errorMessage = 'Ошибка на сервере. Попробуйте еще раз.';
+        }
+      } else {
+        errorStore.errorMessage = 'Ошибка на сервере. Попробуйте еще раз.';
+      }
+
+      // errorStore.errorMessage = e.toString();
       // print(e);
     });
   }

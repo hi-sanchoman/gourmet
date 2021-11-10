@@ -223,8 +223,9 @@ class _ProductCardWidgetState extends State<ProductCardWidget> {
   Widget _buildBtn() {
     bool isActive = widget.product.isActive ?? false;
     double price = widget.product.price ?? 0;
+    int amount = widget.product.amount ?? 0;
 
-    return isActive
+    return isActive && amount > 0
         ? Padding(
             padding: EdgeInsetsDirectional.fromSTEB(10, 0, 10, 4),
             child: _checkItemisInCart() == false

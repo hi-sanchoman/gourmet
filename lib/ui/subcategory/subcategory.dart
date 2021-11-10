@@ -245,6 +245,12 @@ class _SubcategoryScreenWidgetState extends State<SubcategoryScreen> {
         );
       }
 
+      var size = MediaQuery.of(context).size;
+
+      /*24 is for notification bar on Android*/
+      final double itemHeight = (size.height - kToolbarHeight - 96) / 2;
+      final double itemWidth = size.width / 2;
+
       return _catalogStore.productsList != null &&
               _catalogStore.productsList!.items != null
           ? Padding(
@@ -256,7 +262,7 @@ class _SubcategoryScreenWidgetState extends State<SubcategoryScreen> {
                   crossAxisCount: 2,
                   crossAxisSpacing: 9,
                   mainAxisSpacing: 9,
-                  childAspectRatio: 0.66,
+                  childAspectRatio: itemWidth / itemHeight,
                 ),
                 shrinkWrap: true,
                 scrollDirection: Axis.vertical,

@@ -60,12 +60,19 @@ class _BsSubcategoryFilterWidgetState extends State<BsSubcategoryFilterWidget> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(12, 0, 0, 16),
-                        child: Text(
-                          'Фильтр',
-                          style: DefaultAppTheme.title2,
-                        ),
-                      ),
+                          padding: EdgeInsetsDirectional.fromSTEB(12, 0, 0, 16),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'Подкатегории',
+                                style: DefaultAppTheme.title2,
+                              ),
+                              TextButton(
+                                  child: Text('Очистить'),
+                                  onPressed: _onClearAllPressed),
+                            ],
+                          )),
                       for (Subcategory subcategory
                           in widget.subcategories.items!)
                         CheckboxListTile(
@@ -98,6 +105,12 @@ class _BsSubcategoryFilterWidgetState extends State<BsSubcategoryFilterWidget> {
               )
             ])
           : Container();
+    });
+  }
+
+  void _onClearAllPressed() {
+    setState(() {
+      _catalogStore.filter!.clear();
     });
   }
 }

@@ -101,12 +101,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         Observer(builder: (context) {
           return _buildMainBody();
         }),
-        // Observer(builder: (context) {
-        //   return Visibility(
-        //     visible: _userStore.isLoading,
-        //     child: CustomProgressIndicatorWidget(),
-        //   );
-        // }),
+
         // Observer(builder: (context) {
         //   return _userStore.profile == null
         //       ? navigate(context)
@@ -125,29 +120,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return !_userStore.isLoggedIn || _userStore.profile == null
         ? Container(
             color: Colors.white,
-            // child: Padding(
-            //   padding: const EdgeInsets.all(32.0),
-            //   child: Column(
-            //       crossAxisAlignment: CrossAxisAlignment.center,
-            //       mainAxisAlignment: MainAxisAlignment.center,
-            //       children: [
-            //         Center(
-            //           child: Text(
-            //             'Нет данных',
-            //             textAlign: TextAlign.center,
-            //           ),
-            //         ),
-            //         Padding(
-            //           padding: const EdgeInsets.all(16.0),
-            //           child: ElevatedButton(
-            //               onPressed: () {
-            //                 _userStore.getProfile();
-            //               },
-            //               child: Text('Перезагрузить'),
-            //               style: DefaultAppTheme.buttonDefaultStyle),
-            //         )
-            //       ]),
-            // ),
+            child: Padding(
+              padding: const EdgeInsets.all(32.0),
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Center(
+                      child: Text(
+                        'Нет данных',
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: ElevatedButton(
+                          onPressed: () {
+                            _userStore.getProfile();
+                          },
+                          child: Text('Перезагрузить'),
+                          style: DefaultAppTheme.buttonDefaultStyle),
+                    )
+                  ]),
+            ),
           )
         : Stack(
             children: [
@@ -407,6 +402,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ),
               ),
+              Observer(builder: (context) {
+                return Visibility(
+                  visible: _userStore.isLoading,
+                  child: CustomProgressIndicatorWidget(),
+                );
+              }),
             ],
           );
   }

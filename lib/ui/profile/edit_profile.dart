@@ -28,7 +28,7 @@ class _EditProfileScreenWidgetState extends State<EditProfileScreen> {
   final _inputKeyEmail = GlobalKey<DefaultInputFieldWidgetState>();
 
   late UserStore _userStore;
-  late FormStore _formStore;
+  // late FormStore _formStore;
 
   late DefaultInputFieldWidget _phoneInput;
   late DefaultInputFieldWidget _userInput;
@@ -51,7 +51,7 @@ class _EditProfileScreenWidgetState extends State<EditProfileScreen> {
     super.didChangeDependencies();
 
     _userStore = Provider.of<UserStore>(context);
-    _formStore = Provider.of<FormStore>(context);
+    // _formStore = Provider.of<FormStore>(context);
 
     if (_userStore.profile != null) {
       _fullnameController.text = _userStore.profile!.fullname!;
@@ -137,10 +137,12 @@ class _EditProfileScreenWidgetState extends State<EditProfileScreen> {
         children: [
           _buildMainBody(),
           Observer(builder: (context) {
+            print(_userStore.successProfile);
+
             return _userStore.successProfile
                 ? navigate(context)
                 : Helpers.showErrorMessage(
-                    context, _formStore.errorStore.errorMessage);
+                    context, _userStore.errorStore.errorMessage);
           }),
           Observer(builder: (context) {
             return Visibility(
@@ -200,7 +202,18 @@ class _EditProfileScreenWidgetState extends State<EditProfileScreen> {
                     }
 
                     await _userStore.editProfile(username, fullname, email);
-                    Navigator.of(context).pop();
+                    print('profile update: ${_userStore.successProfile}');
+
+                    if (_userStore.successProfile == true) {
+                      Helpers.showInfoMessage(
+                          context, 'Профиль изменен успешно');
+                    }
+                    // else {
+                    //   print(
+                    //       "profile update error: ${_userStore.errorStore.errorMessage}");
+                    //   Helpers.showErrorMessage(
+                    //       context, _userStore.errorStore.errorMessage);
+                    // }
                   },
                   child: Text('Сохранить'),
                   style: DefaultAppTheme.buttonDefaultStyle),
@@ -212,19 +225,20 @@ class _EditProfileScreenWidgetState extends State<EditProfileScreen> {
   }
 
   Widget navigate(BuildContext context) {
-    if (_userStore.profile != null) {
-      Future.delayed(Duration(seconds: 0), () {
-        FlushbarHelper.createSuccess(
-            message: 'Профиль обновлен',
-            title: 'Успех',
-            duration: Duration(seconds: 3))
-          ..show(context);
-      });
-    }
-
-    _userStore.successProfile = false;
-
     print("navigate called... edit profile");
+    // if (_userStore.profile != null) {
+    //   Future.delayed(Duration(seconds: 0), () {
+    //     FlushbarHelper.createSuccess(
+    //         message: 'Профиль обновлен',
+    //         title: 'Успех',
+    //         duration: Duration(seconds: 3))
+    //       ..show(context);
+    //   });
+    // }
+
+    // _userStore.successProfile = false;
+
+    // Navigator.of(context).pop();
 
     return Container();
   }

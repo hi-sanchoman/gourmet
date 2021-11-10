@@ -661,6 +661,12 @@ class _HomeScreenWidgetState extends State<HomeScreen> {
       // hide print
       print(_catalogStore.mainList?.items?.length);
 
+      var size = MediaQuery.of(context).size;
+
+      /*24 is for notification bar on Android*/
+      final double itemHeight = (size.height - kToolbarHeight - 96) / 2;
+      final double itemWidth = size.width / 2;
+
       return _catalogStore.mainList != null
           ? Container(
               padding: EdgeInsets.fromLTRB(0, 20, 0, 20),
@@ -713,7 +719,7 @@ class _HomeScreenWidgetState extends State<HomeScreen> {
                         crossAxisCount: 2,
                         crossAxisSpacing: 9,
                         mainAxisSpacing: 9,
-                        childAspectRatio: 0.66,
+                        childAspectRatio: itemWidth / itemHeight,
                       ),
                       shrinkWrap: true,
                       scrollDirection: Axis.vertical,

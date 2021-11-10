@@ -287,7 +287,12 @@ abstract class _FormStore with Store {
 
       if (res is LoginResponse) {
         loginResponse = res;
-        successSMS = true;
+
+        if (res.message!.contains('RX loyalty')) {
+          throw Exception();
+        } else {
+          successSMS = true;
+        }
       }
 
       // print("login response: $res");
@@ -295,9 +300,8 @@ abstract class _FormStore with Store {
       isLoading = false;
       successSMS = false;
 
-      DioError err = e as DioError;
-
-      errorStore.errorMessage = 'Ошибка на сервере. Попробуйте еще раз.';
+      // DioError err = e as DioError;
+      errorStore.errorMessage = 'Ошибка: неверный код';
     });
   }
 

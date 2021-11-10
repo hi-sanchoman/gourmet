@@ -1,4 +1,5 @@
 import 'package:esentai/stores/order/order_store.dart';
+import 'package:esentai/utils/extensions/gourmet_timepicker.dart';
 import 'package:esentai/utils/helpers.dart';
 import 'package:esentai/utils/themes/default.dart';
 import 'package:esentai/widgets/cupertino_switchstyle.dart';
@@ -22,6 +23,23 @@ class _PickDateWidgetState extends State<PickDateWidget> {
   bool switchListTileValue = false;
   DateTime? _currentDate;
   TimeOfDay? _currentTime = TimeOfDay.now();
+
+  @override
+  void initState() {
+    super.initState();
+
+    // if (_currentTime != null) {
+    //   if (_currentTime!.minute < 15) {
+    //     _currentTime = TimeOfDay(hour: _currentTime!.hour, minute: 0);
+    //   } else if (_currentTime!.minute >= 15 && _currentTime!.minute < 30) {
+    //     _currentTime = TimeOfDay(hour: _currentTime!.hour, minute: 15);
+    //   } else if (_currentTime!.minute >= 30 && _currentTime!.minute < 45) {
+    //     _currentTime = TimeOfDay(hour: _currentTime!.hour, minute: 30);
+    //   } else if (_currentTime!.minute >= 45 && _currentTime!.minute < 60) {
+    //     _currentTime = TimeOfDay(hour: _currentTime!.hour, minute: 45);
+    //   }
+    // }
+  }
 
   @override
   void didChangeDependencies() {
@@ -173,7 +191,7 @@ class _PickDateWidgetState extends State<PickDateWidget> {
                                   ),
                                 ),
                               ),
-                            )
+                            ),
                           ],
                         ),
                       ),
@@ -226,15 +244,24 @@ class _PickDateWidgetState extends State<PickDateWidget> {
   void _showTimePicker() async {
     print('pick time');
 
-    DatePicker.showTimePicker(context,
+    DatePicker.showPicker(context,
+        pickerModel: GourmetTimePicker(currentTime: DateTime.now()),
         locale: LocaleType.ru,
-        showTitleActions: true,
-        showSecondsColumn: false,
-        currentTime: DateTime.now(), onConfirm: (date) {
+        showTitleActions: true, onConfirm: (date) {
       setState(() {
         _currentTime = TimeOfDay(hour: date.hour, minute: date.minute);
       });
     });
+
+    // DatePicker.showTimePicker(context,
+    //     locale: LocaleType.ru,
+    //     showTitleActions: true,
+    //     showSecondsColumn: false,
+    //     currentTime: DateTime.now(), onConfirm: (date) {
+    //   setState(() {
+    //     _currentTime = TimeOfDay(hour: date.hour, minute: date.minute);
+    //   });
+    // });
 
     // final TimeOfDay? res = await showTimePicker(
     //     initialEntryMode: TimePickerEntryMode.dial,

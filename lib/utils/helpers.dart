@@ -21,21 +21,18 @@ class Helpers {
       // });
 
       Future.delayed(Duration(milliseconds: 0), () {
-        // Flushbar(
-        //   title: 'Ошибка',
-        //   message: message,
-        //   icon: Icon(
-        //     Icons.info_outline,
-        //     size: 28.0,
-        //     color: Colors.blue[300],
-        //   ),
-        //   leftBarIndicatorColor: Colors.blue[300],
-        //   duration: Duration(seconds: 3),
-        //   flushbarPosition: FlushbarPosition.TOP,
-        // )..show(context);
-
-        Helpers.showInfoMessage(
-            context, 'Ошибка на сервере. Попробуйте еще раз');
+        Flushbar(
+          title: 'Ошибка',
+          message: message,
+          icon: Icon(
+            Icons.info_outline,
+            size: 28.0,
+            color: Colors.blue[300],
+          ),
+          leftBarIndicatorColor: Colors.blue[300],
+          duration: Duration(seconds: 3),
+          flushbarPosition: FlushbarPosition.TOP,
+        )..show(context);
       });
     }
 

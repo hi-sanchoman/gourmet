@@ -247,6 +247,12 @@ class _SearchScreenWidgetState extends State<SearchScreen> {
       //   }
       // }
 
+      var size = MediaQuery.of(context).size;
+
+      /*24 is for notification bar on Android*/
+      final double itemHeight = (size.height - kToolbarHeight - 96) / 2;
+      final double itemWidth = size.width / 2;
+
       return _catalogStore.searchList != null &&
               _catalogStore.searchList!.items != null
           ? Padding(
@@ -271,7 +277,7 @@ class _SearchScreenWidgetState extends State<SearchScreen> {
                               crossAxisCount: 2,
                               crossAxisSpacing: 9,
                               mainAxisSpacing: 9,
-                              childAspectRatio: 0.66,
+                              childAspectRatio: itemWidth / itemHeight,
                             ),
                             shrinkWrap: true,
                             scrollDirection: Axis.vertical,
