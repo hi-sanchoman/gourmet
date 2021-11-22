@@ -402,12 +402,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ),
               ),
-              Observer(builder: (context) {
-                return Visibility(
-                  visible: _userStore.isLoading,
-                  child: CustomProgressIndicatorWidget(),
-                );
-              }),
+              // Observer(builder: (context) {
+              //   return Visibility(
+              //     visible: _userStore.isLoading,
+              //     child: CustomProgressIndicatorWidget(),
+              //   );
+              // }),
             ],
           );
   }

@@ -367,6 +367,7 @@ class _PhoneVerifyScreenState extends State<PhoneVerifyScreen> {
     print("after code enter: ${_formStore.successSMS}");
 
     if (_formStore.successSMS == true) {
+      _formStore.successSMS = false;
       print("print- get token");
       await _formStore.getToken();
       return;

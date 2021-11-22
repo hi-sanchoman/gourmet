@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:esentai/data/sharedpref/constants/preferences.dart';
 import 'package:esentai/models/address/address.dart';
 import 'package:esentai/stores/user/user_store.dart';
 import 'package:esentai/ui/address/add_address.dart';
@@ -7,6 +10,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AddressPickerWidget extends StatefulWidget {
   AddressPickerWidget({Key? key}) : super(key: key);
@@ -277,8 +281,12 @@ class _ChooseDefaultAddressWidgetWidgetState
     _userStore.getAddresses();
   }
 
-  void _onAddressPicked(Address address) {
+  void _onAddressPicked(Address address) async {
     _userStore.currentAddress = address;
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString(
+        Preferences.current_address, _userStore.currentAddress!.toJson());
 
     Navigator.of(context).pop();
   }
@@ -289,6 +297,9 @@ class _ChooseDefaultAddressWidgetWidgetState
     // clear default address
     if (_userStore.currentAddress?.id == address.id) {
       _userStore.currentAddress = null;
+
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString(Preferences.current_address, '');
     }
 
     await _userStore.deleteAddress(address.id!);

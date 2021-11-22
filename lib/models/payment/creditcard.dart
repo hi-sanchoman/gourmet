@@ -20,8 +20,8 @@ class CreditCard {
 
   Map<String, dynamic> toMap() {
     return {
-      'cardId': cardId,
-      'cardStr': cardStr,
+      'card_id': cardId,
+      'card_num': cardStr,
     };
   }
 

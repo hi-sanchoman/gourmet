@@ -13,6 +13,7 @@ import 'package:esentai/models/catalog/gift_list.dart';
 import 'package:esentai/models/catalog/product.dart';
 import 'package:esentai/models/catalog/product_list.dart';
 import 'package:esentai/models/catalog/search_list.dart';
+import 'package:esentai/models/catalog/search_result.dart';
 import 'package:esentai/models/catalog/subcategory_list.dart';
 import 'package:esentai/models/favorites/favorite_list.dart';
 import 'package:esentai/models/gift/package_list.dart';
@@ -261,16 +262,74 @@ class Repository {
   Future<ProductList> autocomplete(
     String query,
   ) async {
-    return await _catalogApi.autocomplete(query).then((list) {
+    ProductList result = ProductList(items: []);
+    ProductList products = ProductList();
+    GiftList gifts = GiftList();
+
+    products = await _catalogApi.autocomplete(query).then((list) {
       return list;
     });
+
+    if (products.items != null) {
+      result.items!.addAll(products.items!);
+    }
+
+    gifts = await _catalogApi.searchGifts(query, null).then((list) {
+      return list;
+    });
+
+    if (gifts.items != null) {
+      result.items!.addAll(gifts.items!);
+    }
+
+    return result;
   }
 
   // search products
   Future<SearchList> searchProducts(String query, String? token) async {
-    return await _catalogApi.searchProducts(query, token).then((list) {
+    SearchList result = SearchList(items: []);
+
+    SearchList foundProducts = SearchList();
+    GiftList foundGifts = GiftList();
+
+    // found products
+    foundProducts = await _catalogApi.searchProducts(query, token).then((list) {
       return list;
     });
+
+    if (foundProducts.items != null) {
+      result.items!.addAll(foundProducts.items!);
+    }
+
+    // found gifts
+    foundGifts = await _catalogApi.searchGifts(query, token).then((list) {
+      return list;
+    });
+
+    if (foundGifts.items != null) {
+      List<Map<String, dynamic>> list = [];
+
+      for (Product item in foundGifts.items!) {
+        list.add({
+          "id": item.id,
+          "name": item.name,
+          "main_image": item.mainImage,
+          "price": "${item.price}",
+          "amount": item.amount,
+          "is_active": item.isActive,
+          "is_liked": item.isLiked,
+          "is_new": item.isNew,
+          "item_type": item.itemType,
+        });
+      }
+
+      SearchResult giftsResult =
+          SearchResult(id: -1, name: 'Подарочные наборы', products: list);
+
+      result.items?.add(giftsResult);
+    }
+
+    return result;
   }
 
   // get favorites

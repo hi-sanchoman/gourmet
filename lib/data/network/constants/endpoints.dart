@@ -49,6 +49,7 @@ class Endpoints {
   static const String getBanners = baseUrl + "/admin/banner/";
   static const String getBannerById = baseUrl + '/admin/banner/:id/';
   static const String searchProducts = baseUrl + "/subcategory-list/";
+  static const String searchGifts = baseUrl + "/gifts/";
   static const String getPackages = baseUrl + "/admin/package/";
   static const String getPostcards = baseUrl + "/admin/postcard/";
 

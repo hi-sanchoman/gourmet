@@ -46,6 +46,7 @@ class _OrderDetailsScreenWidgetState extends State<OrderDetailsWidget> {
   Widget build(BuildContext context) {
     return Scaffold(
         key: _scaffoldKey,
+        resizeToAvoidBottomInset: true,
         backgroundColor: Color(0xFFFCFCFC),
         body: _buildBody());
   }
@@ -643,8 +644,7 @@ class _OrderDetailsScreenWidgetState extends State<OrderDetailsWidget> {
         ),
         if (_userStore.currentOrder!.review == null)
           Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(
-                16, 10, 16, MediaQuery.of(context).viewInsets.bottom + 64),
+            padding: EdgeInsetsDirectional.fromSTEB(16, 10, 16, 16),
             child: ElevatedButton(
               onPressed: () {
                 _submitReview();

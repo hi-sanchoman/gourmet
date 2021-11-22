@@ -131,6 +131,27 @@ class CatalogApi {
     }
   }
 
+  // search gifts
+  Future<GiftList> searchGifts(String query, String? token) async {
+    try {
+      var params = {"search": query};
+
+      var options;
+      if (token != null && token.isNotEmpty)
+        options = Options(headers: {"Authorization": "JWT $token"});
+
+      final res = await _dioClient.get(Endpoints.searchGifts,
+          queryParameters: params, options: options);
+
+      print('res for products... $res');
+
+      return GiftList.fromJson(res);
+    } catch (e) {
+      return GiftList();
+      // throw e;
+    }
+  }
+
   // get main gifts
   Future<GiftList> getMainGifts(String? token) async {
     try {

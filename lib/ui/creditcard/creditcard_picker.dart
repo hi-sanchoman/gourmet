@@ -1,4 +1,5 @@
 import 'package:credit_card_type_detector/credit_card_type_detector.dart';
+import 'package:esentai/data/sharedpref/constants/preferences.dart';
 import 'package:esentai/models/address/address.dart';
 import 'package:esentai/models/payment/creditcard.dart';
 import 'package:esentai/stores/user/user_store.dart';
@@ -11,6 +12,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CreditCardPickerWidget extends StatefulWidget {
   CreditCardPickerWidget({Key? key}) : super(key: key);
@@ -282,8 +284,12 @@ class _ChooseDefaultCreditCardWidgetWidgetState
     _userStore.getCards();
   }
 
-  void _onCardPicked(CreditCard card) {
+  void _onCardPicked(CreditCard card) async {
     _userStore.currentCard = card;
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString(
+        Preferences.current_card, _userStore.currentCard!.toJson());
 
     Navigator.of(context).pop();
   }
@@ -294,9 +300,14 @@ class _ChooseDefaultCreditCardWidgetWidgetState
     // clear default address
     if (_userStore.currentCard?.cardId == card.cardId) {
       _userStore.currentCard = null;
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString(Preferences.current_card, '');
     }
 
     // await _userStore.deleteCard(card.id!);
-    _userStore.deleteCard(card.cardId!);
+    await _userStore.deleteCard(card.cardId!);
+
+    // refresh
+    _userStore.getCards();
   }
 }

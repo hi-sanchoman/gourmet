@@ -70,6 +70,21 @@ mixin _$CatalogStore on _CatalogStore, Store {
     });
   }
 
+  final _$giftsListAtom = Atom(name: '_CatalogStore.giftsList');
+
+  @override
+  GiftList? get giftsList {
+    _$giftsListAtom.reportRead();
+    return super.giftsList;
+  }
+
+  @override
+  set giftsList(GiftList? value) {
+    _$giftsListAtom.reportWrite(value, super.giftsList, () {
+      super.giftsList = value;
+    });
+  }
+
   final _$mainListAtom = Atom(name: '_CatalogStore.mainList');
 
   @override
@@ -484,6 +499,13 @@ mixin _$CatalogStore on _CatalogStore, Store {
     return _$getPostcardsAsyncAction.run(() => super.getPostcards());
   }
 
+  final _$autocompleteAsyncAction = AsyncAction('_CatalogStore.autocomplete');
+
+  @override
+  Future<dynamic> autocomplete(String query) {
+    return _$autocompleteAsyncAction.run(() => super.autocomplete(query));
+  }
+
   final _$_CatalogStoreActionController =
       ActionController(name: '_CatalogStore');
 
@@ -527,6 +549,7 @@ fetchCatalogsFuture: ${fetchCatalogsFuture},
 catalogList: ${catalogList},
 searchList: ${searchList},
 mainGifts: ${mainGifts},
+giftsList: ${giftsList},
 mainList: ${mainList},
 subcategoryList: ${subcategoryList},
 productsList: ${productsList},

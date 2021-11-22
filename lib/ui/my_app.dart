@@ -1,7 +1,12 @@
+import 'dart:convert';
+
 import 'package:esentai/constants/app_theme.dart';
 import 'package:esentai/constants/strings.dart';
 import 'package:esentai/data/repository.dart';
+import 'package:esentai/data/sharedpref/constants/preferences.dart';
 import 'package:esentai/di/components/service_locator.dart';
+import 'package:esentai/models/address/address.dart';
+import 'package:esentai/models/payment/creditcard.dart';
 import 'package:esentai/stores/cart/cart_store.dart';
 import 'package:esentai/stores/cart/gift_store.dart';
 import 'package:esentai/stores/catalog/catalog_store.dart';
@@ -24,6 +29,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
@@ -136,6 +142,8 @@ class _MyAppState extends State<MyApp> {
     super.didChangeDependencies();
 
     // print("from my app: ${_userStore.isLoggedIn}");
+
+    _initFromShared();
   }
 
   @override
@@ -190,5 +198,30 @@ class _MyAppState extends State<MyApp> {
 
   Widget _initScreen() {
     return widget.initScreen == 1 ? NavBarScreen() : OnBoardingScreen();
+  }
+
+  void _initFromShared() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    // current address
+    String? currentAddressString =
+        await prefs.getString(Preferences.current_address);
+
+    if (currentAddressString != null && currentAddressString.isNotEmpty) {
+      _userStore.currentAddress = Address.fromJson(currentAddressString);
+      _orderStore.address = _userStore.currentAddress;
+    }
+
+    // current payment card
+    String? currentCardString = await prefs.getString(Preferences.current_card);
+
+    if (currentCardString != null && currentCardString.isNotEmpty) {
+      print("current card: $currentCardString");
+
+      _userStore.currentCard = CreditCard.fromJson(currentCardString);
+      _userStore.currentPaymentMethod = 1;
+      _orderStore.paymentId = '1'; // by credit card
+      print('current card: ${_userStore.currentCard}');
+    }
   }
 }

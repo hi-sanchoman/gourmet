@@ -56,7 +56,8 @@ class _CategoryScreenScreenWidgetState extends State<CategoryScreen> {
     if (_category.hasPermissions == true && hasPermissions == null) {
       bool res = await showCupertinoModalPopup(
           context: context,
-          builder: (BuildContext context) => CupertinoAlertDialog(
+          builder: (BuildContext context) => WillPopScope(
+              child: CupertinoAlertDialog(
                 title: new Text("Вам 21 год или больше?"),
                 content: Text('${_category.permissionsText}'),
                 actions: <Widget>[
@@ -74,7 +75,10 @@ class _CategoryScreenScreenWidgetState extends State<CategoryScreen> {
                     },
                   )
                 ],
-              ));
+              ),
+              onWillPop: () async {
+                return false;
+              }));
 
       if (res == true) {
         // it's ok
@@ -333,16 +337,16 @@ class _CategoryScreenScreenWidgetState extends State<CategoryScreen> {
                 _buildFilter(),
                 Stack(children: [
                   _buildListView(),
-                  Observer(builder: (context) {
-                    return Visibility(
-                      visible: _catalogStore.isLoading,
-                      child: Container(
-                          padding: const EdgeInsets.fromLTRB(0, 40, 0, 0),
-                          color: Color(0xFFFCFCFC),
-                          // color: Colors.transparent,
-                          child: Center(child: CircularProgressIndicator())),
-                    );
-                  }),
+                  // Observer(builder: (context) {
+                  //   return Visibility(
+                  //     visible: _catalogStore.isLoading,
+                  //     child: Container(
+                  //         padding: const EdgeInsets.fromLTRB(0, 40, 0, 0),
+                  //         color: Color(0xFFFCFCFC),
+                  //         // color: Colors.transparent,
+                  //         child: Center(child: CircularProgressIndicator())),
+                  //   );
+                  // }),
                 ]),
                 Container(
                   height: 120,
@@ -406,6 +410,39 @@ class _CategoryScreenScreenWidgetState extends State<CategoryScreen> {
     final double itemHeight = (size.height - kToolbarHeight - 96) / 2;
     final double itemWidth = size.width / 2;
 
+    int totalCount = 0;
+
+    if (_catalogStore.subcategoryList != null &&
+        _catalogStore.subcategoryList!.items != null &&
+        _catalogStore.subcategoryList!.items!.length > 0) {
+      for (var subcategory in _catalogStore.subcategoryList!.items!) {
+        totalCount += subcategory.products!.items!.length;
+      }
+
+      if (totalCount <= 0) {
+        return Container(
+          padding: EdgeInsets.only(top: 150),
+          width: double.infinity,
+          child: Column(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('Ничего не найдено',
+                    style: DefaultAppTheme.title1
+                        .override(color: DefaultAppTheme.grayLight)),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
+                  child: Text(
+                    'К сожалению, этих товаров сейчас нет',
+                    style: DefaultAppTheme.bodyText2,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ]),
+        );
+      }
+    }
+
     return _catalogStore.subcategoryList != null &&
             _catalogStore.subcategoryList!.items != null &&
             _catalogStore.subcategoryList!.items!.length > 0
@@ -455,7 +492,7 @@ class _CategoryScreenScreenWidgetState extends State<CategoryScreen> {
                             ),
                         ],
                       ),
-                    )
+                    ),
               ],
             ))
         : Container(
@@ -496,9 +533,9 @@ class _CategoryScreenScreenWidgetState extends State<CategoryScreen> {
                 child: ChoiceChip(
                   label: Text('По популярности'),
                   onSelected: (val) {
-                    _sort('-name');
+                    _sort('popularity_count');
                   },
-                  selected: _sortBy == '-name',
+                  selected: _sortBy == 'popularity_count',
                 ),
               ),
               Padding(
@@ -559,6 +596,7 @@ class _CategoryScreenScreenWidgetState extends State<CategoryScreen> {
 
   void _loadData() {
     // _catalogStore.getProducts(_catalogStore.filter!, _sortBy, _isActive);
+    print("load with filter: ${_catalogStore.filter}");
     _catalogStore.getSubcategories(_catalogStore.filter!, _sortBy, _isActive);
   }
 

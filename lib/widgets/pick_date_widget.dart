@@ -117,20 +117,26 @@ class _PickDateWidgetState extends State<PickDateWidget> {
                         height: 360,
                         locale: 'ru',
                         onDayPressed: (DateTime date, List<Event> events) {
+                          print('day pressed');
                           this.setState(() => _currentDate = date);
                         },
+
                         weekdayTextStyle: TextStyle(
                           color: Color(0x4D3C3C43),
                         ),
                         weekendTextStyle: TextStyle(
                           color: Color(0xFF313234),
                         ),
+                        todayButtonColor: Colors.transparent,
+                        todayTextStyle:
+                            TextStyle(color: DefaultAppTheme.primaryColor),
                         thisMonthDayBorderColor: Colors.grey,
                         selectedDayButtonColor: DefaultAppTheme.primaryColor,
                         showHeaderButton: true,
                         showHeader: true,
                         // firstDayOfWeek: 1,
-                        minSelectedDate: DateTime.now(),
+                        minSelectedDate:
+                            DateTime.now().subtract(Duration(days: 1)),
                         selectedDayTextStyle: TextStyle(
                             // backgroundColor: DefaultAppTheme.primaryColor,
                             ),

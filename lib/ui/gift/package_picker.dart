@@ -1,8 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:esentai/models/catalog/product.dart';
 import 'package:esentai/models/gift/package.dart';
+import 'package:esentai/stores/cart/cart_store.dart';
 import 'package:esentai/stores/catalog/catalog_store.dart';
 import 'package:esentai/ui/gift/postcard_picker.dart';
+import 'package:esentai/utils/routes/routes.dart';
 import 'package:esentai/utils/themes/default.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -21,6 +23,7 @@ class PackagePickerScreen extends StatefulWidget {
 class _PackagePickerScreenState extends State<PackagePickerScreen> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   late CatalogStore _catalogStore;
+  late CartStore _cartStore;
 
   Package? _chosen;
   bool _picked = false;
@@ -30,6 +33,7 @@ class _PackagePickerScreenState extends State<PackagePickerScreen> {
     super.didChangeDependencies();
 
     _catalogStore = Provider.of<CatalogStore>(context);
+    _cartStore = Provider.of<CartStore>(context);
 
     // set curretn gift id
     _catalogStore.setGift(widget.gift);
@@ -231,10 +235,28 @@ class _PackagePickerScreenState extends State<PackagePickerScreen> {
     // set curret packageId in the store
     _catalogStore.setPackage(_chosen);
 
-    // go to postcard chooser
-    pushNewScreen(context,
-        screen: PostcardPickerScreen(gift: widget.gift),
-        withNavBar: false,
-        pageTransitionAnimation: PageTransitionAnimation.fade);
+    // // go to postcard chooser
+    // pushNewScreen(context,
+    //     screen: PostcardPickerScreen(gift: widget.gift),
+    //     withNavBar: false,
+    //     pageTransitionAnimation: PageTransitionAnimation.fade);
+
+    // submit to cart
+    print("add to cart: ${_catalogStore.gift}, ${_catalogStore.package}");
+
+    _cartStore.addToCart(_catalogStore.gift!,
+        package: _catalogStore.package, postcard: null);
+
+    // clear
+    _catalogStore.setPostcard(null);
+    _catalogStore.setPackage(null);
+    _catalogStore.setGift(null);
+
+    // go to home
+    // return;
+    Future.delayed(Duration(milliseconds: 0), () {
+      Navigator.of(context)
+          .pushNamedAndRemoveUntil(Routes.home, (route) => false);
+    });
   }
 }

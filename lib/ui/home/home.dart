@@ -268,24 +268,24 @@ class _HomeScreenWidgetState extends State<HomeScreen> {
                               children: [
                                 Image.asset('assets/images/ic_notification.png',
                                     width: 20, height: 20),
-                                if (_userStore.showBadge != null &&
-                                    _userStore.showBadge != false)
-                                  Padding(
-                                    padding:
-                                        const EdgeInsets.fromLTRB(10, 0, 0, 0),
-                                    child: Align(
-                                      alignment: Alignment.topRight,
-                                      child: ClipRRect(
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(5)),
-                                          child: Container(
-                                            color:
-                                                DefaultAppTheme.secondaryColor,
-                                            width: 10,
-                                            height: 10,
-                                          )),
-                                    ),
-                                  ),
+                                // if (_userStore.showBadge != null &&
+                                //     _userStore.showBadge != false)
+                                //   Padding(
+                                //     padding:
+                                //         const EdgeInsets.fromLTRB(10, 0, 0, 0),
+                                //     child: Align(
+                                //       alignment: Alignment.topRight,
+                                //       child: ClipRRect(
+                                //           borderRadius: BorderRadius.all(
+                                //               Radius.circular(5)),
+                                //           child: Container(
+                                //             color:
+                                //                 DefaultAppTheme.secondaryColor,
+                                //             width: 10,
+                                //             height: 10,
+                                //           )),
+                                //     ),
+                                //   ),
                               ],
                             ),
                           )),
@@ -538,11 +538,15 @@ class _HomeScreenWidgetState extends State<HomeScreen> {
               ),
               padding: EdgeInsets.fromLTRB(0, 20, 0, 20),
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Padding(
                     padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
                     child: Row(
                       mainAxisSize: MainAxisSize.max,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         Expanded(
                           child: Padding(
@@ -617,6 +621,7 @@ class _HomeScreenWidgetState extends State<HomeScreen> {
               ),
               padding: EdgeInsets.fromLTRB(0, 20, 0, 20),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Padding(
                     padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),

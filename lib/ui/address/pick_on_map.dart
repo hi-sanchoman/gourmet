@@ -4,9 +4,11 @@ import 'package:esentai/utils/helpers.dart';
 import 'package:esentai/utils/locale/app_localization.dart';
 import 'package:esentai/utils/themes/default.dart';
 import 'package:esentai/widgets/progress_indicator_widget.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:maps_toolkit/maps_toolkit.dart';
 import 'package:provider/provider.dart';
 import 'package:yandex_mapkit/yandex_mapkit.dart';
 
@@ -54,7 +56,10 @@ class _ChooseAddressScreenState extends State<PickOnMapScreen> {
         automaticallyImplyLeading: true,
         leading: InkWell(
           onTap: () {
-            _onClose();
+            setState(() {
+              _address = '';
+            });
+            Navigator.of(context).pop();
           },
           child: Icon(
             Icons.arrow_back_ios,
@@ -141,8 +146,54 @@ class _ChooseAddressScreenState extends State<PickOnMapScreen> {
     ]);
   }
 
-  void _onClose() {
+  void _onClose() async {
+    // validate address
+    if (!_valididateAddress()) {
+      // show wrong address dialog
+      await showCupertinoModalPopup(
+          context: context,
+          builder: (BuildContext context) => WillPopScope(
+              child: CupertinoAlertDialog(
+                // title: new Text(""),
+                content: Text('Указаный адрес находится вне зоны доставки'),
+                actions: <Widget>[
+                  CupertinoDialogAction(
+                    isDefaultAction: true,
+                    child: Text('Выбрать другой адрес'),
+                    onPressed: () {
+                      setState(() {
+                        _address = '';
+                      });
+                      Navigator.pop(context, true);
+                    },
+                  ),
+                ],
+              ),
+              onWillPop: () async {
+                return false;
+              }));
+
+      return;
+    }
+
     Navigator.pop(context, _address);
+  }
+
+  bool _valididateAddress() {
+    if (_point == null) return false;
+
+    List<LatLng> points = [];
+    points.add(LatLng(43.229453, 76.966498));
+    points.add(LatLng(43.255743, 76.984039));
+    points.add(LatLng(43.273285, 76.984868));
+    points.add(LatLng(43.269717, 76.923165));
+    points.add(LatLng(43.242868, 76.821920));
+    points.add(LatLng(43.198244, 76.840771));
+    points.add(LatLng(43.194735, 76.896971));
+    points.add(LatLng(43.229453, 76.966498));
+
+    return PolygonUtil.containsLocation(
+        LatLng(_point!.latitude, _point!.longitude), points, true);
   }
 
   Future<void> cameraPositionChanged(

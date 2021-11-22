@@ -82,12 +82,12 @@ class _SubcategoryScreenWidgetState extends State<FavoritesScreen> {
     return Stack(
       children: [
         _buildMainBody(),
-        Observer(builder: (context) {
-          return Visibility(
-            visible: _catalogStore.isLoading,
-            child: CustomProgressIndicatorWidget(),
-          );
-        }),
+        // Observer(builder: (context) {
+        //   return Visibility(
+        //     visible: _catalogStore.isLoading,
+        //     child: CustomProgressIndicatorWidget(),
+        //   );
+        // }),
         Observer(builder: (context) {
           return _catalogStore.successProducts
               ? navigate(context)
@@ -186,7 +186,32 @@ class _SubcategoryScreenWidgetState extends State<FavoritesScreen> {
       final double itemHeight = (size.height - kToolbarHeight - 96) / 2;
       final double itemWidth = size.width / 2;
 
-      return _catalogStore.favoritesList!.items != null &&
+      if (_catalogStore.favoritesList != null &&
+          _catalogStore.favoritesList!.items != null &&
+          _catalogStore.favoritesList!.items!.length <= 0) {
+        return Container(
+          padding: EdgeInsets.only(top: 200),
+          child: Column(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('Тут пусто',
+                    style: DefaultAppTheme.title1
+                        .override(color: DefaultAppTheme.grayLight)),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
+                  child: Text(
+                    'Добавьте товар в избранные, нажав на иконку «сердце»',
+                    style: DefaultAppTheme.bodyText2,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ]),
+        );
+      }
+
+      return _catalogStore.favoritesList != null &&
+              _catalogStore.favoritesList!.items != null &&
               _catalogStore.favoritesList!.items!.length > 0
           ? Padding(
               padding: EdgeInsetsDirectional.fromSTEB(16, 10, 16, 0),
@@ -206,25 +231,7 @@ class _SubcategoryScreenWidgetState extends State<FavoritesScreen> {
                 ],
               ),
             )
-          : Container(
-              padding: EdgeInsets.only(top: 200),
-              child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text('Тут пусто',
-                        style: DefaultAppTheme.title1
-                            .override(color: DefaultAppTheme.grayLight)),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
-                      child: Text(
-                        'Добавьте товар в избранные, нажав на иконку «сердце»',
-                        style: DefaultAppTheme.bodyText2,
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ]),
-            );
+          : Container();
     });
   }
 

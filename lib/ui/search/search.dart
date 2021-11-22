@@ -52,7 +52,7 @@ class _SearchScreenWidgetState extends State<SearchScreen> {
     _catalogStore = Provider.of<CatalogStore>(context);
     _cartStore = Provider.of<CartStore>(context);
 
-    _catalogStore.searchList?.items?.clear();
+    _catalogStore.searchList = null;
     // _catalogStore.filter?.clear();
   }
 
@@ -242,6 +242,7 @@ class _SearchScreenWidgetState extends State<SearchScreen> {
                       _textController.text = '';
                       _query = '';
                       _catalogStore.productsList = null;
+                      _catalogStore.searchList = null;
                     });
                   },
                   child: Padding(
@@ -269,6 +270,12 @@ class _SearchScreenWidgetState extends State<SearchScreen> {
     return Observer(builder: (context) {
       print(_catalogStore.productsList?.items?.length);
 
+      if (_catalogStore.productsList != null &&
+          _catalogStore.productsList!.items != null &&
+          _catalogStore.productsList!.items!.length <= 0) {
+        return _buildNotFound();
+      }
+
       return _catalogStore.productsList != null
           ? Padding(
               padding: const EdgeInsets.fromLTRB(0, 16, 0, 92),
@@ -279,6 +286,10 @@ class _SearchScreenWidgetState extends State<SearchScreen> {
             )
           : Container(
               height: 0,
+              // child: Text(
+              //   'Нет вариантов',
+              //   style: DefaultAppTheme.bodyText2,
+              // ),
             );
     });
   }
@@ -322,6 +333,12 @@ class _SearchScreenWidgetState extends State<SearchScreen> {
       /*24 is for notification bar on Android*/
       final double itemHeight = (size.height - kToolbarHeight - 96) / 2;
       final double itemWidth = size.width / 2;
+
+      if (_catalogStore.searchList != null &&
+          _catalogStore.searchList!.items != null &&
+          _catalogStore.searchList!.items!.length <= 0) {
+        return _buildNotFound();
+      }
 
       return _catalogStore.searchList != null &&
               _catalogStore.searchList!.items != null &&
@@ -441,11 +458,30 @@ class _SearchScreenWidgetState extends State<SearchScreen> {
       // print(_query);
       Future.delayed(Duration(milliseconds: 400), () {
         _catalogStore.searchProducts(search);
-
         _textController.text = search;
-
         _catalogStore.productsList = null;
       });
     }
+  }
+
+  Widget _buildNotFound() {
+    return Container(
+      padding: EdgeInsets.only(top: 200),
+      width: double.infinity,
+      child: Column(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text('Ничего не найдено',
+                style: DefaultAppTheme.title1
+                    .override(color: DefaultAppTheme.grayLight)),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
+              child: Image.asset('assets/images/search_not_found.png',
+                  width: 100, height: 100),
+            ),
+          ]),
+    );
   }
 }

@@ -23,12 +23,25 @@ class CatalogScreen extends StatefulWidget {
 
 class _CatalogScreenWidgetState extends State<CatalogScreen> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
+  late ScrollController _scrollController;
 
   late CatalogStore _catalogStore;
 
   @override
   void initState() {
     super.initState();
+
+    // add scroll position
+    _scrollController = ScrollController()
+      ..addListener(() {
+        // print("scroll pos: ${_scrollController.offset}");
+      });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -42,6 +55,10 @@ class _CatalogScreenWidgetState extends State<CatalogScreen> {
     if (!_catalogStore.isLoading) {
       _catalogStore.getCategoryList();
     }
+
+    Future.delayed(Duration(seconds: 0), () {
+      _scrollController.jumpTo(100);
+    });
   }
 
   @override
@@ -72,6 +89,7 @@ class _CatalogScreenWidgetState extends State<CatalogScreen> {
                 }
               },
               child: CustomScrollView(
+                controller: _scrollController,
                 slivers: [
                   SliverAppBar(
                       floating: false,

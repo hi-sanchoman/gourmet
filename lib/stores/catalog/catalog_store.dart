@@ -53,6 +53,9 @@ abstract class _CatalogStore with Store {
   GiftList? mainGifts;
 
   @observable
+  GiftList? giftsList;
+
+  @observable
   ProductList? mainList;
 
   @observable
@@ -202,7 +205,7 @@ abstract class _CatalogStore with Store {
     }).catchError((e) {
       isLoading = false;
       successProducts = false;
-      errorStore.errorMessage = "Ошибка на сервере. Попробуйте позже.";
+      errorStore.errorMessage = "Ошибка: выберите хотя бы одну подкатегорию";
     });
   }
 
@@ -291,7 +294,7 @@ abstract class _CatalogStore with Store {
       successProducts = true;
       searchList = res;
 
-      // print("searchlist $searchList");
+      print("searchlist $searchList");
     }).catchError((e) {
       isLoading = false;
       successProducts = false;
@@ -335,7 +338,7 @@ abstract class _CatalogStore with Store {
 
   @action
   Future toggleFav(int id, String type) async {
-    isLoading = true;
+    // isLoading = true;
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString(Preferences.auth_token);
@@ -388,7 +391,7 @@ abstract class _CatalogStore with Store {
                   for (var item in res.products!) {
                     if (item['id'] == id) {
                       item['is_liked'] = !item['is_liked']!;
-                      // print('item found to be checked/unchekd');
+                      // print('item ${item} found to be checked/unchecked');
                       break;
                     }
                   }
@@ -446,6 +449,25 @@ abstract class _CatalogStore with Store {
                   // print('item found to be checked/unchekd');
                   break;
                 }
+              }
+            }
+
+            // search list
+            if (searchList != null) {
+              if (searchList!.items != null) {
+                for (var res in searchList!.items!) {
+                  if (res.products != null) {
+                    for (var item in res.products!) {
+                      if (item['id'] == id) {
+                        item['is_liked'] = !item['is_liked']!;
+                        // print('item ${item} found to be checked/unchecked');
+                        break;
+                      }
+                    }
+                  }
+                }
+
+                searchList = searchList!.copyWith(items: searchList!.items!);
               }
             }
 

@@ -1,3 +1,4 @@
+import 'package:esentai/constants/app_config.dart';
 import 'package:esentai/models/catalog/product.dart';
 import 'package:esentai/models/gift/gift_wrapper.dart';
 import 'package:esentai/models/order/order_result.dart';
@@ -5,6 +6,7 @@ import 'package:esentai/stores/cart/cart_store.dart';
 import 'package:esentai/stores/order/order_store.dart';
 import 'package:esentai/stores/user/user_store.dart';
 import 'package:esentai/ui/creditcard/creditcard_picker.dart';
+import 'package:esentai/ui/creditcard/enter_cvc.dart';
 import 'package:esentai/ui/orders/orders.dart';
 import 'package:esentai/ui/orders/payment_picker.dart';
 import 'package:esentai/ui/payment/pay.dart';
@@ -44,6 +46,8 @@ class _CheckoutConfirmScreenWidgetState extends State<CheckoutConfirmScreen> {
 
   String _deliveryMode = 'DEV_COURIER';
 
+  double _totalPrice = 0;
+
   @override
   void initState() {
     super.initState();
@@ -63,6 +67,12 @@ class _CheckoutConfirmScreenWidgetState extends State<CheckoutConfirmScreen> {
       _fullnameController.text = _userStore.profile!.fullname!;
       _usernameController.text = _userStore.profile!.username!;
       _emailController.text = _userStore.profile!.email!;
+    }
+
+    _totalPrice = _cartStore.getTotalAmount();
+    if (_totalPrice < AppConfig.delivery_threshold &&
+        _orderStore.deliveryType != 'DEV_DIY') {
+      _totalPrice += AppConfig.delivery_price;
     }
   }
 
@@ -278,7 +288,10 @@ class _CheckoutConfirmScreenWidgetState extends State<CheckoutConfirmScreen> {
                               ),
                             ),
                             Text(
-                              '1000 тг',
+                              _cartStore.getTotalAmount() >=
+                                      AppConfig.delivery_threshold
+                                  ? 'Бесплатно'
+                                  : '1200 тг',
                               textAlign: TextAlign.end,
                               style: DefaultAppTheme.bodyText1.override(
                                 fontFamily: 'Gilroy',
@@ -361,7 +374,7 @@ class _CheckoutConfirmScreenWidgetState extends State<CheckoutConfirmScreen> {
                             ),
                           ),
                           Text(
-                            '${_cartStore.getTotalAmount()} тг',
+                            '$_totalPrice тг',
                             textAlign: TextAlign.end,
                             style: DefaultAppTheme.title2.override(
                               fontFamily: 'Gilroy',
@@ -522,25 +535,25 @@ class _CheckoutConfirmScreenWidgetState extends State<CheckoutConfirmScreen> {
         Map<String, dynamic> giftOrder = {'gift': wrapper.gift.id};
 
         if (wrapper.package != null) {
-          giftOrder['package_order'] = [
-            {'package': wrapper.package!.id, 'package_count': item.quantity}
-          ];
+          giftOrder['package_order'] = {
+            'package': wrapper.package!.id,
+            'package_count': item.quantity
+          };
         }
 
         if (wrapper.postcard != null) {
-          giftOrder['postcard_order'] = [
-            {
-              'postcard': wrapper.postcard!.id,
-              'postcard_count': item.quantity,
-              'text': 'some text',
-            }
-          ];
+          giftOrder['postcard_order'] = {
+            'postcard': wrapper.postcard!.id,
+            'postcard_count': item.quantity,
+            'text': 'some text',
+          };
         }
 
         orderItems
             .add({'gift_order': giftOrder, 'product_count': item.quantity});
       }
     }
+
     print(orderItems);
     // return;
     // print(_orderStore.address);
@@ -565,15 +578,20 @@ class _CheckoutConfirmScreenWidgetState extends State<CheckoutConfirmScreen> {
       "delivery_end_time": null,
       "bonus_payed": _orderStore.payWithBonus,
       "bonus_returned": null,
-      "total_price": _cartStore.getTotalAmount(),
+      "total_price": _totalPrice,
       "send_check": switchListTileValue,
       "comment": _orderStore.comment,
       "review": null,
+      "delivery_price": _totalPrice - _cartStore.getTotalAmount(),
       "delivery_type": _orderStore.deliveryType == 'DEV_DIY' ? 2 : 1,
     };
 
     if (_orderStore.deliveryType != 'DEV_DIY' && _orderStore.address != null) {
       data['address'] = _orderStore.address!.id;
+    }
+
+    if (_orderStore.paymentId == "1" && _userStore.currentCard != null) {
+      data['card_id'] = _userStore.currentCard!.cardId;
     }
 
     print('order to be created: $data');
@@ -596,7 +614,7 @@ class _CheckoutConfirmScreenWidgetState extends State<CheckoutConfirmScreen> {
 
     // clear all _orderStore
     _orderStore.comment = null;
-    _orderStore.address = null;
+    // _orderStore.address = null;
     _orderStore.dateIsAsap = false;
     _orderStore.dateStart = null;
     _orderStore.deliveryType = null;
@@ -608,7 +626,7 @@ class _CheckoutConfirmScreenWidgetState extends State<CheckoutConfirmScreen> {
       print("payment number go to payment page");
 
       pushNewScreen(context,
-          screen: PayScreen(),
+          screen: EnterCVCScreen(link: _orderStore.response!.message!),
           withNavBar: false,
           pageTransitionAnimation: PageTransitionAnimation.fade);
     } else {

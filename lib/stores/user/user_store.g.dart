@@ -54,6 +54,21 @@ mixin _$UserStore on _UserStore, Store {
     });
   }
 
+  final _$showBadgeAtom = Atom(name: '_UserStore.showBadge');
+
+  @override
+  bool? get showBadge {
+    _$showBadgeAtom.reportRead();
+    return super.showBadge;
+  }
+
+  @override
+  set showBadge(bool? value) {
+    _$showBadgeAtom.reportWrite(value, super.showBadge, () {
+      super.showBadge = value;
+    });
+  }
+
   final _$profileAtom = Atom(name: '_UserStore.profile');
 
   @override
@@ -376,6 +391,7 @@ mixin _$UserStore on _UserStore, Store {
 isLoggedIn: ${isLoggedIn},
 success: ${success},
 successProfile: ${successProfile},
+showBadge: ${showBadge},
 profile: ${profile},
 orderList: ${orderList},
 currentOrder: ${currentOrder},

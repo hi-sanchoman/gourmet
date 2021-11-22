@@ -59,7 +59,8 @@ class _SubcategoryScreenWidgetState extends State<SubcategoryScreen> {
     if (widget.category.hasPermissions == true && hasPermissions == null) {
       bool res = await showCupertinoModalPopup(
           context: context,
-          builder: (BuildContext context) => CupertinoAlertDialog(
+          builder: (BuildContext context) => WillPopScope(
+              child: CupertinoAlertDialog(
                 title: new Text("Вам 21 год или больше?"),
                 content: Text('${widget.category.permissionsText}'),
                 actions: <Widget>[
@@ -77,7 +78,10 @@ class _SubcategoryScreenWidgetState extends State<SubcategoryScreen> {
                     },
                   )
                 ],
-              ));
+              ),
+              onWillPop: () async {
+                return false;
+              }));
 
       if (res == true) {
         // it's ok

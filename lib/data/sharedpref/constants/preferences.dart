@@ -14,4 +14,7 @@ class Preferences {
 
   static const String hasPermissions = 'hasPermissions';
   static const String fcm = 'fcm';
+
+  static const String current_address = 'current_address';
+  static const String current_card = 'current_card';
 }

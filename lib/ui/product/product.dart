@@ -5,9 +5,11 @@ import 'package:esentai/models/catalog/gift_product.dart';
 import 'package:esentai/models/catalog/product.dart';
 import 'package:esentai/stores/cart/cart_store.dart';
 import 'package:esentai/stores/catalog/catalog_store.dart';
+import 'package:esentai/stores/user/user_store.dart';
 import 'package:esentai/ui/catalog/product_card_widget.dart';
 import 'package:esentai/ui/gift/gift_builder.dart';
 import 'package:esentai/ui/gift/package_picker.dart';
+import 'package:esentai/ui/login/login.dart';
 import 'package:esentai/ui/orders/order_prepare.dart';
 import 'package:esentai/utils/helpers.dart';
 import 'package:esentai/utils/themes/default.dart';
@@ -34,6 +36,7 @@ class _FoodScreenWidgetState extends State<ProductScreen> {
 
   late CartStore _cartStore;
   late CatalogStore _catalogStore;
+  late UserStore _userStore;
 
   late CartItem? _cartItem;
   late int _isInCart;
@@ -49,6 +52,7 @@ class _FoodScreenWidgetState extends State<ProductScreen> {
 
     _cartStore = Provider.of<CartStore>(context);
     _catalogStore = Provider.of<CatalogStore>(context);
+    _userStore = Provider.of<UserStore>(context);
 
     print('product ${widget.product.amount}');
 
@@ -271,9 +275,86 @@ class _FoodScreenWidgetState extends State<ProductScreen> {
             ),
           ),
           _buildCartTotal(),
+          _buildFavBtn(),
         ]);
       }),
     );
+  }
+
+  Widget _buildFavBtn() {
+    return Observer(builder: (context) {
+      if (_catalogStore.productsList != null) {
+        print(_catalogStore.productsList?.items?.length);
+        // return Container();
+
+        if (_catalogStore.productsList!.items == null) {
+          print(_catalogStore.productsList?.items?.length);
+          // return Container();
+        }
+      }
+      if (_catalogStore.mainList != null) {
+        print(_catalogStore.mainList?.items?.length);
+        // return Container();
+      }
+      if (_catalogStore.mainGifts != null) {
+        print(_catalogStore.mainGifts?.items?.length);
+        // return Container();
+      }
+      if (_catalogStore.searchList != null) {
+        print(_catalogStore.searchList?.items?.length);
+        // return Container();
+      }
+      if (_catalogStore.otherList != null) {
+        print(_catalogStore.otherList?.items?.length);
+        // return Container();
+      }
+
+      // return Text('L');
+
+      return Align(
+        alignment: AlignmentDirectional(1, -1),
+        child: Padding(
+          padding: EdgeInsetsDirectional.fromSTEB(0, 15, 20, 0),
+          child: InkWell(
+            onTap: () {
+              _onAddToFavPressed();
+            },
+            child: Image.asset(
+              widget.product.isLiked == true
+                  // _catalogStore.productsList!.items!
+                  //             .elementAt(widget.product.id!)
+                  //             .isLiked ==
+                  //         true
+                  ? 'assets/images/add_to_fav_active.png'
+                  : 'assets/images/add_to_fav.png',
+              width: 36,
+              height: 36,
+              fit: BoxFit.contain,
+            ),
+          ),
+        ),
+      );
+    });
+  }
+
+  void _onAddToFavPressed() {
+    print('toggle fav');
+
+    if (!_userStore.isLoggedIn) {
+      Future.delayed(Duration(milliseconds: 0), () {
+        // Navigator.of(context).pushReplacementNamed(Routes.login);
+        pushNewScreen(context,
+            screen: LoginScreen(),
+            withNavBar: false,
+            pageTransitionAnimation: PageTransitionAnimation.fade);
+      });
+      return;
+    }
+
+    _catalogStore.toggleFav(widget.product.id!, widget.product.itemType!);
+    setState(() {
+      // widget.product.isLiked = !widget.product.isLiked!;
+    });
   }
 
   String _getItemLeft() {

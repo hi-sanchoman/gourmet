@@ -150,80 +150,84 @@ class _CartItemWidgetWidgetState extends State<CartItemWidgetWidget> {
       ),
       child: Container(
         width: double.infinity,
-        height: 212,
+        // height: 152,
         child: Stack(
           children: [
             Column(
               children: [
-                Row(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(10, 10, 10, 0),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
-                        child: SizedBox(
-                            width: 100, height: 100, child: _buildItem()),
-                      ),
-                    ),
-                    Expanded(
-                      child: Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(0, 15, 10, 0),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.max,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Text(
-                              '${widget.item.productName}',
-                              maxLines: 2,
-                              textAlign: TextAlign.left,
-                              style: DefaultAppTheme.title3,
-                            ),
-                            // Spacer(),
-                            Padding(
-                              padding:
-                                  EdgeInsetsDirectional.fromSTEB(0, 16, 0, 10),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.max,
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      '${_calcSubtotal()} тг',
-                                      textAlign: TextAlign.left,
-                                      style: DefaultAppTheme.title2.override(
-                                        fontFamily: 'Gilroy',
-                                        color: DefaultAppTheme.primaryColor,
-                                      ),
-                                    ),
-                                  ),
-                                  Container(
-                                    width: 100,
-                                    height: 36,
-                                    decoration: BoxDecoration(
-                                      color: Color(0xFFF0F0F0),
-                                      borderRadius: BorderRadius.circular(100),
-                                    ),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.max,
-                                      children: [
-                                        Expanded(
-                                          child: _buildQuantityPicker(),
-                                        ),
-                                      ],
-                                    ),
-                                  )
-                                ],
-                              ),
-                            )
-                          ],
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: EdgeInsetsDirectional.fromSTEB(10, 10, 10, 0),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: SizedBox(
+                              width: 100, height: 100, child: _buildItem()),
                         ),
                       ),
-                    )
-                  ],
+                      Expanded(
+                        child: Padding(
+                          padding: EdgeInsetsDirectional.fromSTEB(0, 15, 10, 0),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.max,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Text(
+                                '${widget.item.productName}',
+                                maxLines: 2,
+                                textAlign: TextAlign.left,
+                                style: DefaultAppTheme.title3,
+                              ),
+                              // Spacer(),
+                              Padding(
+                                padding: EdgeInsetsDirectional.fromSTEB(
+                                    0, 16, 0, 10),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        '${_calcSubtotal()} тг',
+                                        textAlign: TextAlign.left,
+                                        style: DefaultAppTheme.title2.override(
+                                          fontFamily: 'Gilroy',
+                                          color: DefaultAppTheme.primaryColor,
+                                        ),
+                                      ),
+                                    ),
+                                    Container(
+                                      width: 100,
+                                      height: 36,
+                                      decoration: BoxDecoration(
+                                        color: Color(0xFFF0F0F0),
+                                        borderRadius:
+                                            BorderRadius.circular(100),
+                                      ),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.max,
+                                        children: [
+                                          Expanded(
+                                            child: _buildQuantityPicker(),
+                                          ),
+                                        ],
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
                 ),
                 if (wrapper.package != null) _buildPackage(wrapper.package!),
                 if (wrapper.postcard != null) _buildPostcard(wrapper.postcard!),
@@ -237,7 +241,7 @@ class _CartItemWidgetWidgetState extends State<CartItemWidgetWidget> {
 
   Widget _buildPackage(Package package) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(10, 20, 10, 0),
+      padding: const EdgeInsets.fromLTRB(10, 0, 10, 8),
       child: Row(
         children: [
           Expanded(
