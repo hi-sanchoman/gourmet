@@ -144,6 +144,8 @@ class _MyAppState extends State<MyApp> {
     // print("from my app: ${_userStore.isLoggedIn}");
 
     _initFromShared();
+
+    _initLastOrder();
   }
 
   @override
@@ -223,5 +225,19 @@ class _MyAppState extends State<MyApp> {
       _orderStore.paymentId = '1'; // by credit card
       print('current card: ${_userStore.currentCard}');
     }
+  }
+
+  void _initLastOrder() {
+    // _orderStore.getLastOrder();
+  }
+
+  Widget _buildLastOrder() {
+    return Observer(builder: (context) {
+      return Container(
+        color: Colors.red,
+        width: double.infinity,
+        height: MediaQuery.of(context).size.height,
+      );
+    });
   }
 }

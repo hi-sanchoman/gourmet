@@ -149,7 +149,9 @@ class _FoodScreenWidgetState extends State<ProductScreen> {
                           // )
                         ],
                       ),
-                    )
+                    ),
+
+                    _buildFavBtn(),
                   ],
                 ),
                 Container(
@@ -275,7 +277,6 @@ class _FoodScreenWidgetState extends State<ProductScreen> {
             ),
           ),
           _buildCartTotal(),
-          _buildFavBtn(),
         ]);
       }),
     );

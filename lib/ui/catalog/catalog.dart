@@ -56,9 +56,9 @@ class _CatalogScreenWidgetState extends State<CatalogScreen> {
       _catalogStore.getCategoryList();
     }
 
-    Future.delayed(Duration(seconds: 0), () {
-      _scrollController.jumpTo(100);
-    });
+    // Future.delayed(Duration(seconds: 0), () {
+    //   _scrollController.jumpTo(100);
+    // });
   }
 
   @override
@@ -80,58 +80,55 @@ class _CatalogScreenWidgetState extends State<CatalogScreen> {
 
   Widget _buildMainBody() {
     return Observer(builder: (context) {
-      return _catalogStore.isLoading
-          ? CustomProgressIndicatorWidget()
-          : RefreshIndicator(
-              onRefresh: () async {
-                if (!_catalogStore.isLoading) {
-                  _catalogStore.getCategoryList();
-                }
-              },
-              child: CustomScrollView(
-                controller: _scrollController,
-                slivers: [
-                  SliverAppBar(
-                      floating: false,
-                      pinned: true,
-                      snap: false,
-                      centerTitle: true,
-                      backgroundColor: DefaultAppTheme.primaryColor,
-                      title: Text(
-                        'Каталог',
-                        style: DefaultAppTheme.title2.override(
-                          fontFamily: 'Gilroy',
-                          color: Colors.white,
-                        ),
-                      ),
-                      elevation: 0,
-                      bottom: AppBar(
-                          backgroundColor: Color(0xFFFCFCFC),
-                          titleSpacing: 0,
-                          elevation: 0,
-                          title: Stack(
-                            children: [
-                              Container(
-                                width: double.infinity,
-                                height: 22,
-                                // color: Colors.red,
-                                color: DefaultAppTheme.primaryColor,
-                              ),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.fromLTRB(16, 0, 16, 0),
-                                child: SearchWidget(),
-                              )
-                            ],
-                          ))),
-                  SliverList(
-                    delegate: SliverChildListDelegate([
-                      _buildListView(),
-                    ]),
+      return RefreshIndicator(
+        onRefresh: () async {
+          if (!_catalogStore.isLoading) {
+            _catalogStore.getCategoryList();
+          }
+        },
+        child: CustomScrollView(
+          controller: _scrollController,
+          slivers: [
+            SliverAppBar(
+                floating: false,
+                pinned: true,
+                snap: false,
+                centerTitle: true,
+                backgroundColor: DefaultAppTheme.primaryColor,
+                title: Text(
+                  'Каталог',
+                  style: DefaultAppTheme.title2.override(
+                    fontFamily: 'Gilroy',
+                    color: Colors.white,
                   ),
-                ],
-              ),
-            );
+                ),
+                elevation: 0,
+                bottom: AppBar(
+                    backgroundColor: Color(0xFFFCFCFC),
+                    titleSpacing: 0,
+                    elevation: 0,
+                    title: Stack(
+                      children: [
+                        Container(
+                          width: double.infinity,
+                          height: 22,
+                          // color: Colors.red,
+                          color: DefaultAppTheme.primaryColor,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+                          child: SearchWidget(),
+                        )
+                      ],
+                    ))),
+            SliverList(
+              delegate: SliverChildListDelegate([
+                _buildListView(),
+              ]),
+            ),
+          ],
+        ),
+      );
     });
   }
 

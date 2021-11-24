@@ -218,8 +218,12 @@ class _PackagePickerScreenState extends State<PostcardPickerScreen> {
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text('${item.name}',
-                                        style: DefaultAppTheme.title2),
+                                    Padding(
+                                      padding:
+                                          const EdgeInsets.fromLTRB(0, 0, 8, 0),
+                                      child: Text('${item.name}',
+                                          style: DefaultAppTheme.title2),
+                                    ),
                                     Padding(
                                         padding: const EdgeInsets.fromLTRB(
                                             0, 16, 0, 0),

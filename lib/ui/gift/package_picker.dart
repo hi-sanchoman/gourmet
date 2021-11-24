@@ -197,21 +197,29 @@ class _PackagePickerScreenState extends State<PackagePickerScreen> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text('${item.name}',
-                                        style: DefaultAppTheme.title2),
-                                    Padding(
+                                Expanded(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Padding(
                                         padding: const EdgeInsets.fromLTRB(
-                                            0, 16, 0, 0),
-                                        child: Text('${item.price} тг',
-                                            style: DefaultAppTheme.subtitle1
-                                                .override(
-                                                    color: DefaultAppTheme
-                                                        .primaryColor))),
-                                  ],
+                                            0, 0, 0, 0),
+                                        child: Text('${item.name} ${item.name}',
+                                            maxLines: 2,
+                                            style: DefaultAppTheme.title2),
+                                      ),
+                                      Padding(
+                                          padding: const EdgeInsets.fromLTRB(
+                                              0, 16, 0, 0),
+                                          child: Text('${item.price} тг',
+                                              style: DefaultAppTheme.subtitle1
+                                                  .override(
+                                                      color: DefaultAppTheme
+                                                          .primaryColor))),
+                                    ],
+                                  ),
                                 ),
                                 Icon(Icons.arrow_forward_ios,
                                     size: 24, color: DefaultAppTheme.grayLight)
