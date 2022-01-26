@@ -8,6 +8,11 @@ class Address {
   String? apt;
   String? porch;
   String? floor;
+
+  int? deliveryPrice;
+  int? deliveryTreshold;
+  int? freeTreshold;
+
   Address({
     this.id,
     this.address,
@@ -16,6 +21,9 @@ class Address {
     this.apt,
     this.porch,
     this.floor,
+    this.deliveryPrice,
+    this.deliveryTreshold,
+    this.freeTreshold,
   });
 
   Address copyWith({
@@ -26,6 +34,9 @@ class Address {
     String? apt,
     String? porch,
     String? floor,
+    int? deliveryPrice,
+    int? deliveryTreshold,
+    int? freePrice,
   }) {
     return Address(
       id: id ?? this.id,
@@ -35,6 +46,9 @@ class Address {
       apt: apt ?? this.apt,
       porch: porch ?? this.porch,
       floor: floor ?? this.floor,
+      deliveryPrice: deliveryPrice ?? this.deliveryPrice,
+      deliveryTreshold: deliveryTreshold ?? this.deliveryTreshold,
+      freeTreshold: freeTreshold ?? this.freeTreshold,
     );
   }
 
@@ -47,6 +61,9 @@ class Address {
       'apt': apt,
       'porch': porch,
       'floor': floor,
+      'delivery_price': deliveryPrice,
+      'delivery_threshold': deliveryTreshold,
+      'free_threshold': freeTreshold,
     };
   }
 
@@ -59,6 +76,12 @@ class Address {
       apt: map['apartment_office'] != null ? map['apartment_office'] : null,
       porch: map['porch'] != null ? map['porch'] : null,
       floor: map['floor'] != null ? map['floor'] : null,
+      deliveryPrice:
+          map['delivery_price'] != null ? map['delivery_price'] : null,
+      deliveryTreshold:
+          map['delivery_threshold'] != null ? map['delivery_threshold'] : null,
+      freeTreshold:
+          map['free_threshold'] != null ? map['free_threshold'] : null,
     );
   }
 
@@ -69,7 +92,7 @@ class Address {
 
   @override
   String toString() {
-    return 'Address(id: $id, address: $address, lat: $lat, lng: $lng, apt: $apt, porch: $porch, floor: $floor)';
+    return 'Address(id: $id, address: $address, lat: $lat, lng: $lng, apt: $apt, porch: $porch, floor: $floor, deliveryPrice: $deliveryPrice, deliveryTreshold: $deliveryTreshold, freeTreshold: $freeTreshold)';
   }
 
   @override

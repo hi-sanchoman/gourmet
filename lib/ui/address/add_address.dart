@@ -1,3 +1,4 @@
+import 'package:esentai/stores/order/order_store.dart';
 import 'package:esentai/stores/user/user_store.dart';
 import 'package:esentai/ui/address/pick_on_map.dart';
 import 'package:esentai/utils/helpers.dart';
@@ -20,11 +21,14 @@ class _AddNewAddressScreenWidgetState extends State<AddNewAddressScreen> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   late UserStore _userStore;
+  late OrderStore _orderStore;
 
   late TextEditingController _streetController;
   late TextEditingController _aptController;
   late TextEditingController _porchController;
   late TextEditingController _floorController;
+
+  FocusNode _focus = FocusNode();
 
   String _address = '';
 
@@ -36,6 +40,8 @@ class _AddNewAddressScreenWidgetState extends State<AddNewAddressScreen> {
     _aptController = TextEditingController();
     _porchController = TextEditingController();
     _floorController = TextEditingController();
+
+    _focus.addListener(_onFocusChange);
   }
 
   @override
@@ -45,6 +51,9 @@ class _AddNewAddressScreenWidgetState extends State<AddNewAddressScreen> {
     _porchController.dispose();
     _floorController.dispose();
 
+    _focus.removeListener(_onFocusChange);
+    _focus.dispose();
+
     super.dispose();
   }
 
@@ -53,6 +62,7 @@ class _AddNewAddressScreenWidgetState extends State<AddNewAddressScreen> {
     super.didChangeDependencies();
 
     _userStore = Provider.of<UserStore>(context);
+    _orderStore = Provider.of<OrderStore>(context);
   }
 
   @override
@@ -131,6 +141,10 @@ class _AddNewAddressScreenWidgetState extends State<AddNewAddressScreen> {
                   Padding(
                     padding: EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
                     child: TextFormField(
+                      // focusNode: _focus,
+                      onTap: () {
+                        _onPickOnMap();
+                      },
                       controller: _streetController,
                       decoration: InputDecoration(hintText: 'Улица'),
                     ),
@@ -181,9 +195,14 @@ class _AddNewAddressScreenWidgetState extends State<AddNewAddressScreen> {
         withNavBar: false,
         pageTransitionAnimation: PageTransitionAnimation.fade);
 
-    if (res is String && res.isNotEmpty) {
+    if (res.isNotEmpty) {
       setState(() {
-        _streetController.text = res;
+        _streetController.text = res['address'];
+
+        // save delivery info
+        _orderStore.deliveryPrice = res['delivery'];
+        _orderStore.deliveryTreshold = res['delivery_treshold'];
+        _orderStore.freeTreshold = res['free_treshold'];
       });
     }
   }
@@ -203,7 +222,10 @@ class _AddNewAddressScreenWidgetState extends State<AddNewAddressScreen> {
       "address": address,
       "apartment_office": apt,
       "porch": porch,
-      "floor": floor
+      "floor": floor,
+      "delivery_price": _orderStore.deliveryPrice,
+      "delivery_threshold": _orderStore.deliveryTreshold,
+      "free_threshold": _orderStore.freeTreshold,
     };
 
     await _userStore.addAddress(data);
@@ -211,5 +233,9 @@ class _AddNewAddressScreenWidgetState extends State<AddNewAddressScreen> {
     if (_userStore.success == true) Navigator.of(context).pop();
 
     // TODO: on error?
+  }
+
+  void _onFocusChange() {
+    _onPickOnMap();
   }
 }

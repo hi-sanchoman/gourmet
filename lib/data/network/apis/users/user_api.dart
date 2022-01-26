@@ -250,7 +250,7 @@ class UserApi {
   }
 
   // add address
-  Future<Address> addAddress(String token, Map<String, String> data) async {
+  Future<Address> addAddress(String token, Map<String, Object> data) async {
     try {
       final res = await _dioClient.post(Endpoints.createAddress,
           data: data,

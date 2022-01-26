@@ -347,7 +347,7 @@ mixin _$UserStore on _UserStore, Store {
   final _$addAddressAsyncAction = AsyncAction('_UserStore.addAddress');
 
   @override
-  Future<dynamic> addAddress(Map<String, String> data) {
+  Future<dynamic> addAddress(Map<String, Object> data) {
     return _$addAddressAsyncAction.run(() => super.addAddress(data));
   }
 

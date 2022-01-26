@@ -13,6 +13,7 @@ import 'package:esentai/stores/catalog/catalog_store.dart';
 import 'package:esentai/stores/form/form_store.dart';
 import 'package:esentai/stores/order/order_store.dart';
 import 'package:esentai/ui/home/navbarscreen.dart';
+import 'package:esentai/ui/orders/orders.dart';
 import 'package:esentai/utils/helpers.dart';
 import 'package:esentai/utils/routes/routes.dart';
 import 'package:esentai/stores/language/language_store.dart';
@@ -28,6 +29,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -84,6 +86,9 @@ class _MyAppState extends State<MyApp> {
   final GiftStore _giftStore = GiftStore();
   final OrderStore _orderStore = OrderStore(getIt<Repository>());
 
+  final GlobalKey<NavigatorState> _navigatorKey =
+      GlobalKey(debugLabel: "MainNavigator");
+
   @override
   void initState() {
     super.initState();
@@ -92,8 +97,21 @@ class _MyAppState extends State<MyApp> {
     FirebaseMessaging.instance
         .getInitialMessage()
         .then((RemoteMessage? message) {
+      print("fireabse closed app msg");
+
       if (message != null) {
-        print("init message: $message");
+        RemoteNotification? notification = message.notification;
+
+        if (notification != null && !kIsWeb) {
+          print("data: ${message.data}");
+
+          if (message.data.containsKey('order_id')) {
+            _navigatorKey.currentState!
+                .push(MaterialPageRoute(builder: (context) {
+              return OrdersScreen();
+            }));
+          }
+        }
       }
     });
 
@@ -134,6 +152,23 @@ class _MyAppState extends State<MyApp> {
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       print('A new onMessageOpenedApp event was published!');
+
+      RemoteNotification? notification = message.notification;
+
+      if (notification != null && !kIsWeb) {
+        print("data onmessageopened: ${message.data}");
+
+        // Navigator.push(context, MaterialPageRoute(builder: (context) {
+        //   return OrdersScreen();
+        // }));
+
+        if (message.data.containsKey("order_id")) {
+          _navigatorKey.currentState!
+              .push(MaterialPageRoute(builder: (context) {
+            return OrdersScreen();
+          }));
+        }
+      }
     });
   }
 
@@ -166,6 +201,7 @@ class _MyAppState extends State<MyApp> {
         name: 'global-observer',
         builder: (context) {
           return MaterialApp(
+            navigatorKey: _navigatorKey,
             debugShowCheckedModeBanner: false,
             title: Strings.appName,
             theme: _themeStore.darkMode ? themeDataDark : themeData,

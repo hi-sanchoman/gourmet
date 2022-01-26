@@ -71,6 +71,15 @@ abstract class _OrderStore with Store {
   @observable
   OrderResult? response;
 
+  @observable
+  int deliveryPrice = 3000;
+
+  @observable
+  int deliveryTreshold = 999999999;
+
+  @observable
+  int freeTreshold = 999999999;
+
   // actions:-------------------------------------------------------------------
   @action
   Future createOrder(Map<String, dynamic> data) async {

@@ -30,11 +30,21 @@ abstract class _CartStore with Store {
     dynamic itemId;
     dynamic itemPrice;
 
+    // product
     if (_productElement.itemType == 'product') {
+      // print("product is_gram: ${_productElement.isGram}");
+
+      funcQuantity = funcQuantity == 0 && _productElement.isGram == true
+          ? 300
+          : funcQuantity;
       itemObject = _productElement;
       itemId = _productElement.id;
-      itemPrice = _productElement.price;
-    } else {
+      itemPrice = _productElement.isGram == true
+          ? _productElement.price
+          : _productElement.price;
+    }
+    // gift
+    else {
       GiftWrapper giftWrapper = GiftWrapper(
           gift: _productElement, package: package, postcard: postcard);
 
@@ -105,6 +115,7 @@ abstract class _CartStore with Store {
       // "Name ${cartItem.productDetails.name} Quantity ${cartItem.quantity}");
       return cartItem;
     }
+
     return cartItem;
   }
 

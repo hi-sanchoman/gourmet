@@ -25,7 +25,7 @@ import 'package:provider/provider.dart';
 class ProductScreen extends StatefulWidget {
   ProductScreen({Key? key, required this.product}) : super(key: key);
 
-  final Product product;
+  Product product;
 
   @override
   _FoodScreenWidgetState createState() => _FoodScreenWidgetState();
@@ -174,14 +174,18 @@ class _FoodScreenWidgetState extends State<ProductScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         if (widget.product.amount != null &&
-                            widget.product.amount! - _getQuantity() <=
-                                AppConfig.product_amount_treshold &&
-                            widget.product.amount! > 0)
+                            widget.product.amount! > 0 &&
+                            (widget.product.amount! - _getQuantity() <=
+                                    AppConfig.product_amount_treshold ||
+                                (widget.product.isGram == true &&
+                                    widget.product.amount! - _getQuantity() <=
+                                        AppConfig
+                                            .product_gram_amount_treshold)))
                           Padding(
                             padding:
                                 EdgeInsetsDirectional.fromSTEB(15, 20, 0, 0),
                             child: Text(
-                              'Осталось: ${_getItemLeft()}',
+                              'Осталось: ${(int.parse(_getItemLeft()) - _getQuantity())}',
                               style: DefaultAppTheme.bodyText1.override(
                                 fontFamily: 'Gilroy',
                                 color: DefaultAppTheme.secondaryColor,
@@ -210,7 +214,7 @@ class _FoodScreenWidgetState extends State<ProductScreen> {
                                     padding: EdgeInsetsDirectional.fromSTEB(
                                         16, 0, 0, 0),
                                     child: Text(
-                                      '${widget.product.price} тг/шт',
+                                      '${widget.product.isGram == true ? (widget.product.price! * 100).toInt() : widget.product.price?.toInt()} тг/${widget.product.isGram == true ? '100 ' : ''}${widget.product.classification ?? 'шт'}',
                                       style: DefaultAppTheme.title1.override(
                                         fontFamily: 'Gilroy',
                                         color: DefaultAppTheme.primaryColor,
@@ -445,7 +449,7 @@ class _FoodScreenWidgetState extends State<ProductScreen> {
                         child: widget.product.itemType == 'gift'
                             ? _buildGiftBtn()
                             : Text(
-                                '${NumberFormat.currency(symbol: "", decimalDigits: 0, locale: "ru").format(widget.product.price?.toInt())} тг'),
+                                '${NumberFormat.currency(symbol: "", decimalDigits: 0, locale: "ru").format(widget.product.isGram == true ? (widget.product.price! * 300) : widget.product.price?.toInt())} тг'),
                         style: ElevatedButton.styleFrom(
                             minimumSize: Size(150, 36),
                             textStyle: DefaultAppTheme.title2.override(
@@ -585,20 +589,46 @@ class _FoodScreenWidgetState extends State<ProductScreen> {
     return item.quantity;
   }
 
+  bool _isGram() {
+    return widget.product.isGram == true;
+  }
+
   void _onCartDecrement() {
     if (_cartStore == null) return;
 
-    _cartStore!.decrementItemFromCartProvider(
-        _cartStore!.findItemIndexFromCartProvider(widget.product.id!)!);
-    // setState(() {});
+    if (widget.product.isGram == true) {
+      if (_getQuantity() == 300) {
+        _cartStore.deleteItemFromCart(
+            _cartStore.findItemIndexFromCartProvider(widget.product.id!)!);
+      } else {
+        for (int i = 0; i < 100; i++) {
+          _cartStore.decrementItemFromCartProvider(
+              _cartStore.findItemIndexFromCartProvider(widget.product.id!)!);
+        }
+      }
+    } else {
+      _cartStore.decrementItemFromCartProvider(
+          _cartStore.findItemIndexFromCartProvider(widget.product.id!)!);
+    }
   }
 
   void _onCartIncrement() {
     if (_cartStore == null) return;
 
-    _cartStore!.incrementItemToCartProvider(
-        _cartStore!.findItemIndexFromCartProvider(widget.product.id!)!);
-    // setState(() {});
+    var item = _cartStore.getSpecificItemFromCartProvider(widget.product.id);
+    print("product is_gram: ${widget.product.isGram}");
+    print("item: $item");
+
+    if (widget.product.isGram == true) {
+      // add 100 gr
+      for (int i = 0; i < 100; i++) {
+        _cartStore.incrementItemToCartProvider(
+            _cartStore.findItemIndexFromCartProvider(widget.product.id!)!);
+      }
+    } else {
+      _cartStore!.incrementItemToCartProvider(
+          _cartStore!.findItemIndexFromCartProvider(widget.product.id!)!);
+    }
   }
 
   Widget _buildQuantityPicker() {
@@ -609,7 +639,7 @@ class _FoodScreenWidgetState extends State<ProductScreen> {
           onTap: () {
             _onCartDecrement();
           },
-          child: _getQuantity() == 1
+          child: _getQuantity() == 1 || (_isGram() && _getQuantity() == 300)
               ? Stack(
                   alignment: Alignment.center,
                   children: [
@@ -689,15 +719,17 @@ class _FoodScreenWidgetState extends State<ProductScreen> {
     if (widget.product.itemType == 'product') {
       // print("get product info");
 
-      _catalogStore.getProduct(widget.product.id!);
-      _catalogStore.getOtherProducts(widget.product.id!);
+      await _catalogStore.getProduct(widget.product.id!);
+      await _catalogStore.getOtherProducts(widget.product.id!);
+
+      widget.product = _catalogStore.currentProduct!;
     }
 
     if (widget.product.itemType == 'gift') {
       // print("get gift info");
 
-      _catalogStore.getGift(widget.product.id!);
-      _catalogStore.getOtherGifts(widget.product.id!);
+      await _catalogStore.getGift(widget.product.id!);
+      await _catalogStore.getOtherGifts(widget.product.id!);
     }
   }
 

@@ -27,7 +27,11 @@ class _ChooseAddressScreenState extends State<PickOnMapScreen> {
   late YandexMapController controller;
 
   late Map<String, Object> _data;
+  late Map<String, Object> _result;
   String _address = '';
+  late int _freeTreshold = 999999999;
+  late int _delivery = 3000;
+  late int _deliveryTreshold = 999999999;
   Point? _point;
 
   Position? _position;
@@ -103,9 +107,13 @@ class _ChooseAddressScreenState extends State<PickOnMapScreen> {
           child: Container(
               color: Colors.grey,
               child: YandexMap(
+                mapObjects: _mapObjects,
                 onMapCreated: (YandexMapController yandexMapController) async {
                   controller = yandexMapController;
                   _onMapRendered();
+                },
+                onCameraPositionChanged: (cameraPosition, reason, finished) {
+                  cameraPositionChanged(cameraPosition, finished);
                 },
               ))),
       Align(
@@ -176,24 +184,89 @@ class _ChooseAddressScreenState extends State<PickOnMapScreen> {
       return;
     }
 
-    Navigator.pop(context, _address);
+    _result = {
+      "delivery": _delivery,
+      "delivery_treshold": _deliveryTreshold,
+      "free_treshold": _freeTreshold,
+      "address": _address,
+    };
+
+    Navigator.pop(context, _result);
   }
 
   bool _valididateAddress() {
     if (_point == null) return false;
 
+    // Esentai Gourmet
     List<LatLng> points = [];
-    points.add(LatLng(43.229453, 76.966498));
-    points.add(LatLng(43.255743, 76.984039));
-    points.add(LatLng(43.273285, 76.984868));
-    points.add(LatLng(43.269717, 76.923165));
-    points.add(LatLng(43.242868, 76.821920));
-    points.add(LatLng(43.198244, 76.840771));
-    points.add(LatLng(43.194735, 76.896971));
-    points.add(LatLng(43.229453, 76.966498));
+    points.add(LatLng(43.217447858542506, 76.9278968248326));
+    points.add(LatLng(43.21835455689957, 76.92610642685327));
+    points.add(LatLng(43.22051139404288, 76.92853732003714));
+    points.add(LatLng(43.22120796995651, 76.93020633510261));
+    points.add(LatLng(43.22009676174443, 76.93163258434038));
+    points.add(LatLng(43.217447858542506, 76.9278968248326));
 
-    return PolygonUtil.containsLocation(
-        LatLng(_point!.latitude, _point!.longitude), points, true);
+    if (PolygonUtil.containsLocation(
+            LatLng(_point!.latitude, _point!.longitude), points, true) ==
+        true) {
+      _deliveryTreshold = 10000;
+      _delivery = 500;
+      _freeTreshold = 10000;
+
+      return true;
+    }
+
+    // oblast - 2
+    points = [];
+    points.add(LatLng(43.24118334655078, 76.83895211904309));
+    points.add(LatLng(43.25198896461259, 76.89324329362789));
+    points.add(LatLng(43.257892255406674, 76.98087383739434));
+    points.add(LatLng(43.169248, 77.033919));
+    points.add(LatLng(43.209358, 76.950635));
+    points.add(LatLng(43.178018, 76.897173));
+    points.add(LatLng(43.17022, 76.861167));
+    points.add(LatLng(43.219378, 76.845674));
+    points.add(LatLng(43.24118334655078, 76.83895211904309));
+    points.add(LatLng(43.24118334655078, 76.83895211904309));
+
+    if (PolygonUtil.containsLocation(
+            LatLng(_point!.latitude, _point!.longitude), points, true) ==
+        true) {
+      _deliveryTreshold = 15000;
+      _delivery = 1500;
+      _freeTreshold = 15000;
+
+      return true;
+    }
+
+    // oblast - 3 (rest)
+    points = [];
+    points.add(LatLng(43.233979, 76.786722));
+    points.add(LatLng(43.243907, 76.826495));
+    points.add(LatLng(43.254138, 76.822045));
+    points.add(LatLng(43.272869, 76.884748));
+    points.add(LatLng(43.351572, 76.921545));
+    points.add(LatLng(43.356122, 76.945603));
+    points.add(LatLng(43.348437, 76.968826));
+    points.add(LatLng(43.348235, 77.010824));
+    points.add(LatLng(43.320966, 77.025474));
+    points.add(LatLng(43.296983, 76.997383));
+    points.add(LatLng(43.265028, 76.985407));
+    points.add(LatLng(43.171522, 77.04291));
+    points.add(LatLng(43.165339, 76.840425));
+    points.add(LatLng(43.233979, 76.786722));
+
+    if (PolygonUtil.containsLocation(
+            LatLng(_point!.latitude, _point!.longitude), points, true) ==
+        true) {
+      _deliveryTreshold = 999999999;
+      _delivery = 3000;
+      _freeTreshold = 999999999;
+
+      return true;
+    }
+
+    return false;
   }
 
   Future<void> cameraPositionChanged(
@@ -206,22 +279,23 @@ class _ChooseAddressScreenState extends State<PickOnMapScreen> {
     }
 
     if (finished) {
-      double zoom = await controller.getZoom();
+      CameraPosition cameraPosition = await controller.getCameraPosition();
+      double zoom = cameraPosition.zoom;
       Point point = cameraPosition.target;
 
       var search = YandexSearch.searchByPoint(
           point: point,
-          zoom: zoom,
+          zoom: zoom.toInt(),
           searchOptions: SearchOptions(searchType: SearchType.geo));
 
       search.result.then((res) {
-        var found = res.items![0].toponymMetadata!.addressComponents;
+        var found = res.items![0].toponymMetadata!.address;
         print("found: $found");
 
         // String? locality = found[SearchComponentKind.locality];
         // String? district = found[SearchComponentKind.district];
-        String? street = found[SearchComponentKind.street];
-        String? house = found[SearchComponentKind.house];
+        String? street = found.addressComponents[SearchComponentKind.street];
+        String? house = found.addressComponents[SearchComponentKind.house];
 
         String fullAddress = '';
         // fullAddress += locality!.isNotEmpty ? "$locality, " : '';
@@ -229,7 +303,8 @@ class _ChooseAddressScreenState extends State<PickOnMapScreen> {
         fullAddress += street != null ? "$street" : "";
         fullAddress += house != null ? ", $house" : "";
 
-        String address = res.items![0].toponymMetadata!.formattedAddress;
+        // String fullAddress =
+        // res.items![0].toponymMetadata!.address.formattedAddress;
         Point point = res.items![0].toponymMetadata!.balloonPoint;
 
         setState(() {
@@ -249,16 +324,25 @@ class _ChooseAddressScreenState extends State<PickOnMapScreen> {
 
     var marker = Placemark(
       point: point,
-      style: PlacemarkStyle(
-        iconName: 'assets/images/pin.png',
-        opacity: 0.9,
+      icon: PlacemarkIcon.single(PlacemarkIconStyle(
+        image: BitmapDescriptor.fromAssetImage('assets/images/pin.png'),
         scale: 2,
-        iconAnchor: Offset(0.5, 1),
-      ),
+        anchor: Offset(0.5, 1),
+      )),
+      // style: PlacemarkStyle(
+      //   iconName: 'assets/images/pin.png',
+      //   opacity: 0.9,
+      //   scale: 2,
+      //   iconAnchor: Offset(0.5, 1),
+      // ),
       mapId: _placemarkId,
     );
 
-    await controller.updateMapObjects([marker]);
+    setState(() {
+      _mapObjects.add(marker);
+    });
+
+    // await controller.updateMapObjects([marker]);
   }
 
   // on map rendered
@@ -266,8 +350,8 @@ class _ChooseAddressScreenState extends State<PickOnMapScreen> {
     print('Map rendered');
 
     // enable camera tracking
-    final currentCameraTracking = await controller.enableCameraTracking(
-        onCameraPositionChange: cameraPositionChanged);
+    // final currentCameraTracking = await controller.enableCameraTracking(
+    //     onCameraPositionChange: cameraPositionChanged);
 
     await Helpers.determinePosition().then((position) async {
       setState(() {
@@ -282,7 +366,8 @@ class _ChooseAddressScreenState extends State<PickOnMapScreen> {
 
       addPlacemark(point);
 
-      controller.move(cameraPosition: CameraPosition(target: point));
+      controller.moveCamera(
+          CameraUpdate.newCameraPosition(CameraPosition(target: point)));
     }).catchError((e) {
       print("map current location erorr: " + e.toString());
 

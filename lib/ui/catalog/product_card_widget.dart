@@ -185,15 +185,18 @@ class _ProductCardWidgetState extends State<ProductCardWidget> {
 
               // Left quantity
               if (widget.product.amount != null &&
-                  widget.product.amount! - _getQuantity() <=
-                      AppConfig.product_amount_treshold &&
-                  widget.product.amount! > 0)
+                  widget.product.amount! > 0 &&
+                  (widget.product.amount! - _getQuantity() <=
+                          AppConfig.product_amount_treshold ||
+                      (widget.product.isGram == true &&
+                          widget.product.amount! - _getQuantity() <=
+                              AppConfig.product_gram_amount_treshold)))
                 Align(
                   alignment: AlignmentDirectional(-1, 0.2),
                   child: Padding(
                     padding: EdgeInsetsDirectional.fromSTEB(15, 0, 0, 20),
                     child: Container(
-                      width: 85,
+                      // width: 85,
                       height: 20,
                       decoration: BoxDecoration(
                         color: DefaultAppTheme.secondaryColor,
@@ -224,6 +227,7 @@ class _ProductCardWidgetState extends State<ProductCardWidget> {
     bool isActive = widget.product.isActive ?? false;
     double price = widget.product.price ?? 0;
     int amount = widget.product.amount ?? 0;
+    bool isGram = widget.product.isGram ?? false;
 
     return isActive && amount > 0
         ? Padding(
@@ -236,7 +240,7 @@ class _ProductCardWidgetState extends State<ProductCardWidget> {
                         _addToCart();
                       },
                       child: Text(
-                          '${NumberFormat.currency(symbol: "", decimalDigits: 0, locale: "ru").format(price)} тг'),
+                          '${NumberFormat.currency(symbol: "", decimalDigits: 0, locale: "ru").format(isGram ? (price * 300) : price)} тг'),
                       style: ElevatedButton.styleFrom(
                           minimumSize: Size(double.infinity, 36),
                           textStyle: DefaultAppTheme.title2.override(
@@ -282,6 +286,12 @@ class _ProductCardWidgetState extends State<ProductCardWidget> {
     if (_cartStore != null) _cartStore!.addToCart(widget.product);
   }
 
+  bool _isGram() {
+    if (_cartStore == null) return false;
+
+    return widget.product.isGram == true;
+  }
+
   int _getQuantity() {
     if (_cartStore == null) return 0;
 
@@ -300,8 +310,22 @@ class _ProductCardWidgetState extends State<ProductCardWidget> {
   void _onCartDecrement() {
     // if (widget.product.itemType == 'product') {
     if (_cartStore == null) return;
-    _cartStore!.decrementItemFromCartProvider(
-        _cartStore!.findItemIndexFromCartProvider(widget.product.id!)!);
+
+    if (widget.product.isGram == true) {
+      if (_getQuantity() == 300) {
+        _cartStore!.deleteItemFromCart(
+            _cartStore!.findItemIndexFromCartProvider(widget.product.id!)!);
+      } else {
+        for (int i = 0; i < 100; i++) {
+          _cartStore!.decrementItemFromCartProvider(
+              _cartStore!.findItemIndexFromCartProvider(widget.product.id!)!);
+        }
+      }
+    } else {
+      _cartStore!.decrementItemFromCartProvider(
+          _cartStore!.findItemIndexFromCartProvider(widget.product.id!)!);
+    }
+
     // }
 
     // if (widget.product.itemType == 'gift') {
@@ -313,8 +337,19 @@ class _ProductCardWidgetState extends State<ProductCardWidget> {
   void _onCartIncrement() {
     // if (widget.product.itemType == 'product') {
     if (_cartStore == null) return;
-    _cartStore!.incrementItemToCartProvider(
-        _cartStore!.findItemIndexFromCartProvider(widget.product.id!)!);
+
+    // print("inc product ${widget.product}");
+
+    if (widget.product.isGram == true) {
+      for (int i = 0; i < 100; i++) {
+        _cartStore!.incrementItemToCartProvider(
+            _cartStore!.findItemIndexFromCartProvider(widget.product.id!)!);
+      }
+    } else {
+      _cartStore!.incrementItemToCartProvider(
+          _cartStore!.findItemIndexFromCartProvider(widget.product.id!)!);
+    }
+
     // }
 
     // if (widget.product.itemType == 'gift') {
@@ -420,7 +455,7 @@ class _ProductCardWidgetState extends State<ProductCardWidget> {
           onTap: () {
             _onCartDecrement();
           },
-          child: _getQuantity() == 1
+          child: _getQuantity() == 1 || (_isGram() && _getQuantity() == 300)
               ? Stack(
                   alignment: Alignment.center,
                   children: [

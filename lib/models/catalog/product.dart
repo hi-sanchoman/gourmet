@@ -17,6 +17,8 @@ class Product {
   List<int>? subcategories;
   bool? isLiked;
   String? itemType;
+  String? classification;
+  bool? isGram;
 
   Product({
     this.id,
@@ -33,6 +35,8 @@ class Product {
     this.subcategories,
     this.isLiked,
     this.itemType,
+    this.classification,
+    this.isGram,
   });
 
   Product copyWith({
@@ -50,23 +54,26 @@ class Product {
     List<int>? subcategories,
     bool? isLiked,
     String? itemType,
+    String? classification,
+    bool? isGram,
   }) {
     return Product(
-      id: id ?? this.id,
-      mainImage: mainImage ?? this.mainImage,
-      name: name ?? this.name,
-      description: description ?? this.description,
-      // loyaltyId: loyaltyId ?? this.loyaltyId,
-      priceCurrency: priceCurrency ?? this.priceCurrency,
-      price: price ?? this.price,
-      amount: amount ?? this.amount,
-      position: position ?? this.position,
-      isNew: isNew ?? this.isNew,
-      isActive: isActive ?? this.isActive,
-      subcategories: subcategories ?? this.subcategories,
-      isLiked: isLiked ?? this.isLiked,
-      itemType: itemType ?? this.itemType,
-    );
+        id: id ?? this.id,
+        mainImage: mainImage ?? this.mainImage,
+        name: name ?? this.name,
+        description: description ?? this.description,
+        // loyaltyId: loyaltyId ?? this.loyaltyId,
+        priceCurrency: priceCurrency ?? this.priceCurrency,
+        price: price ?? this.price,
+        amount: amount ?? this.amount,
+        position: position ?? this.position,
+        isNew: isNew ?? this.isNew,
+        isActive: isActive ?? this.isActive,
+        subcategories: subcategories ?? this.subcategories,
+        isLiked: isLiked ?? this.isLiked,
+        itemType: itemType ?? this.itemType,
+        classification: classification ?? this.classification,
+        isGram: isGram ?? this.isGram);
   }
 
   Map<String, dynamic> toMap() {
@@ -85,6 +92,8 @@ class Product {
       'subcategories': subcategories,
       'isLiked': isLiked,
       'itemType': itemType,
+      'classification': classification,
+      'isGram': isGram,
     };
   }
 
@@ -92,23 +101,24 @@ class Product {
     // print("product $map");
 
     return Product(
-      id: map['id'],
-      mainImage: map['main_image'],
-      name: map['name'],
-      description: map['description'],
-      // loyaltyId: map['loyalty_id'],
-      priceCurrency: map['price_currency'],
-      price: double.parse(map['price'] ?? "0"),
-      amount: map['amount'],
-      position: map['position'],
-      isNew: map['is_new'],
-      isActive: map['is_active'],
-      subcategories: map['subcategories'] != null
-          ? List<int>.from(map['subcategory'])
-          : null,
-      isLiked: map['is_liked'],
-      itemType: map['item_type'],
-    );
+        id: map['id'],
+        mainImage: map['main_image'],
+        name: map['name'],
+        description: map['description'],
+        // loyaltyId: map['loyalty_id'],
+        priceCurrency: map['price_currency'],
+        price: double.parse(map['price'] ?? "0"),
+        amount: map['amount'],
+        position: map['position'],
+        isNew: map['is_new'],
+        isActive: map['is_active'],
+        subcategories: map['subcategories'] != null
+            ? List<int>.from(map['subcategory'])
+            : null,
+        isLiked: map['is_liked'],
+        itemType: map['item_type'],
+        classification: map['classification'],
+        isGram: map['is_gram']);
   }
 
   String toJson() => json.encode(toMap());
@@ -139,6 +149,8 @@ class Product {
         other.isActive == isActive &&
         other.itemType == itemType &&
         listEquals(other.subcategories, subcategories) &&
+        other.classification == classification &&
+        other.isGram == isGram &&
         other.isLiked == isLiked;
   }
 
@@ -157,6 +169,8 @@ class Product {
         isActive.hashCode ^
         itemType.hashCode ^
         subcategories.hashCode ^
-        isLiked.hashCode;
+        isLiked.hashCode ^
+        classification.hashCode ^
+        isGram.hashCode;
   }
 }

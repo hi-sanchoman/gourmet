@@ -640,6 +640,9 @@ class _CheckoutScreenWidgetState extends State<OrderPrepareScreen> {
     );
 
     _orderStore.address = _userStore.currentAddress;
+
+    print(
+        "address list: current - ${_userStore.currentAddress}, order - ${_orderStore.address}");
   }
 
   void _enterComment() async {

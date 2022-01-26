@@ -400,6 +400,9 @@ class _SearchScreenWidgetState extends State<SearchScreen> {
                                         price: double.tryParse(
                                             product['price'] ?? '0'),
                                         itemType: product['item_type'],
+                                        isGram: product['is_gram'],
+                                        classification:
+                                            product['classification'],
                                         isActive: product['is_active'] ?? false,
                                         isLiked: product['is_liked'] ?? false),
                                   ),

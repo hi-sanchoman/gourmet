@@ -451,7 +451,7 @@ class Repository {
   }
 
   // add address
-  Future<Address> addAddress(String token, Map<String, String> data) async {
+  Future<Address> addAddress(String token, Map<String, Object> data) async {
     return await _userApi.addAddress(token, data).then((res) {
       return res;
     }).catchError((e) => throw e);

@@ -390,7 +390,7 @@ abstract class _UserStore with Store {
   }
 
   @action
-  Future addAddress(Map<String, String> data) async {
+  Future addAddress(Map<String, Object> data) async {
     isLoading = true;
 
     SharedPreferences prefs = await SharedPreferences.getInstance();

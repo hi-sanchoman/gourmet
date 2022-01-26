@@ -70,10 +70,21 @@ class _CheckoutConfirmScreenWidgetState extends State<CheckoutConfirmScreen> {
     }
 
     _totalPrice = _cartStore.getTotalAmount();
-    if (_totalPrice < AppConfig.delivery_threshold &&
-        _orderStore.deliveryType != 'DEV_DIY') {
-      _totalPrice += AppConfig.delivery_price;
+
+    if (_orderStore.deliveryType != 'DEV_DIY' && _orderStore.address != null) {
+      if (_totalPrice >= _orderStore.address!.freeTreshold!) {
+      }
+      // else if (_totalPrice < _orderStore.address!.deliveryTreshold!) {
+      else {
+        _totalPrice += _orderStore.address!.deliveryPrice!;
+      }
     }
+
+    // old delivery pricing
+    // if (_totalPrice < AppConfig.delivery_threshold &&
+    //     _orderStore.deliveryType != 'DEV_DIY') {
+    //   _totalPrice += AppConfig.delivery_price;
+    // }
   }
 
   @override
@@ -288,10 +299,11 @@ class _CheckoutConfirmScreenWidgetState extends State<CheckoutConfirmScreen> {
                               ),
                             ),
                             Text(
-                              _cartStore.getTotalAmount() >=
-                                      AppConfig.delivery_threshold
+                              _orderStore.address != null &&
+                                      _cartStore.getTotalAmount() >=
+                                          _orderStore.address!.freeTreshold!
                                   ? 'Бесплатно'
-                                  : '1200 тг',
+                                  : '${_orderStore.address!.deliveryPrice} тг',
                               textAlign: TextAlign.end,
                               style: DefaultAppTheme.bodyText1.override(
                                 fontFamily: 'Gilroy',
@@ -588,6 +600,7 @@ class _CheckoutConfirmScreenWidgetState extends State<CheckoutConfirmScreen> {
 
     if (_orderStore.deliveryType != 'DEV_DIY' && _orderStore.address != null) {
       data['address'] = _orderStore.address!.id;
+      // data['delivery_price'] = _orderStore.address!.deliveryPrice;
     }
 
     if (_orderStore.paymentId == "1" && _userStore.currentCard != null) {

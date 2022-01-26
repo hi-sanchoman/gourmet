@@ -234,6 +234,51 @@ mixin _$OrderStore on _OrderStore, Store {
     });
   }
 
+  final _$deliveryPriceAtom = Atom(name: '_OrderStore.deliveryPrice');
+
+  @override
+  int get deliveryPrice {
+    _$deliveryPriceAtom.reportRead();
+    return super.deliveryPrice;
+  }
+
+  @override
+  set deliveryPrice(int value) {
+    _$deliveryPriceAtom.reportWrite(value, super.deliveryPrice, () {
+      super.deliveryPrice = value;
+    });
+  }
+
+  final _$deliveryTresholdAtom = Atom(name: '_OrderStore.deliveryTreshold');
+
+  @override
+  int get deliveryTreshold {
+    _$deliveryTresholdAtom.reportRead();
+    return super.deliveryTreshold;
+  }
+
+  @override
+  set deliveryTreshold(int value) {
+    _$deliveryTresholdAtom.reportWrite(value, super.deliveryTreshold, () {
+      super.deliveryTreshold = value;
+    });
+  }
+
+  final _$freeTresholdAtom = Atom(name: '_OrderStore.freeTreshold');
+
+  @override
+  int get freeTreshold {
+    _$freeTresholdAtom.reportRead();
+    return super.freeTreshold;
+  }
+
+  @override
+  set freeTreshold(int value) {
+    _$freeTresholdAtom.reportWrite(value, super.freeTreshold, () {
+      super.freeTreshold = value;
+    });
+  }
+
   final _$createOrderAsyncAction = AsyncAction('_OrderStore.createOrder');
 
   @override
@@ -258,7 +303,10 @@ paymentId: ${paymentId},
 promoId: ${promoId},
 payWithBonus: ${payWithBonus},
 sendCheck: ${sendCheck},
-response: ${response}
+response: ${response},
+deliveryPrice: ${deliveryPrice},
+deliveryTreshold: ${deliveryTreshold},
+freeTreshold: ${freeTreshold}
     ''';
   }
 }

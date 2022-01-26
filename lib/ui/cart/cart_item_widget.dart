@@ -309,6 +309,18 @@ class _CartItemWidgetWidgetState extends State<CartItemWidgetWidget> {
     return Container();
   }
 
+  bool _isGram() {
+    String type = widget.item.productDetails is Product ? 'product' : 'gift';
+    String itemId = '';
+
+    if (type == 'product') {
+      Product product = widget.item.productDetails as Product;
+      return product.isGram == true;
+    }
+
+    return false;
+  }
+
   int _getQuantity() {
     String type = widget.item.productDetails is Product ? 'product' : 'gift';
     String itemId = '';
@@ -347,8 +359,21 @@ class _CartItemWidgetWidgetState extends State<CartItemWidgetWidget> {
     String itemId = '';
 
     if (type == 'product') {
-      itemId = (widget.item.productDetails as Product).id.toString();
-      _cartStore!.decrementItemFromCartProvider(widget.item.itemCartIndex);
+      Product product = widget.item.productDetails as Product;
+      itemId = product.id.toString();
+
+      if (product.isGram == true) {
+        if (_getQuantity() == 300) {
+          _cartStore!.deleteItemFromCart(widget.item.itemCartIndex);
+        } else {
+          for (int i = 0; i < 100; i++) {
+            _cartStore!
+                .decrementItemFromCartProvider(widget.item.itemCartIndex);
+          }
+        }
+      } else {
+        _cartStore!.decrementItemFromCartProvider(widget.item.itemCartIndex);
+      }
     } else {
       GiftWrapper wrapper = widget.item.productDetails as GiftWrapper;
       itemId =
@@ -368,8 +393,16 @@ class _CartItemWidgetWidgetState extends State<CartItemWidgetWidget> {
     String itemId = '';
 
     if (type == 'product') {
-      itemId = (widget.item.productDetails as Product).id.toString();
-      _cartStore!.incrementItemToCartProvider(widget.item.itemCartIndex);
+      Product product = widget.item.productDetails as Product;
+      itemId = product.id.toString();
+
+      if (product.isGram == true) {
+        for (int i = 0; i < 100; i++) {
+          _cartStore!.incrementItemToCartProvider(widget.item.itemCartIndex);
+        }
+      } else {
+        _cartStore!.incrementItemToCartProvider(widget.item.itemCartIndex);
+      }
     } else {
       GiftWrapper wrapper = widget.item.productDetails as GiftWrapper;
       itemId =
@@ -402,7 +435,7 @@ class _CartItemWidgetWidgetState extends State<CartItemWidgetWidget> {
           onTap: () {
             _onCartDecrement();
           },
-          child: _getQuantity() == 1
+          child: _getQuantity() == 1 || (_isGram() && _getQuantity() == 300)
               ? Stack(
                   alignment: Alignment.center,
                   children: [
@@ -433,6 +466,7 @@ class _CartItemWidgetWidgetState extends State<CartItemWidgetWidget> {
             textAlign: TextAlign.center,
             style: DefaultAppTheme.title2.override(
               fontFamily: 'Gilroy',
+              fontSize: 14,
             ),
           ),
         ),

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:esentai/data/sharedpref/constants/preferences.dart';
 import 'package:esentai/models/address/address.dart';
+import 'package:esentai/stores/order/order_store.dart';
 import 'package:esentai/stores/user/user_store.dart';
 import 'package:esentai/ui/address/add_address.dart';
 import 'package:esentai/utils/themes/default.dart';
@@ -25,6 +26,7 @@ class _ChooseDefaultAddressWidgetWidgetState
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
   late UserStore _userStore;
+  late OrderStore _orderStore;
 
   String _mode = 'MODE_PICK'; // MODE_PICK, MODE_EDIT
 
@@ -33,6 +35,7 @@ class _ChooseDefaultAddressWidgetWidgetState
     super.didChangeDependencies();
 
     _userStore = Provider.of<UserStore>(context);
+    _orderStore = Provider.of<OrderStore>(context);
 
     if (!_userStore.isLoading) {
       _userStore.getAddresses();
@@ -282,11 +285,22 @@ class _ChooseDefaultAddressWidgetWidgetState
   }
 
   void _onAddressPicked(Address address) async {
+    // update
+    // address.deliveryPrice = _orderStore.deliveryPrice;
+    // address.deliveryTreshold = _orderStore.deliveryTreshold;
+    // address.freeTreshold = _orderStore.freeTreshold;
+
+    print(
+        "numbers - ${address.deliveryPrice}, ${address.deliveryTreshold}, ${address.freeTreshold}");
+
     _userStore.currentAddress = address;
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString(
         Preferences.current_address, _userStore.currentAddress!.toJson());
+
+    // order address update
+    _orderStore.address = _userStore.currentAddress;
 
     Navigator.of(context).pop();
   }
