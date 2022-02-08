@@ -27,6 +27,8 @@ class _InfoScreenWidgetState extends State<InfoScreen> {
 
     _catalogStore = Provider.of<CatalogStore>(context);
 
+    _catalogStore.pages = null;
+
     if (!_catalogStore.isLoading) {
       _catalogStore.getInfoPage(widget.slug);
     }

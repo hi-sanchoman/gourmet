@@ -152,13 +152,15 @@ class _AddNewAddressScreenWidgetState extends State<AddNewAddressScreen> {
                   Padding(
                     padding: EdgeInsetsDirectional.fromSTEB(16, 20, 16, 0),
                     child: TextFormField(
+                      keyboardType: TextInputType.number,
                       controller: _aptController,
-                      decoration: InputDecoration(hintText: 'Кф./офис'),
+                      decoration: InputDecoration(hintText: 'Кв./офис'),
                     ),
                   ),
                   Padding(
                     padding: EdgeInsetsDirectional.fromSTEB(16, 20, 16, 0),
                     child: TextFormField(
+                      keyboardType: TextInputType.number,
                       controller: _porchController,
                       decoration: InputDecoration(hintText: 'Подъезд'),
                     ),
@@ -166,6 +168,7 @@ class _AddNewAddressScreenWidgetState extends State<AddNewAddressScreen> {
                   Padding(
                     padding: EdgeInsetsDirectional.fromSTEB(16, 20, 16, 0),
                     child: TextFormField(
+                      keyboardType: TextInputType.number,
                       controller: _floorController,
                       decoration: InputDecoration(hintText: 'Этаж'),
                     ),

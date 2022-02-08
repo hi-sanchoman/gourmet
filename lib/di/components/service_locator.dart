@@ -1,4 +1,5 @@
 import 'package:esentai/data/local/datasources/post/post_datasource.dart';
+import 'package:esentai/data/navigation_service.dart';
 import 'package:esentai/data/network/apis/catalog/catalog_api.dart';
 import 'package:esentai/data/network/apis/posts/post_api.dart';
 import 'package:esentai/data/network/apis/users/user_api.dart';
@@ -42,6 +43,7 @@ Future<void> setupLocator() async {
       NetworkModule.provideDio(getIt<SharedPreferenceHelper>()));
   getIt.registerSingleton(DioClient(getIt<Dio>()));
   getIt.registerSingleton(RestClient());
+  getIt.registerLazySingleton(() => NavigationService());
 
   // api's:---------------------------------------------------------------------
   getIt.registerSingleton(PostApi(getIt<DioClient>(), getIt<RestClient>()));

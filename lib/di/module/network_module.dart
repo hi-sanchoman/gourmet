@@ -1,9 +1,15 @@
 import 'dart:io';
 
 import 'package:dio/adapter.dart';
+import 'package:esentai/data/navigation_service.dart';
 import 'package:esentai/data/network/constants/endpoints.dart';
 import 'package:esentai/data/sharedpref/shared_preference_helper.dart';
 import 'package:dio/dio.dart';
+import 'package:esentai/ui/login/login.dart';
+import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 abstract class NetworkModule {
   /// A singleton dio provider.
@@ -11,6 +17,7 @@ abstract class NetworkModule {
   /// Calling it multiple times will return the same instance.
   static Dio provideDio(SharedPreferenceHelper sharedPrefHelper) {
     final dio = Dio();
+    final getIt = GetIt.instance;
 
     dio
       ..options.baseUrl = Endpoints.baseUrl
@@ -31,23 +38,22 @@ abstract class NetworkModule {
     //   return client;
     // };
 
-    // ..interceptors.add(
-    //   InterceptorsWrapper(
-    //     onRequest: (RequestOptions options,
-    //         RequestInterceptorHandler handler) async {
-    //       // getting token
-    //       // var token = await sharedPrefHelper.authToken;
+    dio.interceptors.add(InterceptorsWrapper(
+      onError: (error, handler) async {
+        if (error.response?.statusCode == 403 ||
+            error.response?.statusCode == 401) {
+          // go to login screen
+          // getIt<NavigationService>().navigatorKey.currentState!.pushAndRemoveUntil(newRoute, (route) => false)
 
-    //       // if (token != null) {
-    //       //   options.headers.putIfAbsent('Authorization', () => token);
-    //       // } else {
-    //       //   print('Auth token is null');
-    //       // }
+          pushNewScreen(getIt<NavigationService>().navigatorKey.currentContext!,
+              screen: LoginScreen(),
+              withNavBar: false,
+              pageTransitionAnimation: PageTransitionAnimation.fade);
+        }
 
-    //       return handler.next(options);
-    //     },
-    //   ),
-    // );
+        // return error.response;
+      },
+    ));
 
     return dio;
   }

@@ -357,6 +357,11 @@ class _PhoneVerifyScreenState extends State<PhoneVerifyScreen> {
   }
 
   void _onSubmit() async {
+    if (_code.isEmpty) {
+      _showErrorMessage('Введите код');
+      return;
+    }
+
     _formStore.setCode(_code);
 
     // if (widget.referer == 'login') {
@@ -509,6 +514,10 @@ class _PhoneVerifyScreenState extends State<PhoneVerifyScreen> {
       });
 
       _userStore.isLoggedIn = true;
+
+      _formStore.tokenResponse = null;
+      _userStore.success = false;
+      _userStore.successProfile = false;
 
       // get current userdata
       print("print- get current profile");

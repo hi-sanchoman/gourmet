@@ -65,8 +65,11 @@ class UserApi {
       "username": userId,
       "full_name": fullName,
       "email": email,
-      "birthday": birthday
     };
+
+    if (birthday.isNotEmpty) {
+      data['birthday'] = birthday;
+    }
 
     try {
       final res = await _dioClient.post(Endpoints.register, data: data);
@@ -118,7 +121,9 @@ class UserApi {
               options: Options(
                   headers: {"Authorization": "JWT ${tokenRes.access}"}));
         } catch (e) {
-          print(e);
+          print("Ошибка регистрации девайса: $e");
+        } finally {
+          return tokenRes;
         }
       }
 

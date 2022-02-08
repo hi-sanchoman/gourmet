@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:esentai/constants/app_theme.dart';
 import 'package:esentai/constants/strings.dart';
+import 'package:esentai/data/navigation_service.dart';
 import 'package:esentai/data/repository.dart';
 import 'package:esentai/data/sharedpref/constants/preferences.dart';
 import 'package:esentai/di/components/service_locator.dart';
@@ -87,7 +88,8 @@ class _MyAppState extends State<MyApp> {
   final OrderStore _orderStore = OrderStore(getIt<Repository>());
 
   final GlobalKey<NavigatorState> _navigatorKey =
-      GlobalKey(debugLabel: "MainNavigator");
+      // GlobalKey(debugLabel: "MainNavigator");
+      getIt<NavigationService>().navigatorKey;
 
   @override
   void initState() {

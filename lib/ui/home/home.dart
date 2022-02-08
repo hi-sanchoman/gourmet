@@ -227,7 +227,61 @@ class _HomeScreenWidgetState extends State<HomeScreen> {
                         ),
                       ),
                     ),
-                  )
+                  ),
+                  Padding(
+                    padding: EdgeInsetsDirectional.fromSTEB(14, 21, 0, 0),
+                    child: InkWell(
+                      onTap: () {
+                        pushNewScreen(context,
+                            screen: InfoScreen(slug: 'offer'),
+                            withNavBar: false,
+                            pageTransitionAnimation:
+                                PageTransitionAnimation.fade);
+                      },
+                      child: Text(
+                        'Публичная оферта',
+                        style: DefaultAppTheme.bodyText1.override(
+                          fontFamily: 'Gilroy',
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsetsDirectional.fromSTEB(14, 21, 0, 0),
+                    child: InkWell(
+                      onTap: () {
+                        pushNewScreen(context,
+                            screen: InfoScreen(slug: 'merchant'),
+                            withNavBar: false,
+                            pageTransitionAnimation:
+                                PageTransitionAnimation.fade);
+                      },
+                      child: Text(
+                        'Реквизиты мерчанта',
+                        style: DefaultAppTheme.bodyText1.override(
+                          fontFamily: 'Gilroy',
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsetsDirectional.fromSTEB(14, 21, 0, 0),
+                    child: InkWell(
+                      onTap: () {
+                        pushNewScreen(context,
+                            screen: InfoScreen(slug: 'privacy'),
+                            withNavBar: false,
+                            pageTransitionAnimation:
+                                PageTransitionAnimation.fade);
+                      },
+                      child: Text(
+                        'Политика конфиденциальности',
+                        style: DefaultAppTheme.bodyText1.override(
+                          fontFamily: 'Gilroy',
+                        ),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
