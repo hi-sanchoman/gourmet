@@ -202,7 +202,10 @@ abstract class _FormStore with Store {
       }
 
       if (err is DioError && err.response != null && !isRx) {
-        print("login error: ${e.response!.data['error']}");
+        if (err.response!.data is String) {
+          errorStore.errorMessage = 'Ошибка на сервере.';
+          return;
+        }
 
         if (err.response!.data['email'] != null) {
           errorStore.errorMessage = 'Пользователь с такой почтой существует';
@@ -267,9 +270,16 @@ abstract class _FormStore with Store {
       DioError err = e as DioError;
 
       if (err.response != null) {
-        print("login error: ${e.response!.data['error']}");
+        // print("login error: ${e.response}");
 
-        if (err.response!.data['error'].contains('No such user')) {
+        if (e.response!.data is String) {
+          errorStore.errorMessage = 'Ошибка на сервере.';
+          return;
+        }
+
+        Map<String, dynamic> data = e.response!.data as Map<String, dynamic>;
+
+        if (data['error'] != null && data['error']!.contains('No such user')) {
           errorStore.errorMessage = 'Пользователь не существует';
         }
       } else {

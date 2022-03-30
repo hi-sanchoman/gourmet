@@ -37,8 +37,10 @@ class UserApi {
 
     try {
       final res = await _dioClient.post(Endpoints.login, data: data);
-
+      print("login response: $res");
       return LoginResponse.fromMap(res);
+
+      // return LoginResponse(message: 'asd');
     } catch (e) {
       print("user_api error:" + e.toString());
       throw e;

@@ -30,10 +30,10 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   void initState() {
     super.initState();
 
-    _slidableController = SlidableController(
-      onSlideAnimationChanged: handleSlideAnimationChanged,
-      onSlideIsOpenChanged: handleSlideIsOpenChanged,
-    );
+    // _slidableController = SlidableController(
+    //   onSlideAnimationChanged: handleSlideAnimationChanged,
+    //   onSlideIsOpenChanged: handleSlideIsOpenChanged,
+    // );
   }
 
   @override
@@ -157,26 +157,43 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                     in _userStore.notificationList!.items!)
                   Slidable(
                     key: Key(item.id.toString()),
-                    controller: _slidableController,
-                    direction: Axis.horizontal,
-                    dismissal: SlidableDismissal(
-                      child: SlidableDrawerDismissal(),
-                      onDismissed: (actionType) {
-                        _onNotificationRemove(item);
-                      },
-                    ),
-                    actionPane: SlidableScrollActionPane(),
-                    actionExtentRatio: 0.25,
-                    secondaryActions: <Widget>[
-                      IconSlideAction(
-                        // caption: 'Delete',
-                        color: DefaultAppTheme.background,
-                        iconWidget: Image.asset(
-                          'assets/images/ic_trash_red.png',
+
+                    startActionPane: ActionPane(
+                        motion: ScrollMotion(),
+                        dismissible: DismissiblePane(
+                          onDismissed: () {},
                         ),
-                        onTap: () => _onNotificationRemove(item),
-                      ),
-                    ],
+                        children: [
+                          SlidableAction(
+                            onPressed: (context) => _onNotificationRemove(item),
+                            backgroundColor: DefaultAppTheme.background,
+                            label: 'Удалить',
+                            icon: Icons.delete,
+                            // Image.asset(
+                            //   'assets/images/ic_trash_red.png',
+                            // ),),
+                          ),
+                        ]),
+                    // controller: _slidableController,
+                    direction: Axis.horizontal,
+                    // dismissal: SlidableDismissal(
+                    //   child: SlidableDrawerDismissal(),
+                    //   onDismissed: (actionType) {
+                    //     _onNotificationRemove(item);
+                    //   },
+                    // ),
+                    // actionPane: SlidableScrollActionPane(),
+                    // actionExtentRatio: 0.25,
+                    // secondaryActions: <Widget>[
+                    //   IconSlideAction(
+                    //     // caption: 'Delete',
+                    //     color: DefaultAppTheme.background,
+                    //     iconWidget: Image.asset(
+                    //       'assets/images/ic_trash_red.png',
+                    //     ),
+                    //     onTap: () => _onNotificationRemove(item),
+                    //   ),
+                    // ],
                     child: Padding(
                       padding: EdgeInsetsDirectional.fromSTEB(16, 16, 16, 0),
                       child: NotificationCardWidget(

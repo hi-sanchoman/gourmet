@@ -52,10 +52,10 @@ class _CartScreenWidgetState extends State<CartScreen> {
   void initState() {
     super.initState();
 
-    _slidableController = SlidableController(
-      onSlideAnimationChanged: handleSlideAnimationChanged,
-      onSlideIsOpenChanged: handleSlideIsOpenChanged,
-    );
+    // _slidableController = SlidableController(
+    //   onSlideAnimationChanged: handleSlideAnimationChanged,
+    //   onSlideIsOpenChanged: handleSlideIsOpenChanged,
+    // );
   }
 
   @override
@@ -126,7 +126,7 @@ class _CartScreenWidgetState extends State<CartScreen> {
           Padding(
             padding: EdgeInsetsDirectional.fromSTEB(0, 30, 0, 0),
             child: Text(
-              'Ваша карзина пуста',
+              'Ваша корзина пуста',
               style: DefaultAppTheme.bodyText1.override(
                 fontFamily: 'Gilroy',
                 color: DefaultAppTheme.grayLight,
@@ -137,7 +137,7 @@ class _CartScreenWidgetState extends State<CartScreen> {
           Padding(
             padding: EdgeInsetsDirectional.fromSTEB(16, 11, 16, 0),
             child: Text(
-              'Добавьте товары в Корзину чтобы увидеть выбранные товары. ',
+              'Добавьте товары в корзину, чтобы увидеть выбранные товары. ',
               textAlign: TextAlign.center,
               style: DefaultAppTheme.bodyText2.override(
                 fontFamily: 'Gilroy',
@@ -169,26 +169,44 @@ class _CartScreenWidgetState extends State<CartScreen> {
             for (var item in _cartStore.flutterCart.cartItem)
               Slidable(
                 key: Key(item.uuid),
-                controller: _slidableController,
-                direction: Axis.horizontal,
-                dismissal: SlidableDismissal(
-                  child: SlidableDrawerDismissal(),
-                  onDismissed: (actionType) {
-                    _onCartRemove(item);
-                  },
-                ),
-                actionPane: _getActionPane(2)!,
-                actionExtentRatio: 0.25,
-                secondaryActions: <Widget>[
-                  IconSlideAction(
-                    // caption: 'Delete',
-                    color: DefaultAppTheme.background,
-                    iconWidget: Image.asset(
-                      'assets/images/ic_trash_red.png',
+
+                startActionPane: ActionPane(
+                    motion: ScrollMotion(),
+                    dismissible: DismissiblePane(
+                      onDismissed: () {},
                     ),
-                    onTap: () => _onCartRemove(item),
-                  ),
-                ],
+                    children: [
+                      SlidableAction(
+                        onPressed: (context) => _onCartRemove(item),
+                        backgroundColor: DefaultAppTheme.background,
+                        label: 'Удалить',
+                        icon: Icons.delete,
+                        // Image.asset(
+                        //   'assets/images/ic_trash_red.png',
+                        // ),),
+                      ),
+                    ]),
+
+                // controller: _slidableController,
+                direction: Axis.horizontal,
+                // dismissal: SlidableDismissal(
+                //   child: SlidableDrawerDismissal(),
+                //   onDismissed: (actionType) {
+                //     _onCartRemove(item);
+                //   },
+                // ),
+                // actionPane: _getActionPane(2)!,
+                // actionExtentRatio: 0.25,
+                // secondaryActions: <Widget>[
+                //   IconSlideAction(
+                //     // caption: 'Delete',
+                //     color: DefaultAppTheme.background,
+                //     iconWidget: Image.asset(
+                //       'assets/images/ic_trash_red.png',
+                //     ),
+                //     onTap: () => _onCartRemove(item),
+                //   ),
+                // ],
                 child: Padding(
                   padding: EdgeInsetsDirectional.fromSTEB(16, 16, 16, 0),
                   child: CartItemWidgetWidget(
@@ -275,20 +293,20 @@ class _CartScreenWidgetState extends State<CartScreen> {
     );
   }
 
-  static Widget? _getActionPane(int index) {
-    switch (index % 4) {
-      case 0:
-        return SlidableBehindActionPane();
-      case 1:
-        return SlidableStrechActionPane();
-      case 2:
-        return SlidableScrollActionPane();
-      case 3:
-        return SlidableDrawerActionPane();
-      default:
-        return null;
-    }
-  }
+  // static Widget? _getActionPane(int index) {
+  //   switch (index % 4) {
+  //     case 0:
+  //       return SlidableBehindActionPane();
+  //     case 1:
+  //       return SlidableStrechActionPane();
+  //     case 2:
+  //       return SlidableScrollActionPane();
+  //     case 3:
+  //       return SlidableDrawerActionPane();
+  //     default:
+  //       return null;
+  //   }
+  // }
 
   void _showSnackBar(BuildContext context, String text) {
     ScaffoldMessenger.of(context)

@@ -101,6 +101,7 @@ class Repository {
   // Login:---------------------------------------------------------------------
   Future<LoginResponse> login(String userId) async {
     return await _userApi.login(userId).catchError((e) {
+      // print("login error repository: $e");
       throw e;
     });
   }

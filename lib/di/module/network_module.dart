@@ -40,6 +40,8 @@ abstract class NetworkModule {
 
     dio.interceptors.add(InterceptorsWrapper(
       onError: (error, handler) async {
+        print('network module error: $error');
+
         if (error.response?.statusCode == 403 ||
             error.response?.statusCode == 401) {
           // go to login screen

@@ -482,6 +482,30 @@ class _PhoneVerifyScreenState extends State<PhoneVerifyScreen> {
   Widget navigate(BuildContext context) {
     print("navigate called...verify phone");
 
+    // we have token
+    if (_formStore.tokenResponse != null) {
+      // save token
+      SharedPreferences.getInstance().then((prefs) {
+        prefs.setBool(Preferences.is_logged_in, true);
+        prefs.setString(
+            Preferences.auth_token, _formStore.tokenResponse!.access);
+
+        // after setting up token
+
+        _userStore.isLoggedIn = true;
+
+        _formStore.tokenResponse = null;
+        _userStore.success = false;
+        _userStore.successProfile = false;
+
+        // get current userdata
+        print("print- get current profile");
+        _userStore.getProfile();
+      });
+
+      return Container();
+    }
+
     // we have user data -> go home
     if (_userStore.profile != null) {
       print("print- success... go to home page");
@@ -500,28 +524,6 @@ class _PhoneVerifyScreenState extends State<PhoneVerifyScreen> {
         Navigator.of(context)
             .pushNamedAndRemoveUntil(Routes.home, (route) => false);
       });
-
-      return Container();
-    }
-
-    // we have token
-    if (_formStore.tokenResponse != null) {
-      // save token
-      SharedPreferences.getInstance().then((prefs) {
-        prefs.setBool(Preferences.is_logged_in, true);
-        prefs.setString(
-            Preferences.auth_token, _formStore.tokenResponse!.access);
-      });
-
-      _userStore.isLoggedIn = true;
-
-      _formStore.tokenResponse = null;
-      _userStore.success = false;
-      _userStore.successProfile = false;
-
-      // get current userdata
-      print("print- get current profile");
-      _userStore.getProfile();
 
       return Container();
     }

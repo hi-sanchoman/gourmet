@@ -37,12 +37,16 @@ class _ChooseAddressScreenState extends State<PickOnMapScreen> {
   Position? _position;
   bool _noLocation = true;
 
+  bool _isMapLoaded = false;
+
   final MapObjectId _placemarkId = MapObjectId('pin_icon');
   final List<MapObject> _mapObjects = [];
 
   @override
   void initState() {
     super.initState();
+
+    _address = 'Подождите. Определяем местоположение...';
   }
 
   @override
@@ -137,20 +141,23 @@ class _ChooseAddressScreenState extends State<PickOnMapScreen> {
           ),
         ),
       ),
-      Align(
-        alignment: AlignmentDirectional.bottomCenter,
-        child: Padding(
-          padding: EdgeInsets.fromLTRB(16, 0, 16, 50),
-          child: ElevatedButton(
-            child: Text('Подтвердить'),
-            onPressed: () {
-              _onClose();
-            },
-            style: DefaultAppTheme.buttonDefaultStyle,
-            // borderRadius: 19
+      if (_isMapLoaded)
+        Align(
+          alignment: AlignmentDirectional.bottomCenter,
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(16, 0, 16, 50),
+            child: ElevatedButton(
+              child: Text('Подтвердить'),
+              onPressed: () {
+                if (_address.isEmpty) return;
+
+                _onClose();
+              },
+              style: DefaultAppTheme.buttonDefaultStyle,
+              // borderRadius: 19
+            ),
           ),
-        ),
-      )
+        )
     ]);
   }
 
@@ -357,6 +364,7 @@ class _ChooseAddressScreenState extends State<PickOnMapScreen> {
       setState(() {
         _position = position;
         _noLocation = false;
+        _isMapLoaded = true;
       });
 
       print("found position: $_position");

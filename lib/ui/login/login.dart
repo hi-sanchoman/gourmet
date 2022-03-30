@@ -530,6 +530,8 @@ class _LoginScreenState extends State<LoginScreen> {
       Helpers.showInfoMessage(context, "Неверный номер телефона");
       // _showErrorMessage(_formStore.formErrorStore.userId.toString());
 
+      _formStore.isLoading = false;
+
       return;
     }
 
@@ -599,6 +601,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
   // General Methods:-----------------------------------------------------------
   _showErrorMessage(String message) {
+    // _formStore.isLoading = false;
+
+    print("error: $message");
+
     if (message.isNotEmpty) {
       Future.delayed(Duration(milliseconds: 0), () {
         Helpers.showInfoMessage(context, message);

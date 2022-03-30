@@ -169,53 +169,53 @@ class _CheckoutConfirmScreenWidgetState extends State<CheckoutConfirmScreen> {
                     ListTile(
                       dense: false,
                     ),
-                    Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 11),
-                      child: Text(
-                        'Дополнительно',
-                        style: DefaultAppTheme.title2.override(
-                          fontFamily: 'Gilroy',
-                        ),
-                      ),
-                    ),
-                    ListTile(
-                      title: Text(
-                        'Промокод',
-                        style: DefaultAppTheme.bodyText1.override(
-                          fontFamily: 'Gilroy',
-                          color: DefaultAppTheme.grey3,
-                        ),
-                      ),
-                      trailing: Icon(
-                        Icons.arrow_forward_ios,
-                        color: DefaultAppTheme.primaryColor,
-                        size: 20,
-                      ),
-                      dense: false,
-                    ),
-                    Divider(
-                      height: 1,
-                      thickness: 1,
-                    ),
-                    ListTile(
-                      title: Text(
-                        'Потратить бонусы',
-                        style: DefaultAppTheme.bodyText1.override(
-                          fontFamily: 'Gilroy',
-                          color: DefaultAppTheme.grey3,
-                        ),
-                      ),
-                      trailing: Icon(
-                        Icons.arrow_forward_ios,
-                        color: DefaultAppTheme.primaryColor,
-                        size: 20,
-                      ),
-                      dense: false,
-                    ),
-                    Divider(
-                      height: 1,
-                      thickness: 1,
-                    )
+                    // Padding(
+                    //   padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 11),
+                    //   child: Text(
+                    //     'Дополнительно',
+                    //     style: DefaultAppTheme.title2.override(
+                    //       fontFamily: 'Gilroy',
+                    //     ),
+                    //   ),
+                    // ),
+                    // ListTile(
+                    //   title: Text(
+                    //     'Промокод',
+                    //     style: DefaultAppTheme.bodyText1.override(
+                    //       fontFamily: 'Gilroy',
+                    //       color: DefaultAppTheme.grey3,
+                    //     ),
+                    //   ),
+                    //   trailing: Icon(
+                    //     Icons.arrow_forward_ios,
+                    //     color: DefaultAppTheme.primaryColor,
+                    //     size: 20,
+                    //   ),
+                    //   dense: false,
+                    // ),
+                    // Divider(
+                    //   height: 1,
+                    //   thickness: 1,
+                    // ),
+                    // ListTile(
+                    //   title: Text(
+                    //     'Потратить бонусы',
+                    //     style: DefaultAppTheme.bodyText1.override(
+                    //       fontFamily: 'Gilroy',
+                    //       color: DefaultAppTheme.grey3,
+                    //     ),
+                    //   ),
+                    //   trailing: Icon(
+                    //     Icons.arrow_forward_ios,
+                    //     color: DefaultAppTheme.primaryColor,
+                    //     size: 20,
+                    //   ),
+                    //   dense: false,
+                    // ),
+                    // Divider(
+                    //   height: 1,
+                    //   thickness: 1,
+                    // )
                   ],
                 ),
               )
@@ -312,62 +312,62 @@ class _CheckoutConfirmScreenWidgetState extends State<CheckoutConfirmScreen> {
                           ],
                         ),
                       ),
-                    Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Expanded(
-                            child: Padding(
-                              padding:
-                                  EdgeInsetsDirectional.fromSTEB(0, 0, 16, 0),
-                              child: Text(
-                                'Бонусы:',
-                                style: DefaultAppTheme.bodyText1.override(
-                                  fontFamily: 'Gilroy',
-                                  color: DefaultAppTheme.grey3,
-                                ),
-                              ),
-                            ),
-                          ),
-                          Text(
-                            '0 тг',
-                            textAlign: TextAlign.end,
-                            style: DefaultAppTheme.bodyText1.override(
-                              fontFamily: 'Gilroy',
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Expanded(
-                            child: Padding(
-                              padding:
-                                  EdgeInsetsDirectional.fromSTEB(0, 0, 16, 0),
-                              child: Text(
-                                'Промокод:',
-                                style: DefaultAppTheme.bodyText1.override(
-                                  fontFamily: 'Gilroy',
-                                  color: DefaultAppTheme.grey3,
-                                ),
-                              ),
-                            ),
-                          ),
-                          Text(
-                            '0 тг',
-                            textAlign: TextAlign.end,
-                            style: DefaultAppTheme.bodyText1.override(
-                              fontFamily: 'Gilroy',
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
+                    // Padding(
+                    //   padding: EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
+                    //   child: Row(
+                    //     mainAxisSize: MainAxisSize.max,
+                    //     children: [
+                    //       Expanded(
+                    //         child: Padding(
+                    //           padding:
+                    //               EdgeInsetsDirectional.fromSTEB(0, 0, 16, 0),
+                    //           child: Text(
+                    //             'Бонусы:',
+                    //             style: DefaultAppTheme.bodyText1.override(
+                    //               fontFamily: 'Gilroy',
+                    //               color: DefaultAppTheme.grey3,
+                    //             ),
+                    //           ),
+                    //         ),
+                    //       ),
+                    //       Text(
+                    //         '0 тг',
+                    //         textAlign: TextAlign.end,
+                    //         style: DefaultAppTheme.bodyText1.override(
+                    //           fontFamily: 'Gilroy',
+                    //         ),
+                    //       )
+                    //     ],
+                    //   ),
+                    // ),
+                    // Padding(
+                    //   padding: EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
+                    //   child: Row(
+                    //     mainAxisSize: MainAxisSize.max,
+                    //     children: [
+                    //       Expanded(
+                    //         child: Padding(
+                    //           padding:
+                    //               EdgeInsetsDirectional.fromSTEB(0, 0, 16, 0),
+                    //           child: Text(
+                    //             'Промокод:',
+                    //             style: DefaultAppTheme.bodyText1.override(
+                    //               fontFamily: 'Gilroy',
+                    //               color: DefaultAppTheme.grey3,
+                    //             ),
+                    //           ),
+                    //         ),
+                    //       ),
+                    //       Text(
+                    //         '0 тг',
+                    //         textAlign: TextAlign.end,
+                    //         style: DefaultAppTheme.bodyText1.override(
+                    //           fontFamily: 'Gilroy',
+                    //         ),
+                    //       )
+                    //     ],
+                    //   ),
+                    // ),
                     Padding(
                       padding: EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
                       child: Row(

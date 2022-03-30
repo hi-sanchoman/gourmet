@@ -198,7 +198,7 @@ class _AddNewAddressScreenWidgetState extends State<AddNewAddressScreen> {
         withNavBar: false,
         pageTransitionAnimation: PageTransitionAnimation.fade);
 
-    if (res.isNotEmpty) {
+    if (res != null && res.isNotEmpty) {
       setState(() {
         _streetController.text = res['address'];
 
