@@ -66,7 +66,7 @@ class BirthdayPickerWidgetState extends State<BirthdayPickerWidget> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'День рождения',
+                'День рождения (не обязательно)',
                 style: DefaultAppTheme.subtitle2.override(
                     fontFamily: 'Gilroy', color: DefaultAppTheme.textColor),
               ),

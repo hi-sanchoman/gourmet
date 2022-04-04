@@ -77,6 +77,7 @@ class _LoginScreenState extends State<LoginScreen> {
     _phoneInput = DefaultInputFieldWidget(
       key: _inputKeyPhone,
       label: 'Номер телефона',
+      isRequired: false,
       formatter: _maskFormatter,
       keyboardType: TextInputType.phone,
       hint: '+7 (   )',
@@ -89,6 +90,7 @@ class _LoginScreenState extends State<LoginScreen> {
     _userInput = DefaultInputFieldWidget(
       key: _inputKeyName,
       label: 'Имя Фамилия',
+      isRequired: true,
       hint: 'Имя Фамилия',
       keyboardType: TextInputType.name,
       leadingIconDefault: 'assets/images/ic_user_grey.png',
@@ -100,6 +102,7 @@ class _LoginScreenState extends State<LoginScreen> {
     _phoneInput2 = DefaultInputFieldWidget(
       key: _inputKeyPhone2,
       label: 'Номер телефона',
+      isRequired: true,
       formatter: _maskFormatter2,
       keyboardType: TextInputType.phone,
       hint: '+7 (   )',
@@ -112,6 +115,7 @@ class _LoginScreenState extends State<LoginScreen> {
     _emailInput = DefaultInputFieldWidget(
       key: _inputKeyEmail,
       label: 'Электронная почта',
+      isRequired: true,
       leadingIconDefault: 'assets/images/ic_email_grey.png',
       leadingIconActive: 'assets/images/ic_email.png',
       hint: 'Электронная почта',
@@ -516,7 +520,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _onLogin() async {
-    String phoneNumber = "+7" + _maskFormatter.getUnmaskedText();
+    String phoneNumber = "+7" + _maskFormatter.getUnmaskedText().trim();
 
     print("go login: $phoneNumber");
 
@@ -539,9 +543,9 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _onRegister() async {
-    var phoneNumber = '+7' + _maskFormatter2.getUnmaskedText();
-    var fullName = _fullnameController.text;
-    var email = _emailController.text;
+    var phoneNumber = '+7' + _maskFormatter2.getUnmaskedText().trim();
+    var fullName = _fullnameController.text.trim();
+    var email = _emailController.text.trim();
 
     _formStore.setFullName(fullName);
     _formStore.setUserId(phoneNumber);

@@ -8,6 +8,7 @@ class DefaultInputFieldWidget extends StatefulWidget {
       {Key? key,
       this.formatter,
       required this.label,
+      this.isRequired = false,
       this.leadingIconDefault,
       this.leadingIconActive,
       this.trailingIconDefault,
@@ -20,6 +21,7 @@ class DefaultInputFieldWidget extends StatefulWidget {
       : super(key: key);
 
   final String label;
+  final bool isRequired;
   final String? leadingIconDefault;
   final String? leadingIconActive;
   final String? trailingIconDefault;
@@ -61,11 +63,22 @@ class DefaultInputFieldWidgetState extends State<DefaultInputFieldWidget> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            widget.label,
-            style: DefaultAppTheme.subtitle2.override(
-                fontFamily: 'Gilroy',
-                color: _hasErrors ? widget.errorColor : widget.color),
+          Row(
+            children: [
+              Text(
+                widget.label,
+                style: DefaultAppTheme.subtitle2.override(
+                    fontFamily: 'Gilroy',
+                    color: _hasErrors ? widget.errorColor : widget.color),
+              ),
+              if (widget.isRequired)
+                Text(
+                  '*',
+                  style: DefaultAppTheme.bodyText1.override(
+                    color: Colors.red,
+                  ),
+                ),
+            ],
           ),
           Row(
             mainAxisSize: MainAxisSize.max,
