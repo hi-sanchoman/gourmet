@@ -7,7 +7,7 @@ class Order {
   int? id;
   int? paymentMethod;
   String? totalPrice;
-  String? bonusReturned;
+  int? bonusReturned;
   String? updatedAt;
   OrderItemList? goods;
   String? status;
@@ -81,7 +81,7 @@ class Order {
 
   @override
   String toString() {
-    return 'Order(id: $id, status: $status, deliveryType: $deliveryType, paymentMethod: $paymentMethod, totalPrice: $totalPrice, bonusReturened: $bonusReturned, updatedAt: $updatedAt)';
+    return 'Order(id: $id, status: $status, deliveryType: $deliveryType, paymentMethod: $paymentMethod, totalPrice: $totalPrice, bonusReturned: $bonusReturned, updatedAt: $updatedAt)';
   }
 
   @override

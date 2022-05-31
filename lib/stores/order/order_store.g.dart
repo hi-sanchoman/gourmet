@@ -204,6 +204,51 @@ mixin _$OrderStore on _OrderStore, Store {
     });
   }
 
+  final _$bonusCanAtom = Atom(name: '_OrderStore.bonusCan');
+
+  @override
+  int? get bonusCan {
+    _$bonusCanAtom.reportRead();
+    return super.bonusCan;
+  }
+
+  @override
+  set bonusCan(int? value) {
+    _$bonusCanAtom.reportWrite(value, super.bonusCan, () {
+      super.bonusCan = value;
+    });
+  }
+
+  final _$bonusMaxAtom = Atom(name: '_OrderStore.bonusMax');
+
+  @override
+  int? get bonusMax {
+    _$bonusMaxAtom.reportRead();
+    return super.bonusMax;
+  }
+
+  @override
+  set bonusMax(int? value) {
+    _$bonusMaxAtom.reportWrite(value, super.bonusMax, () {
+      super.bonusMax = value;
+    });
+  }
+
+  final _$bonusPayAtom = Atom(name: '_OrderStore.bonusPay');
+
+  @override
+  int? get bonusPay {
+    _$bonusPayAtom.reportRead();
+    return super.bonusPay;
+  }
+
+  @override
+  set bonusPay(int? value) {
+    _$bonusPayAtom.reportWrite(value, super.bonusPay, () {
+      super.bonusPay = value;
+    });
+  }
+
   final _$sendCheckAtom = Atom(name: '_OrderStore.sendCheck');
 
   @override
@@ -279,11 +324,88 @@ mixin _$OrderStore on _OrderStore, Store {
     });
   }
 
+  final _$deliveryPointAtom = Atom(name: '_OrderStore.deliveryPoint');
+
+  @override
+  LatLng? get deliveryPoint {
+    _$deliveryPointAtom.reportRead();
+    return super.deliveryPoint;
+  }
+
+  @override
+  set deliveryPoint(LatLng? value) {
+    _$deliveryPointAtom.reportWrite(value, super.deliveryPoint, () {
+      super.deliveryPoint = value;
+    });
+  }
+
+  final _$listOfSuggestionsAtom = Atom(name: '_OrderStore.listOfSuggestions');
+
+  @override
+  List<Widget>? get listOfSuggestions {
+    _$listOfSuggestionsAtom.reportRead();
+    return super.listOfSuggestions;
+  }
+
+  @override
+  set listOfSuggestions(List<Widget>? value) {
+    _$listOfSuggestionsAtom.reportWrite(value, super.listOfSuggestions, () {
+      super.listOfSuggestions = value;
+    });
+  }
+
+  final _$addressesFoundAtom = Atom(name: '_OrderStore.addressesFound');
+
+  @override
+  List<String>? get addressesFound {
+    _$addressesFoundAtom.reportRead();
+    return super.addressesFound;
+  }
+
+  @override
+  set addressesFound(List<String>? value) {
+    _$addressesFoundAtom.reportWrite(value, super.addressesFound, () {
+      super.addressesFound = value;
+    });
+  }
+
+  final _$queryModeAtom = Atom(name: '_OrderStore.queryMode');
+
+  @override
+  bool get queryMode {
+    _$queryModeAtom.reportRead();
+    return super.queryMode;
+  }
+
+  @override
+  set queryMode(bool value) {
+    _$queryModeAtom.reportWrite(value, super.queryMode, () {
+      super.queryMode = value;
+    });
+  }
+
   final _$createOrderAsyncAction = AsyncAction('_OrderStore.createOrder');
 
   @override
   Future<dynamic> createOrder(Map<String, dynamic> data) {
     return _$createOrderAsyncAction.run(() => super.createOrder(data));
+  }
+
+  final _$getBonusesAsyncAction = AsyncAction('_OrderStore.getBonuses');
+
+  @override
+  Future<dynamic> getBonuses(String loyaltyNum, List<dynamic> cartDetails) {
+    return _$getBonusesAsyncAction
+        .run(() => super.getBonuses(loyaltyNum, cartDetails));
+  }
+
+  final _$processBonusesAsyncAction = AsyncAction('_OrderStore.processBonuses');
+
+  @override
+  Future<dynamic> processBonuses(int orderId, int totalSum, int sumWithDiscount,
+      List<dynamic> discountDetails, List<dynamic> cartDetails) {
+    return _$processBonusesAsyncAction.run(() => super.processBonuses(
+        orderId, totalSum, sumWithDiscount, discountDetails, cartDetails));
   }
 
   @override
@@ -302,11 +424,18 @@ dateStart: ${dateStart},
 paymentId: ${paymentId},
 promoId: ${promoId},
 payWithBonus: ${payWithBonus},
+bonusCan: ${bonusCan},
+bonusMax: ${bonusMax},
+bonusPay: ${bonusPay},
 sendCheck: ${sendCheck},
 response: ${response},
 deliveryPrice: ${deliveryPrice},
 deliveryTreshold: ${deliveryTreshold},
-freeTreshold: ${freeTreshold}
+freeTreshold: ${freeTreshold},
+deliveryPoint: ${deliveryPoint},
+listOfSuggestions: ${listOfSuggestions},
+addressesFound: ${addressesFound},
+queryMode: ${queryMode}
     ''';
   }
 }

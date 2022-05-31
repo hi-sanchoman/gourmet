@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:esentai/models/order/order.dart';
 import 'package:esentai/models/order/order_item.dart';
+import 'package:esentai/utils/helpers.dart';
 import 'package:esentai/utils/themes/default.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -51,7 +52,7 @@ class _OrderCardWidgetState extends State<OrderHistoryCardWidget> {
                           ),
                         ),
                         Text(
-                          '${widget.order.totalPrice ?? 0}  тг',
+                          '${widget.order.totalPrice != null ? Helpers.prettyNum(double.tryParse(widget.order.totalPrice!)) : 0} тг',
                           style: DefaultAppTheme.title2.override(
                             fontFamily: 'Gilroy',
                             color: DefaultAppTheme.primaryColor,
@@ -74,13 +75,14 @@ class _OrderCardWidgetState extends State<OrderHistoryCardWidget> {
                             ),
                           ),
                         ),
-                        Text(
-                          '${widget.order.bonusReturned ?? 0}  тг',
-                          style: DefaultAppTheme.subtitle2.override(
-                            fontFamily: 'Gilroy',
-                            color: DefaultAppTheme.tertiaryColor,
+                        if (widget.order.bonusReturned != null)
+                          Text(
+                            '+${widget.order.bonusReturned} тг',
+                            style: DefaultAppTheme.subtitle2.override(
+                              fontFamily: 'Gilroy',
+                              color: DefaultAppTheme.tertiaryColor,
+                            ),
                           ),
-                        )
                       ],
                     ),
                   ),

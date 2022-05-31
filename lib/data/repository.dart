@@ -34,6 +34,7 @@ import 'package:esentai/models/user/user.dart';
 import 'package:sembast/sembast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../models/order/rx_bonus.dart';
 import 'local/constants/db_constants.dart';
 import 'network/apis/catalog/catalog_api.dart';
 import 'network/apis/posts/post_api.dart';
@@ -133,6 +134,20 @@ class Repository {
   // JWT create token
   Future<TokenResponse> getToken(String username, String password) async {
     return await _userApi.createJwtToken(username, password).catchError((e) {
+      throw e;
+    });
+  }
+
+  // get available bonuses
+  Future<RxBonus> getBonuses(String token, dynamic data) async {
+    return await _userApi.getBonuses(token, data).catchError((e) {
+      throw e;
+    });
+  }
+
+  // pay & receive bonuses
+  Future<bool> processBonuses(String token, dynamic data) async {
+    return await _userApi.processBonuses(token, data).catchError((e) {
       throw e;
     });
   }

@@ -104,21 +104,22 @@ class _OrdersScreenState extends State<OrdersScreen> {
         ? Stack(
             children: [
               ListView(
-                  padding: EdgeInsets.zero,
-                  scrollDirection: Axis.vertical,
-                  children: [
-                    for (Order order in _userStore.orderList!.items!)
-                      // _buildOrder(order),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-                        child: InkWell(
-                            onTap: () {
-                              _onOrderPressed(order);
-                            },
-                            child: OrderHistoryCardWidget(order: order)),
-                      ),
-                    Container(height: 82),
-                  ]),
+                padding: EdgeInsets.zero,
+                scrollDirection: Axis.vertical,
+                children: [
+                  for (Order order in _userStore.orderList!.items!)
+                    // _buildOrder(order),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                      child: InkWell(
+                          onTap: () {
+                            _onOrderPressed(order);
+                          },
+                          child: OrderHistoryCardWidget(order: order)),
+                    ),
+                  Container(height: 82),
+                ],
+              ),
             ],
           )
         : Container(
@@ -126,27 +127,28 @@ class _OrdersScreenState extends State<OrdersScreen> {
             width: double.infinity,
             padding: EdgeInsets.only(top: 0),
             child: Column(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('Тут пусто',
-                      style: DefaultAppTheme.title1
-                          .override(color: DefaultAppTheme.grayLight)),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
-                    child: Text(
-                      'Здесь появятся ваши заказы',
-                      style: DefaultAppTheme.bodyText2,
-                      textAlign: TextAlign.center,
-                    ),
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('Тут пусто',
+                    style: DefaultAppTheme.title1
+                        .override(color: DefaultAppTheme.grayLight)),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
+                  child: Text(
+                    'Здесь появятся ваши заказы',
+                    style: DefaultAppTheme.bodyText2,
+                    textAlign: TextAlign.center,
                   ),
-                ]),
+                ),
+              ],
+            ),
           );
     ;
   }
 
   void _onOrderPressed(Order order) async {
-    print('order');
+    print('order pressed: $order');
 
     // Helpers.showInfoMessage(context, 'Order #${order.id}');
 

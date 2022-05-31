@@ -9,6 +9,8 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
+import '../utils/helpers.dart';
+
 class OrderDetailsWidget extends StatefulWidget {
   OrderDetailsWidget({Key? key, required this.order}) : super(key: key);
 
@@ -446,7 +448,7 @@ class _OrderDetailsScreenWidgetState extends State<OrderDetailsWidget> {
                             padding:
                                 EdgeInsetsDirectional.fromSTEB(16, 0, 0, 0),
                             child: Text(
-                              '${_userStore.currentOrder?.totalPrice ?? 0} тг',
+                              '${_userStore.currentOrder!.totalPrice ?? 0} тг',
                               style: DefaultAppTheme.title2.override(
                                 fontFamily: 'Gilroy',
                               ),
@@ -492,7 +494,7 @@ class _OrderDetailsScreenWidgetState extends State<OrderDetailsWidget> {
                             padding:
                                 EdgeInsetsDirectional.fromSTEB(16, 0, 0, 0),
                             child: Text(
-                              '${_userStore.currentOrder?.bonusReturned ?? 0} тг',
+                              '${widget.order.bonusReturned ?? 0} тг',
                               style: DefaultAppTheme.title2.override(
                                 fontFamily: 'Gilroy',
                               ),

@@ -8,6 +8,7 @@ import 'package:esentai/stores/user/user_store.dart';
 import 'package:esentai/ui/creditcard/creditcard_picker.dart';
 import 'package:esentai/ui/creditcard/enter_cvc.dart';
 import 'package:esentai/ui/orders/orders.dart';
+import 'package:esentai/ui/orders/pay_with_bonuses.dart';
 import 'package:esentai/ui/orders/payment_picker.dart';
 import 'package:esentai/ui/payment/pay.dart';
 import 'package:esentai/ui/payment/payment_result.dart';
@@ -68,7 +69,10 @@ class _CheckoutConfirmScreenWidgetState extends State<CheckoutConfirmScreen> {
       _usernameController.text = _userStore.profile!.username!;
       _emailController.text = _userStore.profile!.email!;
     }
+  }
 
+  // METHODS
+  int _getTotalPrice() {
     _totalPrice = _cartStore.getTotalAmount();
 
     if (_orderStore.deliveryType != 'DEV_DIY' && _orderStore.address != null) {
@@ -85,6 +89,41 @@ class _CheckoutConfirmScreenWidgetState extends State<CheckoutConfirmScreen> {
     //     _orderStore.deliveryType != 'DEV_DIY') {
     //   _totalPrice += AppConfig.delivery_price;
     // }
+
+    if (_orderStore.bonusPay != null) {
+      _totalPrice -= _getBonusPaid();
+    }
+
+    return _totalPrice.toInt();
+  }
+
+  int _getBonusPaid() {
+    return _orderStore.bonusPay ?? 0;
+  }
+
+  List<dynamic> _getCartDetails() {
+    List<dynamic> details = [];
+
+    for (var item in _cartStore.flutterCart.cartItem) {
+      details.add({
+        "ProductCode": item.productId,
+        "Quantity": item.quantity,
+        "TotalPrice": item.subTotal,
+        "TotalPriceDiscounted": 0,
+        "BonusDiscount": 0
+      });
+    }
+
+    return details;
+  }
+
+  _onPayWithBonuses() {
+    pushNewScreen(
+      context,
+      screen: PayWithBonusesScreen(),
+      withNavBar: false,
+      pageTransitionAnimation: PageTransitionAnimation.fade,
+    );
   }
 
   @override
@@ -122,14 +161,18 @@ class _CheckoutConfirmScreenWidgetState extends State<CheckoutConfirmScreen> {
   Widget _buildBody() {
     return Stack(
       children: [
-        Observer(builder: (context) {
-          return _buildForm();
-        }),
-        Observer(builder: (context) {
-          return Visibility(
-              visible: _orderStore.isLoading,
-              child: CustomProgressIndicatorWidget());
-        }),
+        Observer(
+          builder: (context) {
+            return _buildForm();
+          },
+        ),
+        Observer(
+          builder: (context) {
+            return Visibility(
+                visible: _orderStore.isLoading,
+                child: CustomProgressIndicatorWidget());
+          },
+        ),
       ],
     );
   }
@@ -169,15 +212,15 @@ class _CheckoutConfirmScreenWidgetState extends State<CheckoutConfirmScreen> {
                     ListTile(
                       dense: false,
                     ),
-                    // Padding(
-                    //   padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 11),
-                    //   child: Text(
-                    //     'Дополнительно',
-                    //     style: DefaultAppTheme.title2.override(
-                    //       fontFamily: 'Gilroy',
-                    //     ),
-                    //   ),
-                    // ),
+                    Padding(
+                      padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 11),
+                      child: Text(
+                        'Дополнительно',
+                        style: DefaultAppTheme.title2.override(
+                          fontFamily: 'Gilroy',
+                        ),
+                      ),
+                    ),
                     // ListTile(
                     //   title: Text(
                     //     'Промокод',
@@ -193,29 +236,39 @@ class _CheckoutConfirmScreenWidgetState extends State<CheckoutConfirmScreen> {
                     //   ),
                     //   dense: false,
                     // ),
-                    // Divider(
-                    //   height: 1,
-                    //   thickness: 1,
-                    // ),
-                    // ListTile(
-                    //   title: Text(
-                    //     'Потратить бонусы',
-                    //     style: DefaultAppTheme.bodyText1.override(
-                    //       fontFamily: 'Gilroy',
-                    //       color: DefaultAppTheme.grey3,
-                    //     ),
-                    //   ),
-                    //   trailing: Icon(
-                    //     Icons.arrow_forward_ios,
-                    //     color: DefaultAppTheme.primaryColor,
-                    //     size: 20,
-                    //   ),
-                    //   dense: false,
-                    // ),
-                    // Divider(
-                    //   height: 1,
-                    //   thickness: 1,
-                    // )
+                    Divider(
+                      height: 1,
+                      thickness: 1,
+                    ),
+                    InkWell(
+                      onTap: () => _onPayWithBonuses(),
+                      child: ListTile(
+                        contentPadding: const EdgeInsets.all(0),
+                        title: Text(
+                          'Потратить бонусы',
+                          style: DefaultAppTheme.bodyText1.override(
+                            fontFamily: 'Gilroy',
+                            color: _orderStore.bonusPay != null &&
+                                    _getBonusPaid() > 0
+                                ? Colors.black
+                                : DefaultAppTheme.grayLight,
+                          ),
+                        ),
+                        trailing: Icon(
+                          Icons.arrow_forward_ios,
+                          color: _orderStore.bonusPay != null &&
+                                  _getBonusPaid() > 0
+                              ? DefaultAppTheme.primaryColor
+                              : DefaultAppTheme.grayLight,
+                          size: 20,
+                        ),
+                        dense: false,
+                      ),
+                    ),
+                    Divider(
+                      height: 1,
+                      thickness: 1,
+                    ),
                   ],
                 ),
               )
@@ -270,7 +323,7 @@ class _CheckoutConfirmScreenWidgetState extends State<CheckoutConfirmScreen> {
                             ),
                           ),
                           Text(
-                            '${_cartStore.getTotalAmount()} тг',
+                            '${Helpers.prettyNum(_cartStore.getTotalAmount())} тг',
                             textAlign: TextAlign.end,
                             style: DefaultAppTheme.bodyText1.override(
                               fontFamily: 'Gilroy',
@@ -303,7 +356,7 @@ class _CheckoutConfirmScreenWidgetState extends State<CheckoutConfirmScreen> {
                                       _cartStore.getTotalAmount() >=
                                           _orderStore.address!.freeTreshold!
                                   ? 'Бесплатно'
-                                  : '${_orderStore.address!.deliveryPrice} тг',
+                                  : '${Helpers.prettyNum(_orderStore.address!.deliveryPrice)} тг',
                               textAlign: TextAlign.end,
                               style: DefaultAppTheme.bodyText1.override(
                                 fontFamily: 'Gilroy',
@@ -312,34 +365,36 @@ class _CheckoutConfirmScreenWidgetState extends State<CheckoutConfirmScreen> {
                           ],
                         ),
                       ),
-                    // Padding(
-                    //   padding: EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
-                    //   child: Row(
-                    //     mainAxisSize: MainAxisSize.max,
-                    //     children: [
-                    //       Expanded(
-                    //         child: Padding(
-                    //           padding:
-                    //               EdgeInsetsDirectional.fromSTEB(0, 0, 16, 0),
-                    //           child: Text(
-                    //             'Бонусы:',
-                    //             style: DefaultAppTheme.bodyText1.override(
-                    //               fontFamily: 'Gilroy',
-                    //               color: DefaultAppTheme.grey3,
-                    //             ),
-                    //           ),
-                    //         ),
-                    //       ),
-                    //       Text(
-                    //         '0 тг',
-                    //         textAlign: TextAlign.end,
-                    //         style: DefaultAppTheme.bodyText1.override(
-                    //           fontFamily: 'Gilroy',
-                    //         ),
-                    //       )
-                    //     ],
-                    //   ),
-                    // ),
+
+                    if (_orderStore.bonusPay != null && _getBonusPaid() > 0)
+                      Padding(
+                        padding: EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            Expanded(
+                              child: Padding(
+                                padding:
+                                    EdgeInsetsDirectional.fromSTEB(0, 0, 16, 0),
+                                child: Text(
+                                  'Бонусы:',
+                                  style: DefaultAppTheme.bodyText1.override(
+                                    fontFamily: 'Gilroy',
+                                    color: DefaultAppTheme.grey3,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Text(
+                              '-${Helpers.prettyNum(_orderStore.bonusPay)} тг',
+                              textAlign: TextAlign.end,
+                              style: DefaultAppTheme.bodyText1.override(
+                                fontFamily: 'Gilroy',
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
                     // Padding(
                     //   padding: EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
                     //   child: Row(
@@ -386,7 +441,7 @@ class _CheckoutConfirmScreenWidgetState extends State<CheckoutConfirmScreen> {
                             ),
                           ),
                           Text(
-                            '$_totalPrice тг',
+                            '${Helpers.prettyNum(_getTotalPrice())} тг',
                             textAlign: TextAlign.end,
                             style: DefaultAppTheme.title2.override(
                               fontFamily: 'Gilroy',
@@ -445,9 +500,12 @@ class _CheckoutConfirmScreenWidgetState extends State<CheckoutConfirmScreen> {
 
   Widget _buildPaymentMethod() {
     String title = 'Способ оплаты';
-    Color color = DefaultAppTheme.grayLight;
+    Color color = _orderStore.paymentId != null
+        ? DefaultAppTheme.primaryColor
+        : DefaultAppTheme.grayLight;
 
     return ListTile(
+      contentPadding: const EdgeInsets.all(0),
       title: _buildPaymentText(),
       trailing: Icon(
         Icons.arrow_forward_ios,
@@ -469,7 +527,7 @@ class _CheckoutConfirmScreenWidgetState extends State<CheckoutConfirmScreen> {
       Map<String, String> methods = {
         '1': 'Оплата банковской картой',
         '2': 'Банковской картой курьеру',
-        '3': 'Наличными',
+        '3': 'Наличными курьеру',
       };
 
       title = methods[_orderStore.paymentId]!;
@@ -522,7 +580,10 @@ class _CheckoutConfirmScreenWidgetState extends State<CheckoutConfirmScreen> {
   }
 
   void _onConfirm() async {
+    _orderStore.isLoading = true;
+
     if (_orderStore.paymentId == null) {
+      _orderStore.isLoading = false;
       Helpers.showInfoMessage(context, 'Выберите способ оплаты');
       return;
     }
@@ -588,13 +649,13 @@ class _CheckoutConfirmScreenWidgetState extends State<CheckoutConfirmScreen> {
           ? Helpers.formatHourMinute(_orderStore.dateStart!)
           : null, // get h:m:s from dateStart
       "delivery_end_time": null,
-      "bonus_payed": _orderStore.payWithBonus,
+      "bonus_payed": _orderStore.bonusPay,
       "bonus_returned": null,
-      "total_price": _totalPrice,
+      "total_price": _getTotalPrice(),
       "send_check": switchListTileValue,
       "comment": _orderStore.comment,
       "review": null,
-      "delivery_price": _totalPrice - _cartStore.getTotalAmount(),
+      "delivery_price": _getTotalPrice() - _cartStore.getTotalAmount(),
       "delivery_type": _orderStore.deliveryType == 'DEV_DIY' ? 2 : 1,
     };
 
@@ -612,12 +673,36 @@ class _CheckoutConfirmScreenWidgetState extends State<CheckoutConfirmScreen> {
     await _orderStore.createOrder(data);
 
     if (_orderStore.response == null) {
+      _orderStore.isLoading = false;
       print('error on creating order...');
       return;
     }
 
     // successfully created order
     print("created order: ${_orderStore.response}");
+
+    // process bonuses if paid via credit card
+    if (_orderStore.paymentId == "1") {
+      var discountDetails = [
+        {
+          'CardCode': _userStore.profile?.loyaltyNum!,
+          'SumBase': _getTotalPrice() + _getBonusPaid(),
+          'SumDiscounted': _getTotalPrice(),
+          'Discount': 0,
+          'BonusDiscount': _getBonusPaid(),
+        }
+      ];
+
+      var cartDetails = _getCartDetails();
+
+      await _orderStore.processBonuses(
+        _orderStore.response!.orderId!,
+        _getTotalPrice() + _getBonusPaid(),
+        _getBonusPaid(),
+        discountDetails,
+        cartDetails,
+      );
+    }
 
     // clear cart
     _cartStore.deleteAllCartProvider();
@@ -632,8 +717,13 @@ class _CheckoutConfirmScreenWidgetState extends State<CheckoutConfirmScreen> {
     _orderStore.dateStart = null;
     _orderStore.deliveryType = null;
     _orderStore.payWithBonus = null;
+    _orderStore.bonusCan = null;
+    _orderStore.bonusPay = null;
+    _orderStore.bonusMax = null;
 
     print("payment number for order: ${_orderStore.paymentId}");
+
+    _orderStore.isLoading = false;
 
     if (_orderStore.paymentId == "1") {
       print("payment number go to payment page");

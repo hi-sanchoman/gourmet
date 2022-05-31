@@ -1,4 +1,5 @@
 import 'package:another_flushbar/flushbar_helper.dart';
+import 'package:esentai/stores/order/order_store.dart';
 import 'package:esentai/stores/user/user_store.dart';
 import 'package:esentai/utils/helpers.dart';
 import 'package:esentai/utils/locale/app_localization.dart';
@@ -24,6 +25,8 @@ class _ChooseAddressScreenState extends State<PickOnMapScreen> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
   late UserStore _userStore;
+  late OrderStore _orderStore;
+
   late YandexMapController controller;
 
   late Map<String, Object> _data;
@@ -46,7 +49,8 @@ class _ChooseAddressScreenState extends State<PickOnMapScreen> {
   void initState() {
     super.initState();
 
-    _address = 'Подождите. Определяем местоположение...';
+    // _address = 'Подождите. Определяем местоположение...';
+    _address = '';
   }
 
   @override
@@ -54,6 +58,7 @@ class _ChooseAddressScreenState extends State<PickOnMapScreen> {
     super.didChangeDependencies();
 
     _userStore = Provider.of<UserStore>(context);
+    _orderStore = Provider.of<OrderStore>(context);
   }
 
   @override
@@ -76,7 +81,7 @@ class _ChooseAddressScreenState extends State<PickOnMapScreen> {
           ),
         ),
         title: Text(
-          'Добавить адрес',
+          'Указать на карте',
           style: DefaultAppTheme.title2.override(
             fontFamily: 'Gilroy',
           ),
@@ -126,8 +131,18 @@ class _ChooseAddressScreenState extends State<PickOnMapScreen> {
           padding: const EdgeInsets.fromLTRB(16.0, 20, 16, 20),
           child: Container(
             decoration: new BoxDecoration(
-                color: Colors.white,
-                borderRadius: new BorderRadius.all(Radius.circular(100))),
+              color: Colors.white,
+              borderRadius: new BorderRadius.all(
+                Radius.circular(100),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  offset: Offset.zero,
+                  blurRadius: 0,
+                  color: Colors.black,
+                ),
+              ],
+            ),
             // color: Colors.white,
             height: 50,
             width: double.infinity,
@@ -148,11 +163,11 @@ class _ChooseAddressScreenState extends State<PickOnMapScreen> {
             padding: EdgeInsets.fromLTRB(16, 0, 16, 50),
             child: ElevatedButton(
               child: Text('Подтвердить'),
-              onPressed: () {
-                if (_address.isEmpty) return;
-
-                _onClose();
-              },
+              onPressed: _address.isEmpty
+                  ? null
+                  : () {
+                      _onClose();
+                    },
               style: DefaultAppTheme.buttonDefaultStyle,
               // borderRadius: 19
             ),
@@ -197,6 +212,13 @@ class _ChooseAddressScreenState extends State<PickOnMapScreen> {
       "free_treshold": _freeTreshold,
       "address": _address,
     };
+
+    setState(() {
+      _orderStore.deliveryPoint = LatLng(
+        _point!.latitude,
+        _point!.longitude,
+      );
+    });
 
     Navigator.pop(context, _result);
   }
@@ -278,6 +300,8 @@ class _ChooseAddressScreenState extends State<PickOnMapScreen> {
 
   Future<void> cameraPositionChanged(
       CameraPosition cameraPosition, bool finished) async {
+    print("camera position updated: $cameraPosition");
+
     if (!finished) {
       // controller.updateMapObjects([]);
 
@@ -300,7 +324,8 @@ class _ChooseAddressScreenState extends State<PickOnMapScreen> {
         print("found: $found");
 
         // String? locality = found[SearchComponentKind.locality];
-        // String? district = found[SearchComponentKind.district];
+        String? district =
+            found.addressComponents[SearchComponentKind.district];
         String? street = found.addressComponents[SearchComponentKind.street];
         String? house = found.addressComponents[SearchComponentKind.house];
 
@@ -309,13 +334,16 @@ class _ChooseAddressScreenState extends State<PickOnMapScreen> {
         // fullAddress += district!.isNotEmpty ? "$district, " : '';
         fullAddress += street != null ? "$street" : "";
         fullAddress += house != null ? ", $house" : "";
+        // fullAddress = res.items![0].toponymMetadata!.address.formattedAddress;
 
-        // String fullAddress =
-        // res.items![0].toponymMetadata!.address.formattedAddress;
         Point point = res.items![0].toponymMetadata!.balloonPoint;
 
         setState(() {
-          _address = fullAddress;
+          // _address = fullAddress;
+          _address = res.items![0].toponymMetadata!.address.formattedAddress
+              .replaceFirst('Казахстан,', '')
+              .replaceFirst('Алматы,', '')
+              .trim();
           _point = point;
         });
       }).onError((error, stackTrace) {
@@ -360,6 +388,28 @@ class _ChooseAddressScreenState extends State<PickOnMapScreen> {
     // final currentCameraTracking = await controller.enableCameraTracking(
     //     onCameraPositionChange: cameraPositionChanged);
 
+    if (_orderStore.deliveryPoint != null) {
+      setState(() {
+        _isMapLoaded = true;
+      });
+
+      var point = Point(
+        latitude: _orderStore.deliveryPoint!.latitude,
+        longitude: _orderStore.deliveryPoint!.longitude,
+      );
+
+      addPlacemark(point);
+
+      controller.moveCamera(CameraUpdate.newCameraPosition(
+        CameraPosition(target: point),
+      ));
+
+      cameraPositionChanged(CameraPosition(target: point), true);
+
+      return;
+    }
+
+    // no prev place -> find current
     await Helpers.determinePosition().then((position) async {
       setState(() {
         _position = position;
@@ -369,13 +419,20 @@ class _ChooseAddressScreenState extends State<PickOnMapScreen> {
 
       print("found position: $_position");
 
-      var point =
-          Point(latitude: position.latitude, longitude: position.longitude);
+      var point = Point(
+        latitude: position.latitude,
+        longitude: position.longitude,
+      );
 
       addPlacemark(point);
 
       controller.moveCamera(
-          CameraUpdate.newCameraPosition(CameraPosition(target: point)));
+        CameraUpdate.newCameraPosition(
+          CameraPosition(
+            target: point,
+          ),
+        ),
+      );
     }).catchError((e) {
       print("map current location erorr: " + e.toString());
 

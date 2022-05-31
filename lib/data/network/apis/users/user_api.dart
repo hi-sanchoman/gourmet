@@ -14,6 +14,7 @@ import 'package:esentai/models/notification/notification_list.dart';
 import 'package:esentai/models/order/order.dart';
 import 'package:esentai/models/order/order_list.dart';
 import 'package:esentai/models/order/order_result.dart';
+import 'package:esentai/models/order/rx_bonus.dart';
 import 'package:esentai/models/payment/creditcard_list.dart';
 import 'package:esentai/models/post/post_list.dart';
 import 'package:esentai/models/user/user.dart';
@@ -136,6 +137,29 @@ class UserApi {
     }
   }
 
+  Future<RxBonus> getBonuses(String token, dynamic data) async {
+    try {
+      final res = await _dioClient.post(Endpoints.getBonuses,
+          data: data,
+          options: Options(headers: {"Authorization": "JWT $token"}));
+      return RxBonus.fromMap(res);
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  // process bonuses
+  Future<bool> processBonuses(String token, dynamic data) async {
+    try {
+      final res = await _dioClient.post(Endpoints.processBonuses,
+          data: data,
+          options: Options(headers: {"Authorization": "JWT $token"}));
+      return res;
+    } catch (e) {
+      throw e;
+    }
+  }
+
   // get profile data
   Future<User> getProfile(String token) async {
     try {
@@ -185,6 +209,8 @@ class UserApi {
     try {
       final res = await _dioClient.get(Endpoints.ordersHistory,
           options: Options(headers: {"Authorization": "JWT $token"}));
+
+      print("my orders: " + OrderList.fromMap(res).toString());
 
       return OrderList.fromMap(res);
     } catch (e) {

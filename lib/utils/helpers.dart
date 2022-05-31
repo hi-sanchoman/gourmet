@@ -6,6 +6,7 @@ import 'package:esentai/models/payment/creditcard.dart';
 import 'package:esentai/utils/themes/default.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:intl/intl.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -158,6 +159,11 @@ class Helpers {
     }
 
     return typeStr;
+  }
+
+  static String prettyNum(dynamic num) {
+    return NumberFormat.currency(symbol: "", decimalDigits: 0, locale: "ru")
+        .format(num);
   }
 
   static String getCardStr(CreditCard card) {

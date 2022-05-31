@@ -7,6 +7,8 @@ import 'package:esentai/models/catalog/product_list.dart';
 import 'package:esentai/models/order/order_result.dart';
 import 'package:esentai/stores/error/error_store.dart';
 import 'package:esentai/utils/dio/dio_error_util.dart';
+import 'package:flutter/material.dart';
+import 'package:maps_toolkit/maps_toolkit.dart';
 import 'package:mobx/mobx.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -66,6 +68,15 @@ abstract class _OrderStore with Store {
   double? payWithBonus;
 
   @observable
+  int? bonusCan;
+
+  @observable
+  int? bonusMax;
+
+  @observable
+  int? bonusPay;
+
+  @observable
   bool sendCheck = true;
 
   @observable
@@ -79,6 +90,18 @@ abstract class _OrderStore with Store {
 
   @observable
   int freeTreshold = 999999999;
+
+  @observable
+  LatLng? deliveryPoint;
+
+  @observable
+  List<Widget>? listOfSuggestions;
+
+  @observable
+  List<String>? addressesFound;
+
+  @observable
+  bool queryMode = false;
 
   // actions:-------------------------------------------------------------------
   @action
@@ -97,6 +120,61 @@ abstract class _OrderStore with Store {
       isLoading = false;
       success = false;
       response = null;
+      errorStore.errorMessage = e.toString();
+    });
+  }
+
+  @action
+  Future getBonuses(String loyaltyNum, List<dynamic> cartDetails) async {
+    isLoading = true;
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString(Preferences.auth_token);
+
+    var data = {
+      "card_code": loyaltyNum,
+      "register_details": cartDetails,
+    };
+
+    print("data $data");
+
+    await _repository.getBonuses(token!, data).then((res) {
+      isLoading = false;
+
+      // set bonuses
+      bonusCan = res.bonusCan?.toInt();
+      bonusMax = res.bonusMax?.toInt();
+    }).catchError((e) {
+      isLoading = false;
+      success = false;
+      errorStore.errorMessage = e.toString();
+    });
+  }
+
+  @action
+  Future processBonuses(int orderId, int totalSum, int sumWithDiscount,
+      List<dynamic> discountDetails, List<dynamic> cartDetails) async {
+    isLoading = true;
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString(Preferences.auth_token);
+
+    var data = {
+      "order_id": orderId,
+      "total_sum": totalSum,
+      "total_sum_discount": sumWithDiscount,
+      "document_discount_dtos": discountDetails,
+      "document_detail_dtos": cartDetails,
+    };
+
+    print("data $data");
+
+    await _repository.processBonuses(token!, data).then((res) {
+      isLoading = false;
+      // success = true;
+    }).catchError((e) {
+      isLoading = false;
+      // success = false;
       errorStore.errorMessage = e.toString();
     });
   }

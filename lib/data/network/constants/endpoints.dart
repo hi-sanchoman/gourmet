@@ -74,4 +74,8 @@ class Endpoints {
   static const String deleteNotification = baseUrl + '/notifications/:id/';
   static const String clearNotifications =
       baseUrl + '/users/notifications-delete/';
+
+  // bonuses
+  static const String getBonuses = baseUrl + '/bonuses/processing-register/';
+  static const String processBonuses = baseUrl + '/bonuses/processing-sale/';
 }

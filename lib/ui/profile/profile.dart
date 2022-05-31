@@ -624,24 +624,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         //             textAlign: TextAlign.center),
                         //       ),
                         //     ]),
-                        // Row(
-                        //   crossAxisAlignment: CrossAxisAlignment.end,
-                        //   children: [
-                        //     // Expanded(child: Text('3%')),
-                        //     Spacer(),
-                        //     Column(
-                        //       crossAxisAlignment: CrossAxisAlignment.end,
-                        //       children: [
-                        //         Text(
-                        //           'Бонусы',
-                        //           style: DefaultAppTheme.bodyText1,
-                        //         ),
-                        //         Text('${_userStore.profile?.loyaltyBalance}',
-                        //             style: DefaultAppTheme.title2),
-                        //       ],
-                        //     ),
-                        //   ],
-                        // )
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            // Expanded(child: Text('3%')),
+                            Spacer(),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Text(
+                                  'Бонусы',
+                                  style: DefaultAppTheme.bodyText1,
+                                ),
+                                Text(
+                                  '${_userStore.profile?.loyaltyBalance!.toInt()}',
+                                  style: DefaultAppTheme.title2,
+                                ),
+                              ],
+                            ),
+                          ],
+                        )
                       ],
                     ),
                   ),

@@ -120,14 +120,18 @@ class _CheckoutScreenWidgetState extends State<OrderPrepareScreen> {
   Widget _buildBody() {
     return Stack(
       children: [
-        Observer(builder: (context) {
-          return _buildForm();
-        }),
-        Observer(builder: (context) {
-          return Visibility(
-              visible: _orderStore.isLoading,
-              child: CustomProgressIndicatorWidget());
-        }),
+        Observer(
+          builder: (context) {
+            return _buildForm();
+          },
+        ),
+        // Observer(
+        //   builder: (context) {
+        //     return Visibility(
+        //         visible: _orderStore.isLoading,
+        //         child: CustomProgressIndicatorWidget());
+        //   },
+        // ),
       ],
     );
   }
