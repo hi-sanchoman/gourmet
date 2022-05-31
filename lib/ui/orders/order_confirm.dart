@@ -655,7 +655,7 @@ class _CheckoutConfirmScreenWidgetState extends State<CheckoutConfirmScreen> {
       "send_check": switchListTileValue,
       "comment": _orderStore.comment,
       "review": null,
-      "delivery_price": _orderStore.deliveryPrice,
+      "delivery_price": _orderStore.address?.deliveryPrice,
       "delivery_type": _orderStore.deliveryType == 'DEV_DIY' ? 2 : 1,
     };
 
@@ -669,6 +669,7 @@ class _CheckoutConfirmScreenWidgetState extends State<CheckoutConfirmScreen> {
     }
 
     print('order to be created: $data');
+    // return;
 
     await _orderStore.createOrder(data);
 
