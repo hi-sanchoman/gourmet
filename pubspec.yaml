@@ -87,7 +87,8 @@ dependencies:
   webview_flutter: ^3.0.1
   cached_network_image: ^3.1.0
   flutter_html: ^3.0.0-alpha.2
-  firebase_core: ^1.8.0
+  # firebase_core: ^1.8.0
+  firebase_core: ^1.17.1
   firebase_messaging: ^11.2.11
   
   yandex_geocoder: ^2.0.1
