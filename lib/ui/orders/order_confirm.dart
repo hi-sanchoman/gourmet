@@ -636,8 +636,8 @@ class _CheckoutConfirmScreenWidgetState extends State<CheckoutConfirmScreen> {
       "full_name": _orderStore.fullname,
       "email": _orderStore.email,
       "phone_number": _orderStore.username,
-      "latitute": null,
-      "longitude": null,
+      "latitute": _orderStore.deliveryPoint?.latitude,
+      "longitude": _orderStore.deliveryPoint?.longitude,
       "payment_method": _orderStore
           .paymentId, // 1 - банковская карта, 2 - курьеру картой, 3 - наличными
       "custom_address": null,
@@ -655,7 +655,7 @@ class _CheckoutConfirmScreenWidgetState extends State<CheckoutConfirmScreen> {
       "send_check": switchListTileValue,
       "comment": _orderStore.comment,
       "review": null,
-      "delivery_price": _getTotalPrice() - _cartStore.getTotalAmount(),
+      "delivery_price": _orderStore.deliveryPrice,
       "delivery_type": _orderStore.deliveryType == 'DEV_DIY' ? 2 : 1,
     };
 
