@@ -2,11 +2,11 @@ class Endpoints {
   Endpoints._();
 
   // base url
-  static const String baseUrl = "https://185.100.67.85/api";
-  static const String serverUrl = "https://185.100.67.85/";
+  // static const String baseUrl = "https://185.100.67.85/api";
+  // static const String serverUrl = "https://185.100.67.85/";
 
-  // static const String baseUrl = "https://admin-esentai.kz/api";
-  // static const String serverUrl = "https://admin-esentail.kz/";
+  static const String baseUrl = "https://admin-esentai.kz/api";
+  static const String serverUrl = "https://admin-esentail.kz/";
 
   // 185.100.67.85
 

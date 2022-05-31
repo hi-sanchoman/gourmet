@@ -290,22 +290,23 @@ class _AddNewAddressScreenWidgetState extends State<AddNewAddressScreen> {
     });
 
     final resultWithSession = YandexSuggest.getSuggestions(
-        text: query,
-        boundingBox: BoundingBox(
-          northEast: Point(
-            latitude: 43.3687955910072,
-            longitude: 77.03463234707239,
-          ),
-          southWest: Point(
-            latitude: 43.16930537074969,
-            longitude: 76.74040475112342,
-          ),
+      text: query,
+      boundingBox: BoundingBox(
+        northEast: Point(
+          latitude: 43.3687955910072,
+          longitude: 77.03463234707239,
         ),
-        suggestOptions: SuggestOptions(
-          suggestType: SuggestType.geo,
-          suggestWords: true,
-          userPosition: null,
-        ));
+        southWest: Point(
+          latitude: 43.16930537074969,
+          longitude: 76.74040475112342,
+        ),
+      ),
+      suggestOptions: SuggestOptions(
+        suggestType: SuggestType.geo,
+        suggestWords: true,
+        userPosition: null,
+      ),
+    );
 
     await resultWithSession.result.then((result) {
       setState(() {

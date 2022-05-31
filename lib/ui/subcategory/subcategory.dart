@@ -341,50 +341,136 @@ class _SubcategoryScreenWidgetState extends State<SubcategoryScreen> {
               Padding(
                 padding: const EdgeInsets.fromLTRB(0, 0, 8, 0),
                 child: ChoiceChip(
-                    label: Text('Есть в наличии'),
-                    selected: _isActive == true,
-                    onSelected: (val) {
-                      _filter();
-                    }),
+                  label: Text(
+                    'Есть в наличии',
+                    style: TextStyle(
+                      color: _isActive
+                          ? DefaultAppTheme.primaryColor
+                          : Colors.black,
+                    ),
+                  ),
+                  onSelected: (val) {
+                    _filter();
+                  },
+                  selected: _isActive == true,
+                  backgroundColor: _isActive ? Colors.white : Color(0xFFF0F0F0),
+                  shape: StadiumBorder(
+                    side: BorderSide(
+                      color: _isActive
+                          ? DefaultAppTheme.primaryColor
+                          : Colors.transparent,
+                    ),
+                  ),
+                  selectedColor: Colors.white,
+                ),
               ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(0, 0, 8, 0),
                 child: ChoiceChip(
-                  label: Text('По алфавиту'),
+                  label: Text(
+                    'По алфавиту',
+                    style: TextStyle(
+                      color: _sortBy == 'name'
+                          ? DefaultAppTheme.primaryColor
+                          : Colors.black,
+                    ),
+                  ),
                   onSelected: (val) {
                     _sort('name');
                   },
                   selected: _sortBy == 'name',
+                  backgroundColor:
+                      _sortBy == 'name' ? Colors.white : Color(0xFFF0F0F0),
+                  shape: StadiumBorder(
+                    side: BorderSide(
+                      color: _sortBy == 'name'
+                          ? DefaultAppTheme.primaryColor
+                          : Colors.transparent,
+                    ),
+                  ),
+                  selectedColor: Colors.white,
                 ),
               ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(0, 0, 8, 0),
                 child: ChoiceChip(
-                  label: Text('По популярности'),
+                  label: Text(
+                    'По популярности',
+                    style: TextStyle(
+                      color: _sortBy == 'popularity_count'
+                          ? DefaultAppTheme.primaryColor
+                          : Colors.black,
+                    ),
+                  ),
                   onSelected: (val) {
-                    _sort('-name');
+                    _sort('popularity_count');
                   },
-                  selected: _sortBy == '-name',
+                  selected: _sortBy == 'popularity_count',
+                  backgroundColor: _sortBy == 'popularity_count'
+                      ? Colors.white
+                      : Color(0xFFF0F0F0),
+                  shape: StadiumBorder(
+                    side: BorderSide(
+                      color: _sortBy == 'popularity_count'
+                          ? DefaultAppTheme.primaryColor
+                          : Colors.transparent,
+                    ),
+                  ),
+                  selectedColor: Colors.white,
                 ),
               ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(0, 0, 8, 0),
                 child: ChoiceChip(
-                  label: Text('Сначала подешевле'),
+                  label: Text(
+                    'Сначала подешевле',
+                    style: TextStyle(
+                      color: _sortBy == 'price'
+                          ? DefaultAppTheme.primaryColor
+                          : Colors.black,
+                    ),
+                  ),
                   onSelected: (val) {
                     _sort('price');
                   },
                   selected: _sortBy == 'price',
+                  backgroundColor:
+                      _sortBy == 'price' ? Colors.white : Color(0xFFF0F0F0),
+                  shape: StadiumBorder(
+                    side: BorderSide(
+                      color: _sortBy == 'price'
+                          ? DefaultAppTheme.primaryColor
+                          : Colors.transparent,
+                    ),
+                  ),
+                  selectedColor: Colors.white,
                 ),
               ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(0, 0, 8, 0),
                 child: ChoiceChip(
-                  label: Text('Сначала подороже'),
+                  label: Text(
+                    'Сначала подороже',
+                    style: TextStyle(
+                      color: _sortBy == '-price'
+                          ? DefaultAppTheme.primaryColor
+                          : Colors.black,
+                    ),
+                  ),
                   onSelected: (val) {
                     _sort('-price');
                   },
                   selected: _sortBy == '-price',
+                  backgroundColor:
+                      _sortBy == '-price' ? Colors.white : Color(0xFFF0F0F0),
+                  shape: StadiumBorder(
+                    side: BorderSide(
+                      color: _sortBy == '-price'
+                          ? DefaultAppTheme.primaryColor
+                          : Colors.transparent,
+                    ),
+                  ),
+                  selectedColor: Colors.white,
                 ),
               ),
 

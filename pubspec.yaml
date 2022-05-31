@@ -92,7 +92,7 @@ dependencies:
   firebase_messaging: ^11.2.11
   
   yandex_geocoder: ^2.0.1
-  yandex_mapkit: ^2.0.1
+  yandex_mapkit: ^2.0.6
     # path: ../libs/yandex_mapkit/
   geolocator: ^8.2.0
   flutter_calendar_carousel: ^2.0.3
