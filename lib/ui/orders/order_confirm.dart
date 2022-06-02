@@ -212,63 +212,65 @@ class _CheckoutConfirmScreenWidgetState extends State<CheckoutConfirmScreen> {
                     ListTile(
                       dense: false,
                     ),
-                    Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 11),
-                      child: Text(
-                        'Дополнительно',
-                        style: DefaultAppTheme.title2.override(
-                          fontFamily: 'Gilroy',
-                        ),
-                      ),
-                    ),
-                    // ListTile(
-                    //   title: Text(
-                    //     'Промокод',
-                    //     style: DefaultAppTheme.bodyText1.override(
-                    //       fontFamily: 'Gilroy',
-                    //       color: DefaultAppTheme.grey3,
-                    //     ),
-                    //   ),
-                    //   trailing: Icon(
-                    //     Icons.arrow_forward_ios,
-                    //     color: DefaultAppTheme.primaryColor,
-                    //     size: 20,
-                    //   ),
-                    //   dense: false,
-                    // ),
-                    Divider(
-                      height: 1,
-                      thickness: 1,
-                    ),
-                    InkWell(
-                      onTap: () => _onPayWithBonuses(),
-                      child: ListTile(
-                        contentPadding: const EdgeInsets.all(0),
-                        title: Text(
-                          'Потратить бонусы',
-                          style: DefaultAppTheme.bodyText1.override(
+                    if (_orderStore.paymentId == "1") ...[
+                      Padding(
+                        padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 11),
+                        child: Text(
+                          'Дополнительно',
+                          style: DefaultAppTheme.title2.override(
                             fontFamily: 'Gilroy',
-                            color: _orderStore.bonusPay != null &&
-                                    _getBonusPaid() > 0
-                                ? Colors.black
-                                : DefaultAppTheme.grayLight,
                           ),
                         ),
-                        trailing: Icon(
-                          Icons.arrow_forward_ios,
-                          color: _orderStore.bonusPay != null &&
-                                  _getBonusPaid() > 0
-                              ? DefaultAppTheme.primaryColor
-                              : DefaultAppTheme.grayLight,
-                          size: 20,
-                        ),
-                        dense: false,
                       ),
-                    ),
-                    Divider(
-                      height: 1,
-                      thickness: 1,
-                    ),
+                      // ListTile(
+                      //   title: Text(
+                      //     'Промокод',
+                      //     style: DefaultAppTheme.bodyText1.override(
+                      //       fontFamily: 'Gilroy',
+                      //       color: DefaultAppTheme.grey3,
+                      //     ),
+                      //   ),
+                      //   trailing: Icon(
+                      //     Icons.arrow_forward_ios,
+                      //     color: DefaultAppTheme.primaryColor,
+                      //     size: 20,
+                      //   ),
+                      //   dense: false,
+                      // ),
+                      Divider(
+                        height: 1,
+                        thickness: 1,
+                      ),
+                      InkWell(
+                        onTap: () => _onPayWithBonuses(),
+                        child: ListTile(
+                          contentPadding: const EdgeInsets.all(0),
+                          title: Text(
+                            'Потратить бонусы',
+                            style: DefaultAppTheme.bodyText1.override(
+                              fontFamily: 'Gilroy',
+                              color: _orderStore.bonusPay != null &&
+                                      _getBonusPaid() > 0
+                                  ? Colors.black
+                                  : DefaultAppTheme.grayLight,
+                            ),
+                          ),
+                          trailing: Icon(
+                            Icons.arrow_forward_ios,
+                            color: _orderStore.bonusPay != null &&
+                                    _getBonusPaid() > 0
+                                ? DefaultAppTheme.primaryColor
+                                : DefaultAppTheme.grayLight,
+                            size: 20,
+                          ),
+                          dense: false,
+                        ),
+                      ),
+                      Divider(
+                        height: 1,
+                        thickness: 1,
+                      ),
+                    ],
                   ],
                 ),
               )
@@ -649,7 +651,7 @@ class _CheckoutConfirmScreenWidgetState extends State<CheckoutConfirmScreen> {
           ? Helpers.formatHourMinute(_orderStore.dateStart!)
           : null, // get h:m:s from dateStart
       "delivery_end_time": null,
-      "bonus_payed": _orderStore.bonusPay,
+      "bonus_payed": _orderStore.bonusPay ?? 0,
       "bonus_returned": null,
       "total_price": _getTotalPrice(),
       "send_check": switchListTileValue,
@@ -671,7 +673,12 @@ class _CheckoutConfirmScreenWidgetState extends State<CheckoutConfirmScreen> {
     print('order to be created: $data');
     // return;
 
-    await _orderStore.createOrder(data);
+    try {
+      await _orderStore.createOrder(data);
+    } catch (e) {
+      _orderStore.isLoading = false;
+      return;
+    }
 
     if (_orderStore.response == null) {
       _orderStore.isLoading = false;
@@ -726,7 +733,7 @@ class _CheckoutConfirmScreenWidgetState extends State<CheckoutConfirmScreen> {
 
     _orderStore.isLoading = false;
 
-    if (_orderStore.paymentId == "1") {
+    if (_orderStore.paymentId == "1" && _orderStore.response!.message != "OK") {
       print("payment number go to payment page");
 
       pushNewScreen(context,

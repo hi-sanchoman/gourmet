@@ -25,6 +25,8 @@ class _PayWithBonusesScreenState extends State<PayWithBonusesScreen> {
 
   TextEditingController _bonusController = TextEditingController();
 
+  bool _isInit = false;
+
   @override
   void initState() {
     super.initState();
@@ -38,7 +40,9 @@ class _PayWithBonusesScreenState extends State<PayWithBonusesScreen> {
     _orderStore = Provider.of<OrderStore>(context);
     _cartStore = Provider.of<CartStore>(context);
 
-    _calculateBonuses();
+    if (!_isInit) {
+      _calculateBonuses();
+    }
   }
 
   // METHODS
@@ -58,6 +62,8 @@ class _PayWithBonusesScreenState extends State<PayWithBonusesScreen> {
   }
 
   _calculateBonuses() async {
+    _isInit = true;
+
     if (!_orderStore.isLoading) {
       await _orderStore.getBonuses(
           _userStore.profile!.loyaltyNum!, _getCartDetails());
@@ -134,15 +140,15 @@ class _PayWithBonusesScreenState extends State<PayWithBonusesScreen> {
   }
 
   int _getBonusRest() {
-    if (_orderStore.bonusPay != null && _orderStore.bonusCan != null) {
-      return _orderStore.bonusCan! - _orderStore.bonusPay!;
+    int canSpend = 0;
+
+    if (_bonusController.text.isNotEmpty && _orderStore.bonusCan != null) {
+      canSpend = _orderStore.bonusCan! - int.parse(_bonusController.text);
+
+      if (canSpend < 0) canSpend = 0;
     }
 
-    if (_orderStore.bonusCan != null) {
-      return _orderStore.bonusCan!;
-    }
-
-    return 0;
+    return canSpend;
   }
 
   String _getBonusToBePaid() {
@@ -161,6 +167,7 @@ class _PayWithBonusesScreenState extends State<PayWithBonusesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
+      // resizeToAvoidBottomInset: true,
       appBar: AppBar(
         backgroundColor: Color(0xFFFCFCFC),
         automaticallyImplyLeading: true,
@@ -187,7 +194,8 @@ class _PayWithBonusesScreenState extends State<PayWithBonusesScreen> {
       backgroundColor: Color(0xFFFCFCFC),
       body: _buildBody(),
       bottomNavigationBar: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+        padding: EdgeInsets.fromLTRB(
+            16, 0, 16, MediaQuery.of(context).viewInsets.bottom + 16),
         child: ElevatedButton(
           onPressed: _bonusController.text.isNotEmpty ? _onConfirm : null,
           style: DefaultAppTheme.buttonDefaultStyle,

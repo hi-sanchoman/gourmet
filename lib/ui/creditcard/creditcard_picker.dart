@@ -272,7 +272,7 @@ class _ChooseDefaultCreditCardWidgetWidgetState
   void _onNewCard() async {
     await _userStore.addCard();
 
-    if (_userStore.paymentLink == null) {
+    if (_userStore.paymentLink == 'error') {
       Helpers.showInfoMessage(context, "Ошибка. Попробуйте еще раз");
       return;
     }
