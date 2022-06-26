@@ -61,6 +61,36 @@ class _FoodScreenWidgetState extends State<ProductScreen> {
     }
   }
 
+  double _getTotalLeft() {
+    double left = double.parse(_getItemLeft());
+    double quantity = _getQuantity();
+
+    // if ()
+
+    return left - quantity;
+  }
+
+  bool _showLeft() {
+    if (widget.product.amount == null) return false;
+    if (widget.product.amount! < 0) return false;
+
+    if (widget.product.minimumGram != null) {
+      return widget.product.amount! * 1000 - _getQuantity() <=
+          widget.product.minimumGram! * 5;
+    }
+
+    return widget.product.amount! - _getQuantity() <=
+        AppConfig.product_amount_treshold;
+
+    // return widget.product.amount != null &&
+    //     widget.product.amount! > 0 &&
+    //     (widget.product.amount! - _getQuantity() <=
+    //             AppConfig.product_amount_treshold ||
+    //         (widget.product.minimumGram != null &&
+    //             widget.product.amount! * 1000 - _getQuantity() <=
+    //                 widget.product.minimumGram! * 5));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -173,19 +203,12 @@ class _FoodScreenWidgetState extends State<ProductScreen> {
                       mainAxisSize: MainAxisSize.max,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        if (widget.product.amount != null &&
-                            widget.product.amount! > 0 &&
-                            (widget.product.amount! - _getQuantity() <=
-                                    AppConfig.product_amount_treshold ||
-                                (widget.product.isGram == true &&
-                                    widget.product.amount! - _getQuantity() <=
-                                        AppConfig
-                                            .product_gram_amount_treshold)))
+                        if (_showLeft())
                           Padding(
                             padding:
                                 EdgeInsetsDirectional.fromSTEB(15, 20, 0, 0),
                             child: Text(
-                              'Осталось: ${(int.parse(_getItemLeft()) - _getQuantity())}',
+                              'Осталось: ${widget.product.minimumGram != null ? _getTotalLeft() / 1000 : _getTotalLeft().toInt()} ${widget.product.classification}',
                               style: DefaultAppTheme.bodyText1.override(
                                 fontFamily: 'Gilroy',
                                 color: DefaultAppTheme.secondaryColor,
@@ -213,12 +236,22 @@ class _FoodScreenWidgetState extends State<ProductScreen> {
                                   child: Padding(
                                     padding: EdgeInsetsDirectional.fromSTEB(
                                         16, 0, 0, 0),
-                                    child: Text(
-                                      '${widget.product.isGram == true ? (widget.product.price! * 100).toInt() : widget.product.price?.toInt()} тг/${widget.product.isGram == true ? '100 ' : ''}${widget.product.classification ?? 'шт'}',
-                                      style: DefaultAppTheme.title1.override(
-                                        fontFamily: 'Gilroy',
-                                        color: DefaultAppTheme.primaryColor,
-                                      ),
+                                    child: Column(
+                                      children: [
+                                        Text(
+                                          '${widget.product.price?.toInt()} тг/${widget.product.classification ?? 'шт'}',
+                                          style:
+                                              DefaultAppTheme.title1.override(
+                                            fontFamily: 'Gilroy',
+                                            color: DefaultAppTheme.primaryColor,
+                                          ),
+                                        ),
+                                        if (widget.product.minimumGram != null)
+                                          Text(
+                                            '~ ${widget.product.minimumGram} гр',
+                                            style: DefaultAppTheme.bodyText1,
+                                          ),
+                                      ],
                                     ),
                                   ),
                                 ),
@@ -369,7 +402,7 @@ class _FoodScreenWidgetState extends State<ProductScreen> {
       return '${amount - _cartStore.getGiftQuantity(widget.product.id!)}';
     }
 
-    return '${widget.product.amount}';
+    return '${widget.product.minimumGram != null && widget.product.amount != null ? widget.product.amount! * 1000 : widget.product.amount}';
   }
 
   Widget _buildOthers() {
@@ -403,6 +436,12 @@ class _FoodScreenWidgetState extends State<ProductScreen> {
             )
           : Container();
     });
+  }
+
+  int _getActualPrice() {
+    return widget.product.minimumGram != null && widget.product.price != null
+        ? widget.product.price! ~/ (1000 / widget.product.minimumGram!)
+        : widget.product.price!.toInt();
   }
 
   Widget _buildBtn() {
@@ -450,7 +489,7 @@ class _FoodScreenWidgetState extends State<ProductScreen> {
                         child: widget.product.itemType == 'gift'
                             ? _buildGiftBtn()
                             : Text(
-                                '${NumberFormat.currency(symbol: "", decimalDigits: 0, locale: "ru").format(widget.product.isGram == true ? (widget.product.price! * 300) : widget.product.price?.toInt())} тг'),
+                                '${NumberFormat.currency(symbol: "", decimalDigits: 0, locale: "ru").format(_getActualPrice())} тг'),
                         style: ElevatedButton.styleFrom(
                             minimumSize: Size(150, 36),
                             textStyle: DefaultAppTheme.title2.override(
@@ -581,13 +620,17 @@ class _FoodScreenWidgetState extends State<ProductScreen> {
         null;
   }
 
-  int _getQuantity() {
+  double _getQuantity() {
     var item = _cartStore.getSpecificItemFromCartProvider(widget.product.id);
     if (item == null) return 0;
 
-    print("count: ${item.quantity}");
+    // print("count: ${item.quantity}");
 
-    return item.quantity;
+    // if (widget.product.minimumGram != null) {
+    //   return item.quantity / 1000;
+    // }
+
+    return item.quantity * 1.0;
   }
 
   bool _isGram() {
@@ -597,15 +640,19 @@ class _FoodScreenWidgetState extends State<ProductScreen> {
   void _onCartDecrement() {
     if (_cartStore == null) return;
 
-    if (widget.product.isGram == true) {
-      if (_getQuantity() == 300) {
-        _cartStore.deleteItemFromCart(
+    if (widget.product.minimumGram != null) {
+      // if (_getQuantity() == widget.product.minimumGram) {
+      //   _cartStore.deleteItemFromCart(
+      //       _cartStore.findItemIndexFromCartProvider(widget.product.id!)!);
+      // } else {
+      //   for (int i = 0; i < widget.product.minimumGram!; i++) {
+      //     _cartStore.decrementItemFromCartProvider(
+      //         _cartStore.findItemIndexFromCartProvider(widget.product.id!)!);
+      //   }
+      // }
+      for (int i = 0; i < widget.product.minimumGram!; i++) {
+        _cartStore.decrementItemFromCartProvider(
             _cartStore.findItemIndexFromCartProvider(widget.product.id!)!);
-      } else {
-        for (int i = 0; i < 100; i++) {
-          _cartStore.decrementItemFromCartProvider(
-              _cartStore.findItemIndexFromCartProvider(widget.product.id!)!);
-        }
       }
     } else {
       _cartStore.decrementItemFromCartProvider(
@@ -617,12 +664,12 @@ class _FoodScreenWidgetState extends State<ProductScreen> {
     if (_cartStore == null) return;
 
     var item = _cartStore.getSpecificItemFromCartProvider(widget.product.id);
-    print("product is_gram: ${widget.product.isGram}");
+    // print("product is_gram: ${widget.product.isGram}");
     print("item: $item");
 
-    if (widget.product.isGram == true) {
-      // add 100 gr
-      for (int i = 0; i < 100; i++) {
+    if (widget.product.minimumGram != null) {
+      // add mininum_gramm gr
+      for (int i = 0; i < widget.product.minimumGram!; i++) {
         _cartStore.incrementItemToCartProvider(
             _cartStore.findItemIndexFromCartProvider(widget.product.id!)!);
       }
@@ -630,6 +677,14 @@ class _FoodScreenWidgetState extends State<ProductScreen> {
       _cartStore!.incrementItemToCartProvider(
           _cartStore!.findItemIndexFromCartProvider(widget.product.id!)!);
     }
+  }
+
+  bool _isAllowedToIncrement() {
+    if (widget.product.minimumGram != null && widget.product.amount != null) {
+      return _getQuantity() >= widget.product.amount! * 1000;
+    }
+
+    return _getQuantity() >= widget.product.amount!;
   }
 
   Widget _buildQuantityPicker() {
@@ -640,7 +695,9 @@ class _FoodScreenWidgetState extends State<ProductScreen> {
           onTap: () {
             _onCartDecrement();
           },
-          child: _getQuantity() == 1 || (_isGram() && _getQuantity() == 300)
+          child: _getQuantity() == 1 ||
+                  (widget.product.minimumGram != null &&
+                      _getQuantity() == widget.product.minimumGram!)
               ? Stack(
                   alignment: Alignment.center,
                   children: [
@@ -668,7 +725,7 @@ class _FoodScreenWidgetState extends State<ProductScreen> {
         child: SizedBox(
           width: 50,
           child: Text(
-            '${_getQuantity()}',
+            '${_getQuantity().toInt()}',
             textAlign: TextAlign.center,
             style: DefaultAppTheme.title2.override(
               fontFamily: 'Gilroy',
@@ -679,12 +736,12 @@ class _FoodScreenWidgetState extends State<ProductScreen> {
       Padding(
         padding: EdgeInsetsDirectional.fromSTEB(0, 4, 2, 0),
         child: InkWell(
-          onTap: _getQuantity() >= widget.product.amount!
+          onTap: _isAllowedToIncrement()
               ? null
               : () {
                   _onCartIncrement();
                 },
-          child: _getQuantity() >= widget.product.amount!
+          child: _isAllowedToIncrement()
               ? Stack(
                   alignment: Alignment.center,
                   children: [

@@ -104,6 +104,7 @@ class _CartItemWidgetWidgetState extends State<CartItemWidgetWidget> {
                                   style: DefaultAppTheme.title2.override(
                                     fontFamily: 'Gilroy',
                                     color: DefaultAppTheme.primaryColor,
+                                    fontSize: 14,
                                   ),
                                 ),
                               ),
@@ -315,10 +316,21 @@ class _CartItemWidgetWidgetState extends State<CartItemWidgetWidget> {
 
     if (type == 'product') {
       Product product = widget.item.productDetails as Product;
-      return product.isGram == true;
+      return product.minimumGram != null;
     }
 
     return false;
+  }
+
+  int _getMinimumGram() {
+    String type = widget.item.productDetails is Product ? 'product' : 'gift';
+
+    if (type == 'product') {
+      Product product = widget.item.productDetails as Product;
+      return product.minimumGram != null ? product.minimumGram! : 0;
+    }
+
+    return 0;
   }
 
   int _getQuantity() {
@@ -326,6 +338,7 @@ class _CartItemWidgetWidgetState extends State<CartItemWidgetWidget> {
     String itemId = '';
 
     if (type == 'product') {
+      Product product = widget.item.productDetails as Product;
       return widget.item.quantity;
     }
 
@@ -362,14 +375,9 @@ class _CartItemWidgetWidgetState extends State<CartItemWidgetWidget> {
       Product product = widget.item.productDetails as Product;
       itemId = product.id.toString();
 
-      if (product.isGram == true) {
-        if (_getQuantity() == 300) {
-          _cartStore!.deleteItemFromCart(widget.item.itemCartIndex);
-        } else {
-          for (int i = 0; i < 100; i++) {
-            _cartStore!
-                .decrementItemFromCartProvider(widget.item.itemCartIndex);
-          }
+      if (product.minimumGram != null) {
+        for (int i = 0; i < product.minimumGram!; i++) {
+          _cartStore!.decrementItemFromCartProvider(widget.item.itemCartIndex);
         }
       } else {
         _cartStore!.decrementItemFromCartProvider(widget.item.itemCartIndex);
@@ -396,8 +404,8 @@ class _CartItemWidgetWidgetState extends State<CartItemWidgetWidget> {
       Product product = widget.item.productDetails as Product;
       itemId = product.id.toString();
 
-      if (product.isGram == true) {
-        for (int i = 0; i < 100; i++) {
+      if (product.minimumGram != null) {
+        for (int i = 0; i < product.minimumGram!; i++) {
           _cartStore!.incrementItemToCartProvider(widget.item.itemCartIndex);
         }
       } else {
@@ -415,6 +423,22 @@ class _CartItemWidgetWidgetState extends State<CartItemWidgetWidget> {
     }
 
     // print('$itemId, ${_cartStore!.findItemIndexFromCartProvider(itemId)}');
+  }
+
+  bool _isAllowedToIncrement(int amount) {
+    String type = widget.item.productDetails is Product ? 'product' : 'gift';
+
+    if (type == 'gift') {
+      return _getQuantity() >= amount;
+    }
+
+    Product product = widget.item.productDetails as Product;
+
+    if (product.minimumGram != null && product.amount != null) {
+      return _getQuantity() >= product.amount! * 1000;
+    }
+
+    return _getQuantity() >= product.amount!;
   }
 
   // TODO: refactor
@@ -435,7 +459,8 @@ class _CartItemWidgetWidgetState extends State<CartItemWidgetWidget> {
           onTap: () {
             _onCartDecrement();
           },
-          child: _getQuantity() == 1 || (_isGram() && _getQuantity() == 300)
+          child: _getQuantity() == 1 ||
+                  (_isGram() && _getQuantity() == _getMinimumGram())
               ? Stack(
                   alignment: Alignment.center,
                   children: [
@@ -460,7 +485,7 @@ class _CartItemWidgetWidgetState extends State<CartItemWidgetWidget> {
       ),
       Expanded(
         child: Padding(
-          padding: EdgeInsetsDirectional.fromSTEB(15, 0, 15, 0),
+          padding: EdgeInsetsDirectional.fromSTEB(10, 0, 10, 0),
           child: Text(
             '${widget.item.quantity}',
             textAlign: TextAlign.center,
@@ -474,12 +499,12 @@ class _CartItemWidgetWidgetState extends State<CartItemWidgetWidget> {
       Padding(
         padding: EdgeInsetsDirectional.fromSTEB(0, 0, 2, 0),
         child: InkWell(
-          onTap: _getQuantity() >= amount
+          onTap: _isAllowedToIncrement(amount)
               ? null
               : () {
                   _onCartIncrement();
                 },
-          child: _getQuantity() >= amount
+          child: _isAllowedToIncrement(amount)
               ? Stack(
                   alignment: Alignment.center,
                   children: [

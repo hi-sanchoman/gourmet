@@ -69,6 +69,46 @@ class _ProductCardWidgetState extends State<ProductCardWidget> {
     return false;
   }
 
+  bool _showLeft() {
+    if (widget.product.amount == null) return false;
+    if (widget.product.amount! < 0) return false;
+
+    if (widget.product.minimumGram != null) {
+      return widget.product.amount! * 1000 - _getQuantity() <=
+          widget.product.minimumGram! * 5;
+    }
+
+    return widget.product.amount! - _getQuantity() <=
+        AppConfig.product_amount_treshold;
+  }
+
+  String _getItemLeft() {
+    if (_cartStore == null) return '';
+
+    if (widget.product.itemType == 'gift') {
+      int amount = widget.product.amount ?? 0;
+
+      return '${amount - _cartStore!.getGiftQuantity(widget.product.id!)}';
+    }
+
+    return '${widget.product.minimumGram != null && widget.product.amount != null ? widget.product.amount! * 1000 : widget.product.amount}';
+  }
+
+  double _getTotalLeft() {
+    double left = double.parse(_getItemLeft());
+    double quantity = _getQuantity();
+
+    // if ()
+
+    return left - quantity;
+  }
+
+  int _getActualPrice() {
+    return widget.product.minimumGram != null && widget.product.price != null
+        ? widget.product.price! ~/ (1000 / widget.product.minimumGram!)
+        : widget.product.price!.toInt();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Observer(builder: (context) {
@@ -184,13 +224,7 @@ class _ProductCardWidgetState extends State<ProductCardWidget> {
               _buildFavButton(),
 
               // Left quantity
-              if (widget.product.amount != null &&
-                  widget.product.amount! > 0 &&
-                  (widget.product.amount! - _getQuantity() <=
-                          AppConfig.product_amount_treshold ||
-                      (widget.product.isGram == true &&
-                          widget.product.amount! - _getQuantity() <=
-                              AppConfig.product_gram_amount_treshold)))
+              if (_showLeft())
                 Align(
                   alignment: AlignmentDirectional(-1, 0.2),
                   child: Padding(
@@ -205,7 +239,7 @@ class _ProductCardWidgetState extends State<ProductCardWidget> {
                       child: Padding(
                         padding: EdgeInsetsDirectional.fromSTEB(5, 2, 5, 0),
                         child: Text(
-                          'Осталось: ${(widget.product.amount! - _getQuantity())}',
+                          'Осталось: ${widget.product.minimumGram != null ? _getTotalLeft() / 1000 : _getTotalLeft().toInt()}',
                           textAlign: TextAlign.start,
                           style: DefaultAppTheme.subtitle2.override(
                             fontFamily: 'Gilroy',
@@ -227,7 +261,7 @@ class _ProductCardWidgetState extends State<ProductCardWidget> {
     bool isActive = widget.product.isActive ?? false;
     double price = widget.product.price ?? 0;
     int amount = widget.product.amount ?? 0;
-    bool isGram = widget.product.isGram ?? false;
+    bool isGram = widget.product.minimumGram != null;
 
     return isActive && amount > 0
         ? Padding(
@@ -240,14 +274,14 @@ class _ProductCardWidgetState extends State<ProductCardWidget> {
                         _addToCart();
                       },
                       child: Text(
-                          '${NumberFormat.currency(symbol: "", decimalDigits: 0, locale: "ru").format(isGram ? (price * 300) : price)} тг'),
+                          '${NumberFormat.currency(symbol: "", decimalDigits: 0, locale: "ru").format(_getActualPrice())} тг'),
                       style: ElevatedButton.styleFrom(
                           minimumSize: Size(double.infinity, 36),
                           textStyle: DefaultAppTheme.title2.override(
                             fontFamily: 'Gilroy',
                             color: Colors.white,
                           ),
-                          padding: const EdgeInsets.only(top: 4),
+                          padding: const EdgeInsets.only(top: 0),
                           elevation: 0,
                           primary: DefaultAppTheme.primaryColor,
                           onPrimary: Colors.white,
@@ -292,7 +326,7 @@ class _ProductCardWidgetState extends State<ProductCardWidget> {
     return widget.product.isGram == true;
   }
 
-  int _getQuantity() {
+  double _getQuantity() {
     if (_cartStore == null) return 0;
 
     // product
@@ -300,26 +334,30 @@ class _ProductCardWidgetState extends State<ProductCardWidget> {
       var item = _cartStore!.getSpecificItemFromCartProvider(widget.product.id);
       if (item == null) return 0;
 
-      return item.quantity;
+      return item.quantity * 1.0;
     }
 
     // gift
-    return _cartStore!.getGiftQuantity(widget.product.id!);
+    return _cartStore!.getGiftQuantity(widget.product.id!) * 1.0;
   }
 
   void _onCartDecrement() {
     // if (widget.product.itemType == 'product') {
     if (_cartStore == null) return;
 
-    if (widget.product.isGram == true) {
-      if (_getQuantity() == 300) {
-        _cartStore!.deleteItemFromCart(
+    if (widget.product.minimumGram != null) {
+      // if (_getQuantity() == 300) {
+      //   _cartStore!.deleteItemFromCart(
+      //       _cartStore!.findItemIndexFromCartProvider(widget.product.id!)!);
+      // } else {
+      //   for (int i = 0; i < 100; i++) {
+      //     _cartStore!.decrementItemFromCartProvider(
+      //         _cartStore!.findItemIndexFromCartProvider(widget.product.id!)!);
+      //   }
+      // }
+      for (int i = 0; i < widget.product.minimumGram!; i++) {
+        _cartStore!.decrementItemFromCartProvider(
             _cartStore!.findItemIndexFromCartProvider(widget.product.id!)!);
-      } else {
-        for (int i = 0; i < 100; i++) {
-          _cartStore!.decrementItemFromCartProvider(
-              _cartStore!.findItemIndexFromCartProvider(widget.product.id!)!);
-        }
       }
     } else {
       _cartStore!.decrementItemFromCartProvider(
@@ -340,8 +378,8 @@ class _ProductCardWidgetState extends State<ProductCardWidget> {
 
     // print("inc product ${widget.product}");
 
-    if (widget.product.isGram == true) {
-      for (int i = 0; i < 100; i++) {
+    if (widget.product.minimumGram != null) {
+      for (int i = 0; i < widget.product.minimumGram!; i++) {
         _cartStore!.incrementItemToCartProvider(
             _cartStore!.findItemIndexFromCartProvider(widget.product.id!)!);
       }
@@ -414,6 +452,14 @@ class _ProductCardWidgetState extends State<ProductCardWidget> {
     });
   }
 
+  bool _isAllowedToIncrement() {
+    if (widget.product.minimumGram != null && widget.product.amount != null) {
+      return _getQuantity() >= widget.product.amount! * 1000;
+    }
+
+    return _getQuantity() >= widget.product.amount!;
+  }
+
   Widget _buildQuantityPicker() {
     if (_cartStore == null) return Container();
 
@@ -455,7 +501,9 @@ class _ProductCardWidgetState extends State<ProductCardWidget> {
           onTap: () {
             _onCartDecrement();
           },
-          child: _getQuantity() == 1 || (_isGram() && _getQuantity() == 300)
+          child: _getQuantity() == 1 ||
+                  (widget.product.minimumGram != null &&
+                      _getQuantity() == widget.product.minimumGram)
               ? Stack(
                   alignment: Alignment.center,
                   children: [
@@ -480,12 +528,13 @@ class _ProductCardWidgetState extends State<ProductCardWidget> {
       ),
       Expanded(
         child: Padding(
-          padding: EdgeInsetsDirectional.fromSTEB(15, 0, 15, 0),
+          padding: EdgeInsetsDirectional.fromSTEB(10, 0, 10, 0),
           child: Text(
-            '${_getQuantity()}',
+            '${_getQuantity().toInt()}',
             textAlign: TextAlign.center,
             style: DefaultAppTheme.title2.override(
               fontFamily: 'Gilroy',
+              fontSize: 16,
             ),
           ),
         ),
@@ -493,12 +542,12 @@ class _ProductCardWidgetState extends State<ProductCardWidget> {
       Padding(
         padding: EdgeInsetsDirectional.fromSTEB(0, 0, 2, 0),
         child: InkWell(
-          onTap: _getQuantity() >= productAmount
+          onTap: _isAllowedToIncrement()
               ? null
               : () {
                   _onCartIncrement();
                 },
-          child: _getQuantity() >= productAmount
+          child: _isAllowedToIncrement()
               ? Stack(
                   alignment: Alignment.center,
                   children: [

@@ -9,6 +9,7 @@ class FavoriteProduct {
   bool? isLiked;
   bool? isActive;
   String? itemType;
+  int? minimumGram;
 
   FavoriteProduct({
     this.id,
@@ -19,6 +20,7 @@ class FavoriteProduct {
     this.isLiked,
     this.isActive,
     this.itemType,
+    this.minimumGram,
   });
 
   FavoriteProduct copyWith({
@@ -30,6 +32,7 @@ class FavoriteProduct {
     bool? isLiked,
     bool? isActive,
     String? itemType,
+    int? minimumGram,
   }) {
     return FavoriteProduct(
       id: id ?? this.id,
@@ -40,6 +43,7 @@ class FavoriteProduct {
       isLiked: isLiked ?? this.isLiked,
       isActive: isActive ?? this.isActive,
       itemType: itemType ?? this.itemType,
+      minimumGram: minimumGram ?? this.minimumGram,
     );
   }
 
@@ -53,6 +57,7 @@ class FavoriteProduct {
       'isLiked': isLiked,
       'isActive': isActive,
       'itemType': itemType,
+      "minimumGram": minimumGram,
     };
   }
 
@@ -66,6 +71,7 @@ class FavoriteProduct {
       isLiked: map['is_liked'] != null ? map['is_liked'] : null,
       isActive: map['is_active'] != null ? map['is_active'] : null,
       itemType: map['item_type'] != null ? map['item_type'] : null,
+      minimumGram: map['minimum_gram'] != null ? map['minimum_gram'] : null,
     );
   }
 
@@ -91,6 +97,7 @@ class FavoriteProduct {
         other.amount == amount &&
         other.isLiked == isLiked &&
         other.isActive == isActive &&
+        other.minimumGram == minimumGram &&
         other.itemType == itemType;
   }
 
@@ -103,6 +110,7 @@ class FavoriteProduct {
         amount.hashCode ^
         isLiked.hashCode ^
         isActive.hashCode ^
+        minimumGram.hashCode ^
         itemType.hashCode;
   }
 }

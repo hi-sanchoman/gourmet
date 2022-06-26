@@ -19,6 +19,7 @@ class Product {
   String? itemType;
   String? classification;
   bool? isGram;
+  int? minimumGram;
 
   Product({
     this.id,
@@ -37,6 +38,7 @@ class Product {
     this.itemType,
     this.classification,
     this.isGram,
+    this.minimumGram,
   });
 
   Product copyWith({
@@ -56,6 +58,7 @@ class Product {
     String? itemType,
     String? classification,
     bool? isGram,
+    int? minimumGram,
   }) {
     return Product(
         id: id ?? this.id,
@@ -73,7 +76,8 @@ class Product {
         isLiked: isLiked ?? this.isLiked,
         itemType: itemType ?? this.itemType,
         classification: classification ?? this.classification,
-        isGram: isGram ?? this.isGram);
+        isGram: isGram ?? this.isGram,
+        minimumGram: minimumGram ?? this.minimumGram);
   }
 
   Map<String, dynamic> toMap() {
@@ -94,6 +98,7 @@ class Product {
       'itemType': itemType,
       'classification': classification,
       'isGram': isGram,
+      "minimumGram": minimumGram,
     };
   }
 
@@ -101,24 +106,26 @@ class Product {
     // print("product $map");
 
     return Product(
-        id: map['id'],
-        mainImage: map['main_image'],
-        name: map['name'],
-        description: map['description'],
-        // loyaltyId: map['loyalty_id'],
-        priceCurrency: map['price_currency'],
-        price: double.parse(map['price'] ?? "0"),
-        amount: map['amount'],
-        position: map['position'],
-        isNew: map['is_new'],
-        isActive: map['is_active'],
-        subcategories: map['subcategories'] != null
-            ? List<int>.from(map['subcategory'])
-            : null,
-        isLiked: map['is_liked'],
-        itemType: map['item_type'],
-        classification: map['classification'],
-        isGram: map['is_gram']);
+      id: map['id'],
+      mainImage: map['main_image'],
+      name: map['name'],
+      description: map['description'],
+      // loyaltyId: map['loyalty_id'],
+      priceCurrency: map['price_currency'],
+      price: double.parse(map['price'] ?? "0"),
+      amount: map['amount'],
+      position: map['position'],
+      isNew: map['is_new'],
+      isActive: map['is_active'],
+      subcategories: map['subcategories'] != null
+          ? List<int>.from(map['subcategory'])
+          : null,
+      isLiked: map['is_liked'],
+      itemType: map['item_type'],
+      classification: map['classification'],
+      isGram: map['is_gram'],
+      minimumGram: map['minimum_gram'],
+    );
   }
 
   String toJson() => json.encode(toMap());
@@ -151,6 +158,7 @@ class Product {
         listEquals(other.subcategories, subcategories) &&
         other.classification == classification &&
         other.isGram == isGram &&
+        other.minimumGram == minimumGram &&
         other.isLiked == isLiked;
   }
 
@@ -171,6 +179,7 @@ class Product {
         subcategories.hashCode ^
         isLiked.hashCode ^
         classification.hashCode ^
-        isGram.hashCode;
+        isGram.hashCode ^
+        minimumGram.hashCode;
   }
 }
