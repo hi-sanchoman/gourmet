@@ -170,6 +170,14 @@ class _ChooseDefaultAddressWidgetWidgetState extends State<PaymentPicker> {
     _orderStore.paymentId = methods[method].toString();
     _userStore.currentPaymentMethod = methods[method];
 
+    // clear bonus if it is not credit_card
+    if (method != 'credit_card') {
+      _orderStore.bonusPay = null;
+      _orderStore.payWithBonus = null;
+      _orderStore.bonusCan = null;
+      _orderStore.bonusMax = null;
+    }
+
     print("order store: " + _orderStore.paymentId.toString());
     print("user store: " + _userStore.currentPaymentMethod.toString());
 

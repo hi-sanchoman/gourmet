@@ -34,14 +34,15 @@ abstract class _CartStore with Store {
     if (_productElement.itemType == 'product') {
       // print("product is_gram: ${_productElement.isGram}");
 
-      funcQuantity = funcQuantity == 0 && _productElement.isGram == true
-          ? 300
+      funcQuantity = funcQuantity == 0 && _productElement.minimumGram != null
+          ? _productElement.minimumGram!
           : funcQuantity;
       itemObject = _productElement;
       itemId = _productElement.id;
-      itemPrice = _productElement.isGram == true
-          ? _productElement.price
-          : _productElement.price;
+      itemPrice =
+          _productElement.minimumGram != null && _productElement.price != null
+              ? _productElement.price! ~/ 1000
+              : _productElement.price!;
     }
     // gift
     else {

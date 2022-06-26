@@ -248,6 +248,7 @@ class _SubcategoryScreenWidgetState extends State<FavoritesScreen> {
             price: double.tryParse('${product.favorite!.price}'),
             itemType: product.favorite!.itemType,
             isActive: product.favorite!.isActive,
+            minimumGram: product.favorite!.minimumGram,
             isLiked: true),
         // isFav: true,
       );

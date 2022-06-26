@@ -401,6 +401,7 @@ class _SearchScreenWidgetState extends State<SearchScreen> {
                                             product['price'] ?? '0'),
                                         itemType: product['item_type'],
                                         isGram: product['is_gram'],
+                                        minimumGram: product['minimum_gram'],
                                         classification:
                                             product['classification'],
                                         isActive: product['is_active'] ?? false,
